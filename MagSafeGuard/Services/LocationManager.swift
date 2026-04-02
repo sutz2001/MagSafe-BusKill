@@ -96,7 +96,7 @@ extension CLLocationCoordinate2D: @retroactive Codable, @retroactive Equatable {
 /// ))
 /// manager.startMonitoring()
 /// ```
-public final class LocationManager: NSObject, LocationManagerProtocol, @unchecked Sendable {
+public class LocationManager: NSObject, LocationManagerProtocol {
 
   // MARK: - Properties
 

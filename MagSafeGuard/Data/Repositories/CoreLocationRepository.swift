@@ -141,7 +141,7 @@ extension CoreLocationRepository: LocationManagerDelegate {
 // MARK: - Trusted Locations Storage
 
 /// Protocol for persisting trusted locations
-public protocol TrustedLocationsStore: Sendable {
+public protocol TrustedLocationsStore {
     /// Saves trusted locations to persistent storage
     func saveTrustedLocations(_ locations: [TrustedLocationDomain]) async throws
     /// Loads trusted locations from persistent storage

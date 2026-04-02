@@ -16,28 +16,16 @@ class MockSystemActions: SystemActionsProtocol {
 
   // Track which actions were called
   var lockScreenCalled = false
-  var lockScreenCallCount = 0
   var playAlarmCalled = false
   var playAlarmVolume: Float?
-  var lastAlarmVolume: Float?
   var stopAlarmCalled = false
   var forceLogoutCalled = false
-  var forceLogoutCallCount = 0
   var scheduleShutdownCalled = false
   var shutdownDelaySeconds: TimeInterval?
-  var lastShutdownDelay: TimeInterval?
   var executeScriptCalled = false
   var executedScriptPath: String?
-  var lastScriptPath: String?
 
-  // Control whether actions should succeed/fail
-  var lockScreenShouldSucceed = true
-  var playAlarmShouldSucceed = true
-  var forceLogoutShouldSucceed = true
-  var scheduleShutdownShouldSucceed = true
-  var executeScriptShouldSucceed = true
-
-  // Control whether actions should fail (legacy)
+  // Control whether actions should fail
   var shouldFailScreenLock = false
   var shouldFailAlarm = false
   var shouldFailLogout = false
@@ -45,31 +33,17 @@ class MockSystemActions: SystemActionsProtocol {
   var shouldFailScript = false
   var scriptExitCode: Int32 = 0
 
-  // Errors to throw
-  var lockScreenError: Error?
-
   // Reset method for test setup
   func reset() {
     lockScreenCalled = false
-    lockScreenCallCount = 0
     playAlarmCalled = false
     playAlarmVolume = nil
-    lastAlarmVolume = nil
     stopAlarmCalled = false
     forceLogoutCalled = false
-    forceLogoutCallCount = 0
     scheduleShutdownCalled = false
     shutdownDelaySeconds = nil
-    lastShutdownDelay = nil
     executeScriptCalled = false
     executedScriptPath = nil
-    lastScriptPath = nil
-
-    lockScreenShouldSucceed = true
-    playAlarmShouldSucceed = true
-    forceLogoutShouldSucceed = true
-    scheduleShutdownShouldSucceed = true
-    executeScriptShouldSucceed = true
 
     shouldFailScreenLock = false
     shouldFailAlarm = false
@@ -77,19 +51,11 @@ class MockSystemActions: SystemActionsProtocol {
     shouldFailShutdown = false
     shouldFailScript = false
     scriptExitCode = 0
-
-    lockScreenError = nil
   }
 
   func lockScreen() throws {
     lockScreenCalled = true
-    lockScreenCallCount += 1
-
-    if let error = lockScreenError {
-      throw error
-    }
-
-    if !lockScreenShouldSucceed || shouldFailScreenLock {
+    if shouldFailScreenLock {
       throw SystemActionError.screenLockFailed
     }
   }
@@ -97,9 +63,7 @@ class MockSystemActions: SystemActionsProtocol {
   func playAlarm(volume: Float) throws {
     playAlarmCalled = true
     playAlarmVolume = volume
-    lastAlarmVolume = volume
-
-    if !playAlarmShouldSucceed || shouldFailAlarm {
+    if shouldFailAlarm {
       throw SystemActionError.alarmPlaybackFailed
     }
   }
@@ -110,9 +74,7 @@ class MockSystemActions: SystemActionsProtocol {
 
   func forceLogout() throws {
     forceLogoutCalled = true
-    forceLogoutCallCount += 1
-
-    if !forceLogoutShouldSucceed || shouldFailLogout {
+    if shouldFailLogout {
       throw SystemActionError.logoutFailed
     }
   }
@@ -120,9 +82,7 @@ class MockSystemActions: SystemActionsProtocol {
   func scheduleShutdown(afterSeconds: TimeInterval) throws {
     scheduleShutdownCalled = true
     shutdownDelaySeconds = afterSeconds
-    lastShutdownDelay = afterSeconds
-
-    if !scheduleShutdownShouldSucceed || shouldFailShutdown {
+    if shouldFailShutdown {
       throw SystemActionError.shutdownFailed
     }
   }
@@ -130,14 +90,13 @@ class MockSystemActions: SystemActionsProtocol {
   func executeScript(at path: String) throws {
     executeScriptCalled = true
     executedScriptPath = path
-    lastScriptPath = path
 
     // Check if file exists for realistic behavior
     if !FileManager.default.fileExists(atPath: path) {
       throw SystemActionError.scriptNotFound
     }
 
-    if !executeScriptShouldSucceed || shouldFailScript {
+    if shouldFailScript {
       if scriptExitCode != 0 {
         throw SystemActionError.scriptExecutionFailed(exitCode: scriptExitCode)
       } else {

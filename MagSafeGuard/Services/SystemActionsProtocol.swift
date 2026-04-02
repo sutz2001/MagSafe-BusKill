@@ -103,8 +103,6 @@ public enum SystemActionError: LocalizedError {
   case permissionDenied
   /// Invalid script path (security violation)
   case invalidScriptPath
-  /// Script file not executable
-  case scriptNotExecutable
   /// Invalid script file type
   case invalidScriptType
   /// Script has insecure permissions
@@ -116,7 +114,7 @@ public enum SystemActionError: LocalizedError {
   /// Script hash not in whitelist
   case unauthorizedScriptHash
   /// Script content validation failed
-  case scriptValidationFailed(reason: String)
+  case scriptValidationFailed
   /// Script execution timed out
   case scriptExecutionTimeout
 
@@ -139,8 +137,6 @@ public enum SystemActionError: LocalizedError {
       return "Permission denied for system action"
     case .invalidScriptPath:
       return "Script path is not allowed for security reasons"
-    case .scriptNotExecutable:
-      return "Script file is not executable"
     case .invalidScriptType:
       return "Script file type is not supported"
     case .insecureScriptPermissions:
@@ -151,8 +147,8 @@ public enum SystemActionError: LocalizedError {
       return "Script contains potentially dangerous commands"
     case .unauthorizedScriptHash:
       return "Script is not in the allowed scripts whitelist"
-    case .scriptValidationFailed(let reason):
-      return "Failed to validate script: \(reason)"
+    case .scriptValidationFailed:
+      return "Failed to validate script content"
     case .scriptExecutionTimeout:
       return "Script execution timed out"
     }

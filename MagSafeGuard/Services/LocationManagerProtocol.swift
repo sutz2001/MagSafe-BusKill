@@ -12,7 +12,7 @@ import CoreLocation
 import Foundation
 
 /// Protocol defining location-based auto-arm operations
-public protocol LocationManagerProtocol: AnyObject, Sendable {
+public protocol LocationManagerProtocol: AnyObject {
   /// Delegate for receiving location-based events
   var delegate: LocationManagerDelegate? { get set }
 
