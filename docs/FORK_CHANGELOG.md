@@ -14,6 +14,7 @@ Upstream releases remain in [CHANGELOG.md](CHANGELOG.md).
 - Optional restore armed state on launch (Settings → General)
 - Auto-arm inactive reason hints in Settings
 - Localized notifications, auth prompts, and event log strings (EN/DE)
+- `task release` — automated Release build, DMG, and SHA256 checksum (`dist/`)
 
 ### Changed
 

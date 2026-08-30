@@ -404,41 +404,47 @@ sudo xcode-select -s /Applications/Xcode.app
 
 ### Creating a Release Build
 
-1. **In Xcode**:
+```bash
+task release              # tests + signed Release .app + DMG + SHA256
+task release:install      # copy to /Applications
+SKIP_TESTS=true task release   # skip tests for faster iteration
+```
 
-   - Select "Any Mac" as destination
-   - Product → Archive
-   - Distribute App → Direct Distribution
+Artifacts: `dist/MagSafeGuard-<version>.app`, `.dmg`, and `SHA256SUMS`.
 
-2. **Via Command Line**:
+**Manual (Xcode):**
 
-   ```bash
-   xcodebuild -project MagSafeGuard.xcodeproj \
-              -scheme MagSafeGuard \
-              -configuration Release \
-              -derivedDataPath build \
-              archive -archivePath build/MagSafeGuard.xcarchive
-   ```
+1. Select "Any Mac" as destination
+2. Product → Archive → Distribute App → Direct Distribution
 
-### Code Signing (Future)
+**Manual (command line):**
+
+```bash
+xcodebuild -project MagSafeGuard.xcodeproj \
+           -scheme MagSafeGuard \
+           -configuration Release \
+           -derivedDataPath dist/DerivedData \
+           build
+```
+
+### Code Signing
+
+Personal Team: Xcode automatic signing (`CODE_SIGN_STYLE = Automatic`). Use `SIGN_MODE=adhoc task release:build` if needed.
 
 ```bash
 # Check signing identity
 security find-identity -p codesigning
-
-# Sign the app
-codesign --force --deep --sign "Developer ID Application: Your Name" \
-         MagSafeGuard.app
 ```
 
-### Creating DMG (Future)
+### Creating DMG
+
+Handled by `task release` / `task release:dmg`. Manual equivalent:
 
 ```bash
-# Create DMG for distribution
 hdiutil create -volname "MagSafe Guard" \
-               -srcfolder build/Release/MagSafeGuard.app \
+               -srcfolder dist/MagSafeGuard-0.3.0.app \
                -ov -format UDZO \
-               MagSafeGuard.dmg
+               dist/MagSafeGuard-0.3.0.dmg
 ```
 
 ## Environment Setup

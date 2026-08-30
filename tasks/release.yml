@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+vars:
+  PROJECT_PATH: MagSafeGuard.xcodeproj
+  SCHEME: MagSafeGuard
+  DIST_DIR: dist
+
+tasks:
+  default:
+    desc: List release packaging tasks
+    silent: true
+    cmds:
+      - task --list | grep "^\\* release:" | grep -v "::" || true
+
+  clean:
+    desc: Remove dist/ release artifacts
+    silent: true
+    cmds:
+      - rm -rf "{{.DIST_DIR}}"
+      - echo "✅ Removed {{.DIST_DIR}}/"
+
+  build:
+    desc: Build signed Release .app into dist/
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh build
+
+  dmg:
+    desc: Create versioned DMG from staged app (run build first)
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh dmg
+
+  checksum:
+    desc: Write SHA256 checksums for dist artifacts
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh checksum
+
+  package:
+    desc: Build app, DMG, and checksums (no tests)
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh all
+
+  show:
+    desc: Show paths to current release artifacts
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh show
+
+  open:
+    desc: Open release DMG or .app in Finder
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh open
+
+  install:
+    desc: Copy release .app to /Applications
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh install
+
+  publish:
+    desc: Full release — sync version, test, build, DMG, checksum
+    silent: true
+    cmds:
+      - task: version:sync
+      - |
+        if [ "${SKIP_TESTS:-}" = "true" ]; then
+          echo "⏭️  Skipping tests (SKIP_TESTS=true)"
+        else
+          echo "🧪 Running tests before release..."
+          task test
+        fi
+      - bash scripts/package-release.sh all
+      - |
+        echo ""
+        echo "🎉 Release package ready"
+        bash scripts/package-release.sh show
+        echo ""
+        echo "Next steps:"
+        echo "  task release:install   # copy to /Applications"
+        echo "  task release:open      # open DMG"
+        echo "  gh release create …  # optional GitHub release upload"

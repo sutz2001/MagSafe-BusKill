@@ -42,6 +42,9 @@ includes:
   version:
     taskfile: ./tasks/version.yml
     optional: false
+  release:
+    taskfile: ./tasks/release.yml
+    optional: false
 vars:
   HOOKS_PATH: .githooks
   SEMGREP_CONFIG: auto
@@ -76,6 +79,7 @@ tasks:
         echo "  task yaml:         - YAML validation and linting"
         echo "  task git:          - Git and GitHub tasks"
         echo "  task ai:           - AI agent analysis tasks"
+        echo "  task release:      - Release build, DMG, and checksum"
         echo ""
         echo "🤖 AI Analysis:"
         echo "  task ai:qa         - Run all QA agents (security, coverage, performance)"
@@ -359,6 +363,19 @@ tasks:
     silent: true
     cmds:
       - task: swift:build
+
+  run:
+    desc: Build Debug and launch MagSafe Guard (menu bar app)
+    silent: true
+    cmds:
+      - task: xcode:build
+      - open ".build/xcode/Build/Products/Debug/MagSafeGuard.app"
+
+  release:
+    desc: Full release — sync version, test, build, DMG, checksum
+    silent: true
+    cmds:
+      - task: release:publish
 
   # Testing and quality assurance
   test:

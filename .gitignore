@@ -31,6 +31,7 @@ feature-flags.json
 # Swift Package Manager
 .build/
 build/
+dist/
 .swiftpm/
 # Package.resolved should be committed for reproducible builds and caching
 /*.xcodeproj

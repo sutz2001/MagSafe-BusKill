@@ -109,14 +109,28 @@ task run            # Menüleisten-App starten
 
 App beenden: Menüleiste → Beenden, oder **⌘.** in Xcode.
 
-### Lokale Build-Installation
+### Lokale Release-Installation
 
 ```bash
-task build
-open "$(find ~/Library/Developer/Xcode/DerivedData -name 'MagSafeGuard.app' -path '*/Debug/*' 2>/dev/null | head -1)"
+task release              # Tests + signiertes Release-.app + DMG + SHA256
+task release:install      # nach /Applications kopieren
 ```
 
-Für den Dauereinsatz `MagSafeGuard.app` aus DerivedData nach `/Applications` kopieren (Release-Build empfohlen).
+Artefakte in `dist/`:
+
+- `MagSafeGuard-<version>.app`
+- `MagSafeGuard-<version>.dmg` (in Applications ziehen)
+- `SHA256SUMS`
+
+Optionen:
+
+```bash
+SKIP_TESTS=true task release         # ohne Tests (schneller)
+SIGN_MODE=adhoc task release:build   # Ad-hoc-Signatur falls Xcode-Signing scheitert
+task release:open                    # DMG im Finder öffnen
+```
+
+Benötigt Xcode-Automatic-Signing (Personal Team reicht). Notarisierte Developer-ID-Verteilung erfordert einen kostenpflichtigen Apple-Developer-Account.
 
 Fork-Changelog: [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)
 

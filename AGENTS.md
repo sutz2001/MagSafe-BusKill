@@ -33,8 +33,10 @@ Prefer `task` over raw tool commands:
 
 ```bash
 task setup && task build && task test
+task run                 # Debug-Build starten
+task release             # Release-.app + DMG
 task version:show
-task version:sync    # after editing version.json
+task version:sync        # after editing version.json
 open MagSafeGuard.xcodeproj
 ```
 

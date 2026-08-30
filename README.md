@@ -112,11 +112,25 @@ Stop the app: quit from menu bar, or **⌘.** in Xcode, or Activity Monitor.
 ### Install a local release build
 
 ```bash
-task build
-open "$(find ~/Library/Developer/Xcode/DerivedData -name 'MagSafeGuard.app' -path '*/Debug/*' 2>/dev/null | head -1)"
+task release              # tests + signed Release .app + DMG + SHA256
+task release:install      # copy to /Applications
 ```
 
-To keep a copy in Applications, drag `MagSafeGuard.app` from DerivedData to `/Applications` after building in Xcode (Release recommended for daily use).
+Artifacts land in `dist/`:
+
+- `MagSafeGuard-<version>.app`
+- `MagSafeGuard-<version>.dmg` (drag to Applications)
+- `SHA256SUMS`
+
+Options:
+
+```bash
+SKIP_TESTS=true task release    # skip test suite (faster iteration)
+SIGN_MODE=adhoc task release:build   # ad-hoc sign if Xcode signing fails
+task release:open               # open DMG in Finder
+```
+
+Requires Xcode automatic signing (Personal Team is fine). Notarized Developer ID distribution needs a paid Apple Developer account.
 
 Fork release history: [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)
 

@@ -53,19 +53,21 @@ runs:
           fi
           
           # Extract major.minor versions for comparison
-          CURRENT_MAJOR_MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f1,2)
-          REQUESTED_MAJOR_MINOR=$(echo "$REQUESTED_VERSION" | cut -d. -f1,2)
-          
-          echo "Current version: $CURRENT_VERSION (major.minor: $CURRENT_MAJOR_MINOR)"
-          echo "Requested version: $REQUESTED_VERSION (major.minor: $REQUESTED_MAJOR_MINOR)"
-          
-          if [[ "$CURRENT_MAJOR_MINOR" == "$REQUESTED_MAJOR_MINOR" ]]; then
-            echo "✅ Swift $CURRENT_VERSION is already available"
+          CURRENT_MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+          CURRENT_MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+          REQUESTED_MAJOR=$(echo "$REQUESTED_VERSION" | cut -d. -f1)
+          REQUESTED_MINOR=$(echo "$REQUESTED_VERSION" | cut -d. -f2)
+
+          echo "Current version: $CURRENT_VERSION (major: $CURRENT_MAJOR, minor: $CURRENT_MINOR)"
+          echo "Requested version: $REQUESTED_VERSION (major: $REQUESTED_MAJOR, minor: $REQUESTED_MINOR)"
+
+          # Accept Xcode's Swift when same major and minor >= requested (e.g. 6.1 satisfies 6.0).
+          # Installing an older hosted Swift breaks XCTest on macos-15 (XCTestCore mismatch).
+          if [[ "$CURRENT_MAJOR" -eq "$REQUESTED_MAJOR" ]] && [[ "$CURRENT_MINOR" -ge "$REQUESTED_MINOR" ]]; then
+            echo "✅ Swift $CURRENT_VERSION satisfies requested $REQUESTED_VERSION"
             echo "swift-available=true" >> $GITHUB_OUTPUT
             echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-            
-            # Set TOOLCHAINS environment variable for subsequent steps
-            echo "TOOLCHAINS=swift $CURRENT_VERSION" >> $GITHUB_ENV
+            # Use Xcode's default toolchain — do not set TOOLCHAINS (XCTest must come from Xcode)
             
             END_TIME=$(date +%s)
             echo "⏱️ Swift check took $((END_TIME - START_TIME)) seconds"
