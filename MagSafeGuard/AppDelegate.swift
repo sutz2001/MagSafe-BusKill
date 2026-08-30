@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import Combine
 import MagSafeGuardCore
 import SwiftUI
 import UserNotifications
@@ -15,6 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private var settingsWindow: NSWindow?
   private var settingsHostingController: NSViewController?
   private var windowDelegates: [NSWindow: WindowDelegate] = [:]
+  private var cancellables = Set<AnyCancellable>()
   let core = AppDelegateCore()
 
   // MARK: - Constants
@@ -102,7 +104,41 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Configure accessibility features
     setupAccessibilityFeatures()
 
+    setupGracePeriodObservation()
+    restoreArmedStateIfNeeded()
+
+    Task { @MainActor in
+      OnboardingPresenter.showIfNeeded(settingsManager: UserDefaultsManager.shared)
+    }
+
     // AppController now handles power monitoring internally
+  }
+
+  private func setupGracePeriodObservation() {
+    core.appController.$gracePeriodRemaining
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        self?.updateStatusIcon()
+        self?.refreshStatusItemAccessibility()
+      }
+      .store(in: &cancellables)
+  }
+
+  private func restoreArmedStateIfNeeded() {
+    let settings = UserDefaultsManager.shared.settings
+    guard settings.restoreArmedStateOnLaunch,
+      ApplicationStatePersistence.loadWasArmed(),
+      core.appController.currentState == .disarmed
+    else { return }
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+      self?.core.appController.arm { result in
+        if case .failure(let error) = result {
+          Log.warning("Failed to restore armed state: \(error.localizedDescription)", category: .ui)
+          ApplicationStatePersistence.clear()
+        }
+      }
+    }
   }
 
   private func setupMenu() {
@@ -147,19 +183,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     if let button = statusItem?.button {
       let statusDescription = core.appController.statusDescription
       let imageName = core.statusMenuBarImageName()
+      let showGraceCountdown = core.appController.currentState == .gracePeriod
 
       if let image = NSImage(named: imageName),
         let templateImage = image.copy() as? NSImage
       {
         templateImage.isTemplate = true
         button.image = templateImage
-        button.title = ""
+        if showGraceCountdown {
+          let seconds = max(0, Int(ceil(core.appController.gracePeriodRemaining)))
+          button.title = L10n.tr("menu.graceCountdown", seconds)
+        } else {
+          button.title = ""
+        }
         Log.debug("Menu bar icon updated: \(imageName)", category: .ui)
       } else if let image = NSImage(systemSymbolName: core.statusIconName(), accessibilityDescription: Self.appName) {
         guard let templateImage = image.copy() as? NSImage else { return }
         templateImage.isTemplate = true
         button.image = templateImage
-        button.title = ""
+        if showGraceCountdown {
+          let seconds = max(0, Int(ceil(core.appController.gracePeriodRemaining)))
+          button.title = L10n.tr("menu.graceCountdown", seconds)
+        } else {
+          button.title = ""
+        }
         Log.debug("Menu bar icon updated (SF Symbol fallback): \(core.statusIconName())", category: .ui)
       } else {
         Log.warning("Failed to load menu bar icon, using text fallback", category: .ui)
@@ -417,13 +464,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func saveApplicationState() {
-    // TODO: Implement state persistence
-    // For now, just log the current state
-    let state = core.appController.currentState
-    let events = core.appController.getEventLog(limit: 10)
-
-    Log.debug("Saving state: \(state.rawValue)", category: .ui)
-    Log.debug("Recent events: \(events.count)", category: .ui)
+    let wasArmed = core.appController.currentState == .armed
+    if wasArmed {
+      ApplicationStatePersistence.saveWasArmed(true)
+    } else {
+      ApplicationStatePersistence.clear()
+    }
+    Log.debug("Saved armed persistence: \(wasArmed)", category: .ui)
   }
 }
 

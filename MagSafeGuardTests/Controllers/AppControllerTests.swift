@@ -84,7 +84,7 @@ final class AppControllerTests: XCTestCase {
         XCTAssertEqual(self.sut.currentState, .armed)
         XCTAssertTrue(
           self.mockNotificationService.deliveredNotifications.contains {
-            $0.title == "MagSafe Guard Armed"
+            $0.title == L10n.tr("notification.armed.title")
           })
       case .failure:
         XCTFail("Arming should succeed")
@@ -170,7 +170,7 @@ final class AppControllerTests: XCTestCase {
         XCTAssertEqual(self.sut.currentState, .disarmed)
         XCTAssertTrue(
           self.mockNotificationService.deliveredNotifications.contains {
-            $0.title == "MagSafe Guard Disarmed"
+            $0.title == L10n.tr("notification.disarmed.title")
           })
       case .failure:
         XCTFail("Disarming should succeed")
@@ -391,7 +391,7 @@ final class AppControllerTests: XCTestCase {
 
   func testMenuTitleForStates() {
     // Disarmed
-    XCTAssertEqual(sut.armDisarmMenuTitle, "Arm Protection")
+    XCTAssertEqual(sut.armDisarmMenuTitle, L10n.tr("menu.arm"))
 
     // Armed
     mockAuthService.shouldSucceed = true
@@ -403,12 +403,14 @@ final class AppControllerTests: XCTestCase {
 
     waitForExpectations(timeout: 1.0)
 
-    XCTAssertEqual(sut.armDisarmMenuTitle, "Disarm Protection")
+    XCTAssertEqual(sut.armDisarmMenuTitle, L10n.tr("menu.disarm"))
   }
 
   func testStatusIconNames() {
     XCTAssertEqual(sut.statusIconName, "shield")  // Disarmed
     XCTAssertEqual(sut.statusMenuBarImageName, "MenuBarIconDisarmed")
+    XCTAssertEqual(AppController.menuBarImageName(for: .gracePeriod), "MenuBarIconGracePeriod")
+    XCTAssertEqual(AppController.menuBarImageName(for: .triggered), "MenuBarIconTriggered")
 
     // Arm
     mockAuthService.shouldSucceed = true
@@ -422,6 +424,19 @@ final class AppControllerTests: XCTestCase {
 
     XCTAssertEqual(sut.statusIconName, "shield.fill")  // Armed
     XCTAssertEqual(sut.statusMenuBarImageName, "MenuBarIconArmed")
+  }
+
+  func testEnterGracePeriodForTesting() {
+    mockAuthService.shouldSucceed = true
+    let armExpectation = expectation(description: "Arm")
+    sut.arm { _ in armExpectation.fulfill() }
+    waitForExpectations(timeout: 1.0)
+
+    sut.enterGracePeriodForTesting()
+
+    XCTAssertEqual(sut.currentState, .gracePeriod)
+    XCTAssertTrue(sut.isInGracePeriod)
+    XCTAssertGreaterThan(sut.gracePeriodRemaining, 0)
   }
 }
 

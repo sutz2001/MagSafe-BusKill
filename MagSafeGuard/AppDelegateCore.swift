@@ -358,11 +358,8 @@ extension AppDelegate {
   }
 
   @objc func showEventLog() {
-    // TODO: Implement event log window
-    let events = core.appController.getEventLog(limit: 50)
-    Log.info("=== Event Log ===")
-    for event in events {
-      Log.info("[\(event.timestamp)] \(event.event.rawValue) - \(event.details ?? "No details")")
+    Task { @MainActor in
+      EventLogWindowController.show(appController: core.appController)
     }
   }
 }

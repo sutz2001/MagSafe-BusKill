@@ -399,4 +399,29 @@ extension AutoArmManager {
 
     return false
   }
+
+  /// Explains why auto-arm is not active when enabled but not arming.
+  public var inactiveReason: String? {
+    guard settingsManager.settings.autoArmEnabled else { return nil }
+
+    if isTemporarilyDisabled {
+      return L10n.tr("autoArm.reason.tempDisabledDetail")
+    }
+
+    if appController.currentState != .disarmed {
+      return L10n.tr("autoArm.reason.alreadyArmed")
+    }
+
+    if let lastTime = lastAutoArmTime,
+      Date().timeIntervalSince(lastTime) < autoArmCooldown
+    {
+      return L10n.tr("autoArm.reason.cooldown")
+    }
+
+    if !isAutoArmConditionMet {
+      return L10n.tr("autoArm.reason.waitingForTrigger")
+    }
+
+    return nil
+  }
 }

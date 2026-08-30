@@ -139,6 +139,14 @@ public struct Settings: Codable {
   /// - Note: Changes require application restart to take effect
   public var showInDock: Bool = false
 
+  /// Restore armed protection after relaunch (requires authentication on next arm attempt flow).
+  ///
+  /// When enabled, if the app was armed when it last quit, it will attempt to re-arm after launch.
+  public var restoreArmedStateOnLaunch: Bool = false
+
+  /// Whether the first-run onboarding wizard has been completed.
+  public var hasCompletedOnboarding: Bool = false
+
   // MARK: - Advanced Settings
 
   /// List of custom script paths for execution during security actions.

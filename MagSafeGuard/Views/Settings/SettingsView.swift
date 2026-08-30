@@ -7,9 +7,11 @@
 //  Main settings window UI using SwiftUI
 //
 
+import AppKit
 import MagSafeGuardCore
 import MagSafeGuardDomain
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Main settings view with sidebar navigation interface
 public struct SettingsView: View {
@@ -146,6 +148,10 @@ struct GeneralSettingsView: View {
 
       Divider()
 
+      restoreArmedStateToggle
+
+      Divider()
+
       launchAtLoginToggle
 
       showInDockToggle
@@ -232,6 +238,22 @@ struct GeneralSettingsView: View {
           .font(.caption)
           .foregroundColor(.secondary)
         Text(l10n: "settings.general.cancelGrace.caption2")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+    }
+  }
+
+  private var restoreArmedStateToggle: some View {
+    Toggle(
+      isOn: Binding(
+        get: { settingsManager.settings.restoreArmedStateOnLaunch },
+        set: { settingsManager.updateSetting(\.restoreArmedStateOnLaunch, value: $0) }
+      )
+    ) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(l10n: "settings.general.restoreArmed.title")
+        Text(l10n: "settings.general.restoreArmed.caption")
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -644,6 +666,11 @@ struct AutoArmSettingsView: View {
     if let autoArmManager = getAutoArmManager() {
       VStack(alignment: .leading, spacing: 8) {
         autoArmStatusRow(autoArmManager)
+        if let reason = autoArmManager.inactiveReason {
+          Text(reason)
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
         autoArmActionButton(autoArmManager)
       }
       .padding(.vertical, 4)
@@ -907,8 +934,37 @@ struct AdvancedSettingsView: View {
   }
 
   private func addCustomScript() {
-    // TODO: Implement file picker for scripts
-    Log.info("Add custom script", category: .settings)
+    let scriptsDir = URL(fileURLWithPath: NSHomeDirectory() + "/.magsafe/scripts", isDirectory: true)
+    try? FileManager.default.createDirectory(at: scriptsDir, withIntermediateDirectories: true)
+
+    let panel = NSOpenPanel()
+    panel.directoryURL = scriptsDir
+    panel.canChooseFiles = true
+    panel.canChooseDirectories = false
+    panel.allowsMultipleSelection = false
+    panel.allowedContentTypes = [.shellScript, .unixExecutable, .plainText]
+    panel.message = L10n.tr("settings.advanced.scriptPicker.message")
+
+    guard panel.runModal() == .OK, let url = panel.url else { return }
+
+    let path = url.path
+    let allowedPrefixes = [
+      "/usr/local/magsafe-scripts/",
+      NSHomeDirectory() + "/.magsafe/scripts/",
+    ]
+    guard allowedPrefixes.contains(where: { path.hasPrefix($0) }) else {
+      let alert = NSAlert()
+      alert.messageText = L10n.tr("settings.advanced.scriptPicker.invalid.title")
+      alert.informativeText = L10n.tr("settings.advanced.scriptPicker.invalid.message")
+      alert.alertStyle = .warning
+      alert.runModal()
+      return
+    }
+
+    var scripts = settingsManager.settings.customScripts
+    guard !scripts.contains(path) else { return }
+    scripts.append(path)
+    settingsManager.updateSetting(\.customScripts, value: scripts)
   }
 
   private var customScriptsList: some View {

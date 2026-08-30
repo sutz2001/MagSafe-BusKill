@@ -247,5 +247,86 @@
 "common.add" = "Add";
 "common.save" = "Save";
 
+"menu.graceCountdown" = "%llds";
+
+/* Auth reasons */
+"auth.reason.arm" = "Authenticate to arm MagSafe Guard";
+"auth.reason.disarm" = "Authenticate to disarm MagSafe Guard";
+"auth.reason.cancelGrace" = "Authenticate to cancel security action";
+
+/* Notifications */
+"notification.armed.title" = "MagSafe Guard Armed";
+"notification.armed.message" = "Protection is now active";
+"notification.disarmed.title" = "MagSafe Guard Disarmed";
+"notification.disarmed.message" = "Protection is now inactive";
+"notification.graceCancelled.title" = "Security Action Cancelled";
+"notification.graceCancelled.message" = "Grace period cancelled";
+"notification.graceAlert.title" = "Security Alert";
+"notification.graceAlert.message" = "Power disconnected! Security action in %lld seconds";
+"notification.actionsExecuted.title" = "Security Actions Executed";
+"notification.actionsExecuted.message" = "All configured actions completed";
+"notification.actionsPartial.title" = "Security Actions Partial";
+"notification.actionsPartial.message" = "%lld actions failed to execute";
+
+/* Errors */
+"error.gracePeriodNotCancellable" = "Grace period cancellation is not allowed";
+"error.authenticationRequired" = "Authentication is required for this operation";
+
+/* General settings */
+"settings.general.restoreArmed.title" = "Restore Armed State on Launch";
+"settings.general.restoreArmed.caption" = "Re-arm protection after restart if it was armed when the app quit (requires authentication)";
+
+/* Script picker */
+"settings.advanced.scriptPicker.message" = "Choose a shell script from ~/.magsafe/scripts or /usr/local/magsafe-scripts";
+"settings.advanced.scriptPicker.invalid.title" = "Invalid Script Location";
+"settings.advanced.scriptPicker.invalid.message" = "Scripts must be stored in ~/.magsafe/scripts or /usr/local/magsafe-scripts";
+
+/* Auto-arm inactive reasons */
+"autoArm.reason.tempDisabledDetail" = "Auto-arm is temporarily disabled";
+"autoArm.reason.alreadyArmed" = "Protection is already active";
+"autoArm.reason.cooldown" = "Auto-arm is in cooldown after the last activation";
+"autoArm.reason.waitingForTrigger" = "Waiting for location or network trigger";
+
+/* Event log */
+"eventLog.windowTitle" = "Event Log";
+"eventLog.search" = "Search events";
+"eventLog.refresh" = "Refresh";
+"eventLog.clear" = "Clear Log";
+"eventLog.empty.title" = "No Events";
+"eventLog.empty.description" = "Security events will appear here as you use the app.";
+
+/* App events */
+"event.armed" = "Armed";
+"event.disarmed" = "Disarmed";
+"event.powerDisconnected" = "Power Disconnected";
+"event.powerConnected" = "Power Connected";
+"event.gracePeriodStarted" = "Grace Period Started";
+"event.gracePeriodCancelled" = "Grace Period Cancelled";
+"event.securityActionExecuted" = "Security Action Executed";
+"event.authenticationFailed" = "Authentication Failed";
+"event.authenticationSucceeded" = "Authentication Succeeded";
+"event.applicationTerminating" = "Application Terminating";
+"event.autoArmTriggered" = "Auto-Arm Triggered";
+
+/* App states */
+"appState.disarmed" = "Disarmed";
+"appState.armed" = "Armed";
+"appState.grace_period" = "Grace Period";
+"appState.triggered" = "Triggered";
+
+/* Onboarding */
+"onboarding.windowTitle" = "Welcome to MagSafe Guard";
+"onboarding.welcome.title" = "Welcome to MagSafe Guard";
+"onboarding.welcome.body" = "Turn your power cable into a dead-man's switch. Arm protection when you work in public spaces.";
+"onboarding.arm.title" = "Arm Before You Leave";
+"onboarding.arm.body" = "Arm protection from the menu bar. Unplugging the adapter starts a grace period, then security actions run.";
+"onboarding.grace.title" = "Grace Period";
+"onboarding.grace.body" = "You have time to cancel with Touch ID or your password. Default grace period is 30 seconds.";
+"onboarding.permissions.title" = "Permissions";
+"onboarding.permissions.body" = "Allow notifications for alerts. Location is optional for auto-arm and trusted places.";
+"onboarding.back" = "Back";
+"onboarding.next" = "Next";
+"onboarding.done" = "Get Started";
+
 /* Notification actions */
 "notification.cancelAction" = "Cancel Action";

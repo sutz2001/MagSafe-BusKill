@@ -247,5 +247,86 @@
 "common.add" = "Hinzufügen";
 "common.save" = "Speichern";
 
+"menu.graceCountdown" = "%lld s";
+
+/* Auth reasons */
+"auth.reason.arm" = "Authentifizieren, um MagSafe Guard zu scharfschalten";
+"auth.reason.disarm" = "Authentifizieren, um MagSafe Guard zu entschärfen";
+"auth.reason.cancelGrace" = "Authentifizieren, um die Sicherheitsaktion abzubrechen";
+
+/* Notifications */
+"notification.armed.title" = "MagSafe Guard scharf";
+"notification.armed.message" = "Schutz ist jetzt aktiv";
+"notification.disarmed.title" = "MagSafe Guard entschärft";
+"notification.disarmed.message" = "Schutz ist jetzt inaktiv";
+"notification.graceCancelled.title" = "Sicherheitsaktion abgebrochen";
+"notification.graceCancelled.message" = "Karenzzeit abgebrochen";
+"notification.graceAlert.title" = "Sicherheitswarnung";
+"notification.graceAlert.message" = "Strom getrennt! Sicherheitsaktion in %lld Sekunden";
+"notification.actionsExecuted.title" = "Sicherheitsaktionen ausgeführt";
+"notification.actionsExecuted.message" = "Alle konfigurierten Aktionen abgeschlossen";
+"notification.actionsPartial.title" = "Sicherheitsaktionen teilweise";
+"notification.actionsPartial.message" = "%lld Aktionen konnten nicht ausgeführt werden";
+
+/* Errors */
+"error.gracePeriodNotCancellable" = "Abbruch der Karenzzeit ist nicht erlaubt";
+"error.authenticationRequired" = "Für diese Aktion ist eine Authentifizierung erforderlich";
+
+/* General settings */
+"settings.general.restoreArmed.title" = "Scharfen Zustand nach Neustart wiederherstellen";
+"settings.general.restoreArmed.caption" = "Schutz nach Neustart wieder scharfschalten, wenn die App scharf beendet wurde (Authentifizierung erforderlich)";
+
+/* Script picker */
+"settings.advanced.scriptPicker.message" = "Shell-Skript aus ~/.magsafe/scripts oder /usr/local/magsafe-scripts wählen";
+"settings.advanced.scriptPicker.invalid.title" = "Ungültiger Skript-Speicherort";
+"settings.advanced.scriptPicker.invalid.message" = "Skripte müssen in ~/.magsafe/scripts oder /usr/local/magsafe-scripts liegen";
+
+/* Auto-arm inactive reasons */
+"autoArm.reason.tempDisabledDetail" = "Auto-Scharfschalten ist vorübergehend deaktiviert";
+"autoArm.reason.alreadyArmed" = "Schutz ist bereits aktiv";
+"autoArm.reason.cooldown" = "Auto-Scharfschalten ist nach der letzten Aktivierung in der Abklingzeit";
+"autoArm.reason.waitingForTrigger" = "Warte auf Standort- oder Netzwerk-Auslöser";
+
+/* Event log */
+"eventLog.windowTitle" = "Ereignisprotokoll";
+"eventLog.search" = "Ereignisse suchen";
+"eventLog.refresh" = "Aktualisieren";
+"eventLog.clear" = "Protokoll leeren";
+"eventLog.empty.title" = "Keine Ereignisse";
+"eventLog.empty.description" = "Sicherheitsereignisse erscheinen hier bei der Nutzung der App.";
+
+/* App events */
+"event.armed" = "Scharfgeschaltet";
+"event.disarmed" = "Entschärft";
+"event.powerDisconnected" = "Strom getrennt";
+"event.powerConnected" = "Strom verbunden";
+"event.gracePeriodStarted" = "Karenzzeit gestartet";
+"event.gracePeriodCancelled" = "Karenzzeit abgebrochen";
+"event.securityActionExecuted" = "Sicherheitsaktion ausgeführt";
+"event.authenticationFailed" = "Authentifizierung fehlgeschlagen";
+"event.authenticationSucceeded" = "Authentifizierung erfolgreich";
+"event.applicationTerminating" = "Anwendung wird beendet";
+"event.autoArmTriggered" = "Auto-Scharfschalten ausgelöst";
+
+/* App states */
+"appState.disarmed" = "Entschärft";
+"appState.armed" = "Scharf";
+"appState.grace_period" = "Karenzzeit";
+"appState.triggered" = "Ausgelöst";
+
+/* Onboarding */
+"onboarding.windowTitle" = "Willkommen bei MagSafe Guard";
+"onboarding.welcome.title" = "Willkommen bei MagSafe Guard";
+"onboarding.welcome.body" = "Machen Sie Ihr Netzkabel zum Dead-Man's-Switch. Scharfschalten in öffentlichen Räumen.";
+"onboarding.arm.title" = "Vor dem Verlassen scharfschalten";
+"onboarding.arm.body" = "Schutz über die Menüleiste aktivieren. Beim Trennen des Adapters startet die Karenzzeit, danach laufen Sicherheitsaktionen.";
+"onboarding.grace.title" = "Karenzzeit";
+"onboarding.grace.body" = "Sie können mit Touch ID oder Passwort abbrechen. Standard-Karenzzeit: 30 Sekunden.";
+"onboarding.permissions.title" = "Berechtigungen";
+"onboarding.permissions.body" = "Benachrichtigungen für Warnungen erlauben. Standort ist optional für Auto-Scharfschalten.";
+"onboarding.back" = "Zurück";
+"onboarding.next" = "Weiter";
+"onboarding.done" = "Los geht's";
+
 /* Notification actions */
 "notification.cancelAction" = "Aktion abbrechen";

@@ -109,6 +109,17 @@ task run            # run menu bar app (preferred for dev)
 
 Stop the app: quit from menu bar, or **⌘.** in Xcode, or Activity Monitor.
 
+### Install a local release build
+
+```bash
+task build
+open "$(find ~/Library/Developer/Xcode/DerivedData -name 'MagSafeGuard.app' -path '*/Debug/*' 2>/dev/null | head -1)"
+```
+
+To keep a copy in Applications, drag `MagSafeGuard.app` from DerivedData to `/Applications` after building in Xcode (Release recommended for daily use).
+
+Fork release history: [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)
+
 ---
 
 ## Apple signing: free vs paid account
@@ -157,7 +168,7 @@ git merge upstream/main
 
 | Field | Current (fork) | Purpose |
 |-------|----------------|---------|
-| `marketingVersion` | **0.2.1** | Semver shown to users |
+| `marketingVersion` | **0.3.0** | Semver shown to users |
 | `buildNumber` | **1** | Integer build (Xcode `CURRENT_PROJECT_VERSION`) |
 
 ```bash

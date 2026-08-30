@@ -237,14 +237,15 @@ public class AppController: ObservableObject {
     }
 
     // Require authentication
-    authService.authenticate(reason: "Authenticate to arm MagSafe Guard") { [weak self] result in
+    authService.authenticate(reason: L10n.tr("auth.reason.arm")) { [weak self] result in
       guard let self = self else { return }
 
       switch result {
       case .success:
         self.logEventInternal(.authenticationSucceeded, details: "Arming system")
         self.transitionToState(.armed)
-        self.onNotification?("MagSafe Guard Armed", "Protection is now active")
+        self.onNotification?(
+          L10n.tr("notification.armed.title"), L10n.tr("notification.armed.message"))
 
         // Accessibility announcement
         AccessibilityAnnouncement.announceStateChange(component: "MagSafe Guard", newState: "armed")
@@ -281,14 +282,15 @@ public class AppController: ObservableObject {
     }
 
     // Require authentication
-    authService.authenticate(reason: "Authenticate to disarm MagSafe Guard") { [weak self] result in
+    authService.authenticate(reason: L10n.tr("auth.reason.disarm")) { [weak self] result in
       guard let self = self else { return }
 
       switch result {
       case .success:
         self.logEventInternal(.authenticationSucceeded, details: "Disarming system")
         self.transitionToState(.disarmed)
-        self.onNotification?("MagSafe Guard Disarmed", "Protection is now inactive")
+        self.onNotification?(
+          L10n.tr("notification.disarmed.title"), L10n.tr("notification.disarmed.message"))
 
         // Accessibility announcement
         AccessibilityAnnouncement.announceStateChange(
@@ -314,7 +316,7 @@ public class AppController: ObservableObject {
       return
     }
 
-    authService.authenticate(reason: "Authenticate to cancel security action") { [weak self] result in
+    authService.authenticate(reason: L10n.tr("auth.reason.cancelGrace")) { [weak self] result in
       guard let self = self else { return }
 
       switch result {
@@ -322,7 +324,9 @@ public class AppController: ObservableObject {
         self.logEventInternal(.authenticationSucceeded, details: "Cancelling grace period")
         self.cancelGracePeriod()
         self.transitionToState(.armed)
-        self.onNotification?("Security Action Cancelled", "Grace period cancelled")
+        self.onNotification?(
+          L10n.tr("notification.graceCancelled.title"),
+          L10n.tr("notification.graceCancelled.message"))
         completion(.success(()))
 
       case .failure(let error):
@@ -416,8 +420,8 @@ public class AppController: ObservableObject {
     logEventInternal(
       .gracePeriodStarted, details: "Grace period started: \(Int(gracePeriodDuration))s")
     notificationService.showCriticalAlert(
-      title: "Security Alert",
-      message: "Power disconnected! Security action in \(Int(gracePeriodDuration)) seconds"
+      title: L10n.tr("notification.graceAlert.title"),
+      message: L10n.tr("notification.graceAlert.message", Int(gracePeriodDuration))
     )
 
     // Start countdown timer
@@ -455,11 +459,15 @@ public class AppController: ObservableObject {
       if result.allSucceeded {
         self.logEventInternal(
           .securityActionExecuted, details: "All security actions executed successfully")
-        self.onNotification?("Security Actions Executed", "All configured actions completed")
+        self.onNotification?(
+          L10n.tr("notification.actionsExecuted.title"),
+          L10n.tr("notification.actionsExecuted.message"))
       } else {
         let failedCount = result.failedActions.count
         self.logEventInternal(.securityActionExecuted, details: "\(failedCount) actions failed")
-        self.onNotification?("Security Actions Partial", "\(failedCount) actions failed to execute")
+        self.onNotification?(
+          L10n.tr("notification.actionsPartial.title"),
+          L10n.tr("notification.actionsPartial.message", failedCount))
       }
 
       // Return to armed state after execution
@@ -582,9 +590,9 @@ public enum AppControllerError: LocalizedError {
     case .invalidState(let message):
       return message
     case .gracePeriodNotCancellable:
-      return "Grace period cancellation is not allowed"
+      return L10n.tr("error.gracePeriodNotCancellable")
     case .authenticationRequired:
-      return "Authentication is required for this operation"
+      return L10n.tr("error.authenticationRequired")
     }
   }
 }
@@ -618,7 +626,12 @@ extension AppController {
 
   /// Asset catalog name for the menu bar icon matching the current state.
   public var statusMenuBarImageName: String {
-    switch currentState {
+    Self.menuBarImageName(for: currentState)
+  }
+
+  /// Maps application state to menu bar asset name.
+  public static func menuBarImageName(for state: AppState) -> String {
+    switch state {
     case .disarmed:
       return "MenuBarIconDisarmed"
     case .armed:
@@ -644,3 +657,16 @@ extension AppController {
     }
   }
 }
+
+// MARK: - Testing Support
+
+#if DEBUG
+extension AppController {
+  /// Enters grace period from armed state when running unit tests.
+  func enterGracePeriodForTesting() {
+    guard Self.isTestEnvironment else { return }
+    guard currentState == .armed else { return }
+    startGracePeriod()
+  }
+}
+#endif

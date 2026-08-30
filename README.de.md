@@ -109,6 +109,17 @@ task run            # Menüleisten-App starten
 
 App beenden: Menüleiste → Beenden, oder **⌘.** in Xcode.
 
+### Lokale Build-Installation
+
+```bash
+task build
+open "$(find ~/Library/Developer/Xcode/DerivedData -name 'MagSafeGuard.app' -path '*/Debug/*' 2>/dev/null | head -1)"
+```
+
+Für den Dauereinsatz `MagSafeGuard.app` aus DerivedData nach `/Applications` kopieren (Release-Build empfohlen).
+
+Fork-Changelog: [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)
+
 ---
 
 ## Apple-Signing: kostenlos vs. bezahlt
@@ -157,7 +168,7 @@ git merge upstream/main
 
 | Feld | Aktuell (Fork) | Bedeutung |
 |------|----------------|-----------|
-| `marketingVersion` | **0.2.1** | Semver für Nutzer |
+| `marketingVersion` | **0.3.0** | Semver für Nutzer |
 | `buildNumber` | **1** | Build-Nummer (Xcode) |
 
 ```bash
