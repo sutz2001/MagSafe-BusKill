@@ -45,7 +45,7 @@ Definiert in `SecurityActionType` (`MagSafeGuardLib/.../SecurityActionProtocols.
 | **Herunterfahren** | ✅ | Shutdown planen (Standard-Verzögerung **30 s**) |
 | **Eigenes Skript** | ✅ | Nur `.sh` / `.zsh` / `.bash` aus erlaubten Ordnern |
 
-**Standard:** Bildschirm sperren + Alarm.
+**Standard:** Bildschirm sperren + Alarm. Unter **Settings → Security** mit **+** hinzufügen, mit **−** entfernen (mindestens eine Aktion aktiv), per Drag & Drop sortieren.
 
 **Erlaubte Skript-Pfade:**
 
@@ -153,14 +153,21 @@ git merge upstream/main
 
 ## Versionierung
 
-| Ort | Zweck |
-|-----|--------|
-| `MagSafeGuard.xcodeproj` → `MARKETING_VERSION` | Anzeige-Version (z. B. `1.0`) |
-| `MagSafeGuard.xcodeproj` → `CURRENT_PROJECT_VERSION` | Build-Nummer |
-| `docs/CHANGELOG.md` | Release Notes |
-| Git-Tags | Releases (`v1.0.0`) |
+**Zentrale Datei:** [`version.json`](version.json)
 
-Bei Versions- oder Verhaltensänderungen **beide README** (EN + DE) anpassen. Siehe `.cursor/rules/project-conventions.mdc`.
+| Feld | Aktuell (Fork) | Bedeutung |
+|------|----------------|-----------|
+| `marketingVersion` | **0.2.0** | Semver für Nutzer |
+| `buildNumber` | **1** | Build-Nummer (Xcode) |
+
+```bash
+task version:show
+task version:sync
+task version:bump:patch    # 0.2.0 → 0.2.1
+task version:bump:minor    # 0.2.0 → 0.3.0
+```
+
+Fork-Version unabhängig vom Upstream (`1.11.0`). In Swift: `AppVersion.marketing`.
 
 ---
 

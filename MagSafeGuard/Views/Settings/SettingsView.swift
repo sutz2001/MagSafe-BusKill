@@ -227,7 +227,6 @@ struct GeneralSettingsView: View {
 
 struct SecuritySettingsView: View {
   @EnvironmentObject var settingsManager: UserDefaultsManager
-  @State private var selectedActions = Set<SecurityActionType>()
 
   var body: some View {
     Form {
@@ -251,7 +250,7 @@ struct SecuritySettingsView: View {
   private var securityActionsHeaderText: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text("Active Security Actions")
-      Text("Drag to reorder, click available actions to add")
+      Text("Drag to reorder, tap + to add or − to remove")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -271,7 +270,12 @@ struct SecuritySettingsView: View {
 
   private var enabledActionsSection: some View {
     ForEach(settingsManager.settings.securityActions, id: \.self) { action in
-      SecurityActionRow(action: action, isEnabled: true)
+      SecurityActionRow(
+        action: action,
+        isEnabled: true,
+        canRemove: settingsManager.settings.securityActions.count > 1,
+        onRemove: { removeSecurityAction(action) }
+      )
     }
     .onMove(perform: moveSecurityActions)
   }
@@ -329,11 +333,23 @@ struct SecuritySettingsView: View {
       settingsManager.updateSetting(\.securityActions, value: actions)
     }
   }
+
+  private func removeSecurityAction(_ action: SecurityActionType) {
+    guard settingsManager.settings.securityActions.count > 1 else { return }
+
+    withAnimation {
+      var actions = settingsManager.settings.securityActions
+      actions.removeAll { $0 == action }
+      settingsManager.updateSetting(\.securityActions, value: actions)
+    }
+  }
 }
 
 struct SecurityActionRow: View {
   let action: SecurityActionType
   let isEnabled: Bool
+  var canRemove: Bool = false
+  var onRemove: (() -> Void)?
 
   var body: some View {
     HStack(spacing: 12) {
@@ -355,9 +371,21 @@ struct SecurityActionRow: View {
       Spacer()
 
       if isEnabled {
-        Image(systemName: "line.3.horizontal")
-          .font(.caption)
-          .foregroundColor(.secondary)
+        HStack(spacing: 8) {
+          if canRemove, let onRemove {
+            Button(action: onRemove) {
+              Image(systemName: "minus.circle.fill")
+                .font(.body)
+                .foregroundColor(.red)
+            }
+            .buttonStyle(.plain)
+            .help("Remove action")
+          }
+
+          Image(systemName: "line.3.horizontal")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
       } else {
         Image(systemName: "plus.circle")
           .font(.body)

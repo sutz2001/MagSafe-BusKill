@@ -45,7 +45,7 @@ All actions are defined in `SecurityActionType` (`MagSafeGuardLib/.../SecurityAc
 | **System Shutdown** | ✅ | Schedules shutdown (default **30 s** delay, configurable) |
 | **Custom Script** | ✅ | Runs `.sh` / `.zsh` / `.bash` from allowed directories only |
 
-**Default actions:** Lock Screen + Sound Alarm.
+**Default actions:** Lock Screen + Sound Alarm. In **Settings → Security**, add actions with **+**, remove with **−** (at least one must stay active), drag to reorder.
 
 **Custom script paths (enforced in code):**
 
@@ -153,14 +153,23 @@ git merge upstream/main
 
 ## Versioning
 
-| File / place | Purpose |
-|--------------|---------|
-| `MagSafeGuard.xcodeproj` → `MARKETING_VERSION` | User-visible version (e.g. `1.0`) |
-| `MagSafeGuard.xcodeproj` → `CURRENT_PROJECT_VERSION` | Build number |
-| `docs/CHANGELOG.md` | Release notes |
-| Git tags | Releases (e.g. `v1.0.0`) |
+**Single source of truth:** [`version.json`](version.json)
 
-When bumping a version, update **both README files** (EN + DE) if behavior or defaults change. See `.cursor/rules/project-conventions.mdc`.
+| Field | Current (fork) | Purpose |
+|-------|----------------|---------|
+| `marketingVersion` | **0.2.0** | Semver shown to users |
+| `buildNumber` | **1** | Integer build (Xcode `CURRENT_PROJECT_VERSION`) |
+
+```bash
+task version:show          # print current version
+task version:sync          # sync to AppVersion.swift + Xcode project
+task version:bump:patch    # 0.2.0 → 0.2.1
+task version:bump:minor    # 0.2.0 → 0.3.0
+```
+
+Fork versioning is **independent** from upstream (`1.11.0`). Swift constant: `AppVersion.marketing` in `MagSafeGuardCore`.
+
+When bumping: update `version.json`, run `task version:sync`, add `docs/CHANGELOG.md` entry, tag `vX.Y.Z` on release.
 
 ---
 

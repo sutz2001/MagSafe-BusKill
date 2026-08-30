@@ -12,12 +12,11 @@ User docs: [README.md](../README.md) (EN) · [README.de.md](../README.de.md) (DE
 
 ## Taskfile first
 
-Use `task` for builds, tests, lint, and security scans — not raw `swift test`, `xcodebuild`, or `swiftlint` when a task exists.
-
 ```bash
 task setup && task build && task test
-task qa:quick
-open MagSafeGuard.xcodeproj   # ⌘R — menu bar app
+task version:show
+task version:sync    # after editing version.json
+open MagSafeGuard.xcodeproj
 ```
 
 ## Fork-specific (do not revert)
@@ -25,42 +24,43 @@ open MagSafeGuard.xcodeproj   # ⌘R — menu bar app
 | Setting | Value |
 |---------|--------|
 | Bundle ID | `com.sutz2001.MagSafeGuard` |
-| Upstream team / bundle | Never restore `PW6K4BERFV` or `com.LekmanConsulting.*` |
-| Entitlements | No iCloud / Push (Personal Team signing) |
-| Grace period default | **30 s** (5–30 s) in `SettingsModel.gracePeriodDuration` |
+| Version file | `version.json` → `task version:sync` |
+| Current fork version | `0.2.0` (independent from upstream `1.11.0`) |
+| Grace period default | **30 s** |
 | Config statics | `.defaultConfig` not `.default` |
-| CI Scorecard | Skipped on private repos in `security.yml` |
+
+## Versioning
+
+- **Source:** `version.json` (`marketingVersion`, `buildNumber`)
+- **Sync:** `task version:sync` → `AppVersion.swift` + Xcode project
+- **Bump:** `task version:bump:patch` (0.2.0→0.2.1) or `task version:bump:minor` (0.2.0→0.3.0)
+- **Semver (fork):** `0.MINOR.PATCH` until `1.0.0` stable; patch=fixes, minor=features
+
+## Every commit (required)
+
+English commit body with full change list. Format:
+
+```text
+<type>(scope): subject
+
+## Summary
+Why.
+
+## Changes
+- Detailed bullets by area (App, Docs, CI, Assets, Tests, …)
+```
+
+Details: `.github/instructions/commits.instructions.md`  
+Blocked in CI: `claude`, `anthropic`, `co-authored`
 
 ## Security actions (only these five)
 
 `lockScreen`, `soundAlarm`, `forceLogout`, `shutdown`, `customScript`
 
-Do not implement or document volume unmount, disk wipe, or Find My unless explicitly added in code. Custom scripts only from `~/.magsafe/scripts/` or `/usr/local/magsafe-scripts/`.
-
-## Architecture
-
-- **MagSafeGuard/** — macOS app (UI, services, repositories)
-- **MagSafeGuardLib/** — Swift package (Core, Domain, tests)
-- Protocol-based DI; business logic in Domain use cases
-- Minimize scope; match existing naming and patterns
-
 ## Safety
 
-- App triggers real system actions when **armed** — never suggest running `task run` or ⌘R without user intent
-- Prefer disarmed / test mode in docs and examples
-- Do not commit secrets, provisioning profiles, or `.env` keys
-
-## Version bump checklist
-
-1. `MagSafeGuard.xcodeproj` → `MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`
-2. `docs/CHANGELOG.md`
-3. Git tag `vX.Y.Z`
-4. `README.md` + `README.de.md` if user-visible changes
-
-## Commits & PRs
-
-- Conventional commits; blocked in CI: `claude`, `anthropic`, `co-authored`
-- PR template: security checklist for auth and permissions changes
+- Never suggest running the app when armed without user intent
+- No secrets in commits
 
 ## Sync upstream
 
@@ -68,4 +68,4 @@ Do not implement or document volume unmount, disk wipe, or Find My unless explic
 git fetch upstream && git merge upstream/main
 ```
 
-Preserve fork bundle ID, entitlements, and README fork notes when merging.
+Preserve fork bundle ID, entitlements, `version.json`, and README fork notes.

@@ -39,6 +39,9 @@ includes:
   ai:
     taskfile: ./tasks/ai.yml
     optional: false
+  version:
+    taskfile: ./tasks/version.yml
+    optional: false
 vars:
   HOOKS_PATH: .githooks
   SEMGREP_CONFIG: auto

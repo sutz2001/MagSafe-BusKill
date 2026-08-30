@@ -129,37 +129,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   private func updateStatusIcon() {
     if let button = statusItem?.button {
-      let iconName = core.statusIconName()
       let statusDescription = core.appController.statusDescription
-      let image = NSImage(systemSymbolName: iconName, accessibilityDescription: AppDelegate.appName)
 
-      // If SF Symbol works, use it
-      if let image = image {
-        // Create a copy and set as template to ensure proper dark/light mode handling
+      if let image = NSImage(named: "MenuBarIcon") {
+        image.isTemplate = true
+        button.image = image
+        button.title = ""
+        Log.debug("Menu bar icon updated (template)", category: .ui)
+      } else if let image = NSImage(systemSymbolName: core.statusIconName(), accessibilityDescription: Self.appName) {
         guard let templateImage = image.copy() as? NSImage else { return }
         templateImage.isTemplate = true
         button.image = templateImage
-        // Clear the title when we have an icon
         button.title = ""
-
-        Log.debug("Icon updated: \(iconName)", category: .ui)
+        Log.debug("Menu bar icon updated (SF Symbol fallback): \(core.statusIconName())", category: .ui)
       } else {
-        // Fallback to text if icon fails
-        Log.warning("Failed to load SF Symbol '\(iconName)', using text fallback", category: .ui)
+        Log.warning("Failed to load menu bar icon, using text fallback", category: .ui)
         button.image = nil
         button.title = core.isArmed ? "MG!" : "MG"
       }
 
-      // Ensure the icon uses system appearance and supports high contrast
       button.contentTintColor = nil
 
-      // Update accessibility properties to reflect current state
       button.setAccessibilityLabel("MagSafe Guard")
       button.setAccessibilityValue(statusDescription)
       button.setAccessibilityHelp(
         "Click to open MagSafe Guard menu. Current status: \(statusDescription)")
 
-      // Announce state changes if VoiceOver is enabled
       if AccessibilityManager.shared.isVoiceOverEnabled {
         AccessibilityAnnouncement.announceStateChange(
           component: "MagSafe Guard status", newState: statusDescription)
