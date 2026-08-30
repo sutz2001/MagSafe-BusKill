@@ -146,12 +146,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private func updateStatusIcon() {
     if let button = statusItem?.button {
       let statusDescription = core.appController.statusDescription
+      let imageName = core.statusMenuBarImageName()
 
-      if let image = NSImage(named: "MenuBarIcon") {
-        image.isTemplate = true
-        button.image = image
+      if let image = NSImage(named: imageName),
+        let templateImage = image.copy() as? NSImage
+      {
+        templateImage.isTemplate = true
+        button.image = templateImage
         button.title = ""
-        Log.debug("Menu bar icon updated (template)", category: .ui)
+        Log.debug("Menu bar icon updated: \(imageName)", category: .ui)
       } else if let image = NSImage(systemSymbolName: core.statusIconName(), accessibilityDescription: Self.appName) {
         guard let templateImage = image.copy() as? NSImage else { return }
         templateImage.isTemplate = true

@@ -408,6 +408,7 @@ final class AppControllerTests: XCTestCase {
 
   func testStatusIconNames() {
     XCTAssertEqual(sut.statusIconName, "shield")  // Disarmed
+    XCTAssertEqual(sut.statusMenuBarImageName, "MenuBarIconDisarmed")
 
     // Arm
     mockAuthService.shouldSucceed = true
@@ -420,6 +421,7 @@ final class AppControllerTests: XCTestCase {
     waitForExpectations(timeout: 1.0)
 
     XCTAssertEqual(sut.statusIconName, "shield.fill")  // Armed
+    XCTAssertEqual(sut.statusMenuBarImageName, "MenuBarIconArmed")
   }
 }
 

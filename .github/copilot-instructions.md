@@ -25,7 +25,7 @@ open MagSafeGuard.xcodeproj
 |---------|--------|
 | Bundle ID | `com.sutz2001.MagSafeGuard` |
 | Version file | `version.json` → `task version:sync` |
-| Current fork version | `0.2.0` (independent from upstream `1.11.0`) |
+| Current fork version | `0.2.1` (independent from upstream `1.11.0`) |
 | Grace period default | **30 s** |
 | Config statics | `.defaultConfig` not `.default` |
 
@@ -50,8 +50,14 @@ Why.
 - Detailed bullets by area (App, Docs, CI, Assets, Tests, …)
 ```
 
-Details: `.github/instructions/commits.instructions.md`  
-Blocked in CI: `claude`, `anthropic`, `co-authored`
+Details: `.github/instructions/commits.instructions.md`
+
+### No `Co-authored-by` trailers (CI will fail)
+
+- **Never** add `Co-authored-by:` lines — not for Cursor, Copilot, or any assistant.
+- CI blocks anywhere in the message (case-insensitive): `claude`, `anthropic`, `co-authored`.
+- Cursor may auto-append `Co-authored-by: Cursor <cursoragent@cursor.com>` — remove it before push.
+- Already pushed? Replay commits without the trailer, then `git push --force-with-lease`.
 
 ## Security actions (only these five)
 

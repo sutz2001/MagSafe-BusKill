@@ -13,10 +13,12 @@ Path-specific Copilot rules: [.github/instructions/](.github/instructions/) (REA
 
 Every commit needs an **English body** with `## Summary` and `## Changes` (detailed bullet list). See [.github/instructions/commits.instructions.md](.github/instructions/commits.instructions.md).
 
+**Never** use `Co-authored-by:` trailers — CI fails on `co-authored` (also `claude`, `anthropic`). Strip auto-appended Cursor trailers before commit/push.
+
 ## Version
 
 - Edit [`version.json`](version.json) → run `task version:sync`
-- Current fork version: **0.2.0** (build 1), separate from upstream 1.11.0
+- Current fork version: **0.2.1** (build 2), separate from upstream 1.11.0
 - Show: `task version:show` · Bump: `task version:bump:patch` / `bump:minor`
 
 ## Quick facts

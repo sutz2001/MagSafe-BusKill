@@ -157,7 +157,7 @@ git merge upstream/main
 
 | Feld | Aktuell (Fork) | Bedeutung |
 |------|----------------|-----------|
-| `marketingVersion` | **0.2.0** | Semver für Nutzer |
+| `marketingVersion` | **0.2.1** | Semver für Nutzer |
 | `buildNumber` | **1** | Build-Nummer (Xcode) |
 
 ```bash

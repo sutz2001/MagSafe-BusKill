@@ -43,7 +43,14 @@ Why this change exists.
 - Bullet list of all meaningful changes by area (App, Docs, CI, …)
 ```
 
-See `.github/instructions/commits.instructions.md`. Never use blocked words: `claude`, `anthropic`, `co-authored`.
+See `.github/instructions/commits.instructions.md`.
+
+### No `Co-authored-by` trailers (CI will fail)
+
+- **Never** add `Co-authored-by:` lines to commit messages — not for Cursor, Copilot, or any tool.
+- CI blocks these words anywhere in the message (case-insensitive): `claude`, `anthropic`, `co-authored`.
+- Cursor may auto-append `Co-authored-by: Cursor <cursoragent@cursor.com>` — **strip it before committing** or rewrite the commit without that trailer.
+- If a bad commit was already pushed: rewrite history (e.g. replay commits with `git commit-tree` and remove the trailer), then `git push --force-with-lease`.
 
 ## Build commands (prefer Taskfile)
 

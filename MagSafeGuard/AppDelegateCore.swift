@@ -268,6 +268,10 @@ public class AppDelegateCore {
     return appController.statusIconName
   }
 
+  public func statusMenuBarImageName() -> String {
+    return appController.statusMenuBarImageName
+  }
+
   // MARK: - Power Monitoring
 
   /// Handles power state changes.

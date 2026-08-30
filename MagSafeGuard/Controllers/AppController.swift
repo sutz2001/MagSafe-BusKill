@@ -602,7 +602,7 @@ extension AppController {
     }
   }
 
-  /// Returns the appropriate icon name for current state
+  /// Returns the appropriate SF Symbol name for current state (fallback when assets are missing).
   public var statusIconName: String {
     switch currentState {
     case .disarmed:
@@ -613,6 +613,20 @@ extension AppController {
       return "exclamationmark.shield.fill"
     case .triggered:
       return "xmark.shield.fill"
+    }
+  }
+
+  /// Asset catalog name for the menu bar icon matching the current state.
+  public var statusMenuBarImageName: String {
+    switch currentState {
+    case .disarmed:
+      return "MenuBarIconDisarmed"
+    case .armed:
+      return "MenuBarIconArmed"
+    case .gracePeriod:
+      return "MenuBarIconGracePeriod"
+    case .triggered:
+      return "MenuBarIconTriggered"
     }
   }
 

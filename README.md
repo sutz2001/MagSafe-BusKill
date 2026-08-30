@@ -157,7 +157,7 @@ git merge upstream/main
 
 | Field | Current (fork) | Purpose |
 |-------|----------------|---------|
-| `marketingVersion` | **0.2.0** | Semver shown to users |
+| `marketingVersion` | **0.2.1** | Semver shown to users |
 | `buildNumber` | **1** | Integer build (Xcode `CURRENT_PROJECT_VERSION`) |
 
 ```bash

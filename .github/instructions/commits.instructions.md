@@ -24,6 +24,13 @@ One or two sentences: why this change exists.
 
 **Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `ci`, `build`
 
-**Blocked by CI:** `claude`, `anthropic`, `co-authored` in commit messages.
+**Blocked by CI** (anywhere in the message, case-insensitive): `claude`, `anthropic`, `co-authored`
+
+### `Co-authored-by` — do not use
+
+- Do **not** add `Co-authored-by:` trailers (including `Co-authored-by: Cursor <cursoragent@cursor.com>`).
+- Cursor and some tools append them automatically — remove before `git commit` / before push.
+- Workflow: `.github/workflows/commit-message-check.yml`
+- Fix pushed commits: rewrite messages without the trailer, then `git push --force-with-lease`.
 
 When the user asks for a commit, always draft the full body with `## Summary` and `## Changes` before running `git commit`.
