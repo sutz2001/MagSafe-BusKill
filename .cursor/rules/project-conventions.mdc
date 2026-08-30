@@ -1,0 +1,56 @@
+---
+description: Fork conventions — README sync, versioning, signing, build; keep in sync with GitHub Copilot
+alwaysApply: true
+---
+
+# MagSafe Guard (sutz2001 fork)
+
+> **Keep in sync with:** `.github/copilot-instructions.md` and `AGENTS.md`  
+> Update **both** Cursor and Copilot instruction files in the same commit when conventions change.
+
+## README (required)
+
+- **English:** `README.md` (primary)
+- **German:** `README.de.md` (must stay in sync)
+- Cross-link at the top of both files
+- When changing features, defaults, actions, build steps, or fork-specific settings → update **both** READMEs in the same PR/commit
+- Remove stale Taskmaster export blocks from README; use tables in README for feature status instead
+
+## Fork identity
+
+- Remote fork: `sutz2001/MagSafe-BusKill`
+- Upstream: `lekman/magsafe-buskill` (remote `upstream`)
+- Bundle ID: `com.sutz2001.MagSafeGuard` — never restore `com.LekmanConsulting.*` or team `PW6K4BERFV`
+- Personal Team: no iCloud/Push in `MagSafeGuard/MagSafeGuard.entitlements`
+
+## Defaults (document in README when changed)
+
+- Grace period: **30 s** (range 5–30 s) — `SettingsModel.gracePeriodDuration`
+- Default security actions: lock screen + sound alarm
+- Config static members: `.defaultConfig` (not `.default`)
+
+## Version bump checklist
+
+1. `MagSafeGuard.xcodeproj` → `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`
+2. `docs/CHANGELOG.md` entry
+3. Git tag `vX.Y.Z` on release
+4. Both README files if user-visible behavior changed
+5. `.github/copilot-instructions.md` if agent/convention rules changed
+
+## Build commands (prefer Taskfile)
+
+```bash
+task setup && task build && task test
+open MagSafeGuard.xcodeproj   # ⌘R in Xcode
+```
+
+Do not use raw `swift test` / `xcodebuild` when `task` equivalents exist.
+
+## Security actions (only these five)
+
+`lockScreen`, `soundAlarm`, `forceLogout`, `shutdown`, `customScript` — document in README; do not claim unmount/wipe without implementation.
+
+## Safety
+
+- Real system actions when armed — do not run/build the app without user intent
+- No secrets in commits; blocked commit words: `claude`, `anthropic`, `co-authored`

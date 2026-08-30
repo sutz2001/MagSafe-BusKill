@@ -27,7 +27,7 @@ public final class MacSystemActionsRepository: SecurityActionRepository, @unchec
     ///   - resourceProtectorConfig: Configuration for resource protection
     public init(
         systemActions: SystemActionsProtocol = MacSystemActions(),
-        resourceProtectorConfig: ResourceProtectorConfig = .default
+        resourceProtectorConfig: ResourceProtectorConfig = .defaultConfig
     ) {
         self.systemActions = systemActions
         self.resourceProtector = ResourceProtector(

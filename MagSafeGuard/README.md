@@ -1,53 +1,16 @@
-# MagSafe Guard Xcode Project
+# MagSafe Guard (Xcode target)
 
-This is the Xcode project structure for MagSafe Guard, migrated from Swift Package Manager to resolve CloudKit and app launch issues.
+macOS menu bar application target. **Start here:** [../README.md](../README.md) (English) · [../README.de.md](../README.de.md) (Deutsch).
 
-## Project Structure
+## Quick open
 
-```text
-MagSafe Guard/
-├── Controllers/
-│   └── AppController.swift         # Main app controller
-├── Services/                       # Core services
-│   ├── AuthenticationService.swift
-│   ├── PowerMonitorService.swift
-│   ├── SecurityActionsService.swift
-│   ├── SyncService.swift          # CloudKit sync
-│   └── ...
-├── Views/
-│   ├── Settings/                  # Settings UI
-│   │   ├── SettingsView.swift
-│   │   ├── CloudSyncSettingsView.swift
-│   │   └── ...
-│   └── PowerMonitorDemoView.swift
-├── Models/
-│   └── SettingsModel.swift
-├── Utilities/
-│   ├── Logger.swift
-│   ├── FeatureFlags.swift
-│   └── AccessibilityExtensions.swift
-├── AppDelegate.swift              # Main app delegate
-├── MagSafe_GuardApp.swift        # App entry point
-├── Assets.xcassets               # App icons and images
-├── Info.plist                    # App configuration
-└── MagSafe_Guard.entitlements    # App entitlements
+```bash
+open MagSafeGuard.xcodeproj
 ```
 
-## Building in Xcode
+- Scheme: **MagSafeGuard**
+- Destination: **My Mac**
+- Signing: Personal Team, bundle `com.sutz2001.MagSafeGuard`
+- Run: **⌘R** (icon appears in menu bar)
 
-1. Open `MagSafe Guard.xcodeproj` in Xcode
-2. Select your development team in Signing & Capabilities
-3. Ensure CloudKit capability is enabled
-4. Build and run (⌘R)
-
-## CloudKit Configuration
-
-The app uses CloudKit for syncing settings across devices. The container identifier is configured in the entitlements file as `iCloud.com.lekman.magsafeguard`.
-
-## Key Features
-
-- Menu bar app with power monitoring
-- CloudKit sync for settings
-- Location-based auto-arming
-- Security actions on cable disconnect
-- Touch ID/password authentication
+Shared logic lives in `MagSafeGuardLib/` (Swift package). See root README for security actions, grace period, and Apple signing limits.

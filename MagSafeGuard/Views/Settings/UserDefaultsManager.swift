@@ -298,7 +298,7 @@ public class UserDefaultsManager: ObservableObject {
     updateSettings { settings in
       settings.showStatusNotifications = true
       settings.playCriticalAlertSound = true
-      settings.gracePeriodDuration = 10.0
+      settings.gracePeriodDuration = 30.0
       settings.securityActions = [SecurityActionType.lockScreen, SecurityActionType.soundAlarm]
     }
   }

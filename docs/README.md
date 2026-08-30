@@ -1,5 +1,7 @@
 # MagSafe Guard Documentation Index
 
+> **Fork quick start:** Feature status, security actions, build, and Apple signing → [README.md](../README.md) · [README.de.md](../README.de.md)
+
 This documentation is organized by audience and role to help you find the information you need quickly.
 
 ## 🚀 Quick Start by Role

@@ -22,6 +22,8 @@ feature-flags.json
 
 # Don't ignore important markdown files
 !README.md
+!README.de.md
+!AGENTS.md
 
 # Mac
 **/.DS_Store

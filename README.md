@@ -1,201 +1,199 @@
 # MagSafe Guard
 
-## A Dead-Man's Cord Theft Protection Switch for Your Mac
+**Language:** English · [Deutsch (README.de.md)](README.de.md)
 
-MagSafe Guard transforms your Mac's power connection into an intelligent security guard. When armed, it instantly detects if your power cable is disconnected and triggers protective actions to secure your data - perfect for protecting your laptop in coffee shops, airports, or any public space.
+A macOS menu bar app that turns your power cable into a dead-man's switch: when **armed**, unplugging the adapter starts a grace period, then runs configurable security actions (screen lock, alarm, logout, shutdown, or a custom script).
+
+Inspired by [BusKill](https://github.com/BusKill/buskill-app). Upstream: [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill). This fork: [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).
 
 ![Demo](docs/assets/magsafe-guard.gif)
 
-### Key Features
+---
 
-⚡ **Instant Detection** - Responds in milliseconds when your power cable is disconnected  
-🔒 **Secure Authentication** - Touch ID or password required to arm/disarm  
-⏱️ **Smart Grace Period** - Prevents false alarms with configurable delay (10 seconds default)  
-🎯 **Customizable Actions** - From simple screen lock to full system shutdown  
-📍 **Location Aware** - Automatically arms in public spaces, disarms at trusted locations  
-🔌 **Universal Compatibility** - Works with any Mac power adapter (MagSafe, USB-C, or third-party)  
-📋 **Supply Chain Transparency** - Software Bill of Materials (SBOM) included for security compliance
+## What it does today
 
-### How It Works
+| Area | Status | Notes |
+|------|--------|--------|
+| Power disconnect detection | ✅ Works | MagSafe, USB-C, third-party adapters |
+| Arm / disarm with Touch ID or password | ✅ Works | Required before monitoring is active |
+| Grace period (default **30 s**, range 5–30 s) | ✅ Works | Cancel during countdown with auth (if enabled) |
+| Menu bar UI & settings | ✅ Works | Icon in menu bar, not a normal window |
+| Security actions (see below) | ✅ Works | Configurable order in Settings |
+| Notifications | ✅ Works | macOS permission on first launch |
+| Auto-arm (location / network) | ✅ Works | Optional; needs Location permission |
+| Rate limiting & circuit breaker | ✅ Works | Prevents action storms |
+| iCloud / CloudKit sync | ⚠️ Partial | **Requires paid Apple Developer account**; disabled in this fork's entitlements for Personal Team |
+| Push notifications capability | ⚠️ Partial | Same as iCloud — not available on free Personal Team |
+| Mac App Store release | ❌ Not yet | Upstream lists as "coming soon" |
+| Volume unmount / disk wipe | ❌ Not implemented | Only via custom script if you write one |
+| Network actions (remote triggers) | ❌ Not implemented | Planned upstream |
+| Evidence collection / log viewer UI | 🔄 In progress upstream | Partial code exists |
 
-1. **Arm the protection** when working in public spaces
-2. **Continue working normally** with your power adapter connected
-3. **If someone grabs your laptop**, the power cable disconnects
-4. **Security actions trigger** immediately (or after grace period)
-5. **Your data stays protected** even if your laptop is stolen
+**Important:** While **disarmed**, unplugging power does **nothing**. The app only monitors when you explicitly **arm** it.
 
-Perfect for digital nomads, security-conscious professionals, and anyone who works with sensitive data in public spaces.
+---
 
-## Acknowledgments
+## Security actions
 
-MagSafe Guard is inspired by the excellent work of the [BusKill Project](https://github.com/BusKill/buskill-app) - an open-source laptop kill cord that uses a USB magnetic breakaway to trigger security actions. We deeply appreciate their pioneering work in this space and their commitment to open-source security tools.
+All actions are defined in `SecurityActionType` (`MagSafeGuardLib/.../SecurityActionProtocols.swift`).
 
-While BusKill requires a physical USB cable attachment, MagSafe Guard adapts the concept to use your existing power connection, making it seamless for Mac users. We encourage you to check out the original BusKill project, especially if you need cross-platform support or prefer a dedicated hardware solution.
+| Action | Implemented | What it does |
+|--------|-------------|--------------|
+| **Lock Screen** | ✅ | Locks display (`pmset displaysleepnow` + system notification) |
+| **Sound Alarm** | ✅ | Plays `alarm.wav` or system beeps in a loop |
+| **Force Logout** | ✅ | Logs out all users via AppleScript |
+| **System Shutdown** | ✅ | Schedules shutdown (default **30 s** delay, configurable) |
+| **Custom Script** | ✅ | Runs `.sh` / `.zsh` / `.bash` from allowed directories only |
 
-Special thanks to:
+**Default actions:** Lock Screen + Sound Alarm.
 
-- The [BusKill team](https://github.com/BusKill) for creating the original concept and implementation
-- [Michael Altfield](https://github.com/maltfield) and all BusKill contributors
-- The open-source security community for continuous innovation
+**Custom script paths (enforced in code):**
 
-## Intended Usage
+- `~/.magsafe/scripts/`
+- `/usr/local/magsafe-scripts/`
 
-MagSafe Guard is fully open source software, licensed under the [MIT License](LICENSE). We believe in transparency and community-driven development for security tools.
+Scripts are validated (path traversal blocked, dangerous commands rejected, must be executable).
 
-For information about contributing to the project, please see our [Contributors Guide](docs/CONTRIBUTORS.md).
+**Not available as built-in actions:** volume eject/unmount, remote wipe, Find My activation — use a custom script if needed.
 
-## Installation
+---
 
-### Installation Options
+## How it works
 
-#### 1. Mac App Store (Recommended)
+```text
+disarmed → armed → grace period (30 s default) → security actions
+              ↑              ↓
+              └── auth (disarm / cancel grace)
+```
 
-_Coming Soon_ - Get automatic updates and easy installation directly from the Mac App Store.
+1. Arm from the menu bar (authentication required).
+2. Work normally with the adapter connected.
+3. If the cable is pulled, grace period starts.
+4. Optionally cancel with Touch ID / password during grace period.
+5. When grace period ends, enabled actions run in order.
 
-#### 2. Direct Download
+---
 
-Download the latest release from our [GitHub Releases](https://github.com/lekman/magsafe-buskill/releases) page.
+## Build & run (this fork)
 
-**Note:** Direct downloads require manual updates. For automatic updates, please wait for the Mac App Store release.
+### Requirements
 
-### Getting Help
+- macOS **13+** (Ventura)
+- **Xcode 15+** (tested with Xcode 26)
+- [Task](https://taskfile.dev): `brew install go-task/tap/go-task`
 
-Need help or found an issue? We're here to assist:
-
-- **Feature Request**: Have an idea? [Submit a feature request](https://github.com/lekman/magsafe-buskill/issues/new?template=feature_request.md)
-- **Bug Report**: Found a problem? [Report an issue](https://github.com/lekman/magsafe-buskill/issues/new?template=bug_report.md)
-- **Security Issue**: Found a vulnerability? [Report securely](https://github.com/lekman/magsafe-buskill/security/advisories/new)
-- **General Question**: [Ask the community](https://github.com/lekman/magsafe-buskill/issues/new?template=question.md)
-
-### Documentation
-
-📚 **[View Full Documentation](docs/README.md)** - Comprehensive guides and API references
-
-**Quick Links:**
-
-- [Changelog](docs/CHANGELOG.md)
-- [QA Dashboard](docs/QA.md)
-- [All Documentation](docs/)
-
-## Development
-
-> **Note:** MagSafe Guard is a Swift Package project. You can use either Xcode or command-line tools for development. The menu bar app requires special handling - use `task run` for the best experience.
-
-### Quick Start
-
-1. **Install Task** (if not already installed):
-
-   ```bash
-   brew install go-task/tap/go-task
-   ```
-
-2. **Initialize Development Environment**:
-
-   ```bash
-   task setup
-   ```
-
-   This sets up git hooks and verifies your development tools.
-
-3. **Build and Run**:
-
-   ```bash
-   # Open in Xcode
-   open MagSafeGuard.xcodeproj
-   ```
-
-   Then press ⌘R (Command+R) to build and run. Look for the lock shield icon in your menu bar.
-
-### Testing
-
-**For Development Testing:**
+### First-time setup
 
 ```bash
-# Run all tests
-task test
-
-# Run tests with coverage
-task test:coverage
+git clone https://github.com/sutz2001/MagSafe-BusKill.git
+cd MagSafe-BusKill
+task setup
+open MagSafeGuard.xcodeproj
 ```
 
-**For CI/CD Automation:**
+In Xcode:
 
-The following tasks are used to run testing and quality assurance prior to opening a pull request:
+1. Target **MagSafeGuard** → **Signing & Capabilities**
+2. **Team:** your Apple ID (**Personal Team** is fine for local dev)
+3. **Bundle ID:** `com.sutz2001.MagSafeGuard` (already set in this fork)
+4. **Do not** add iCloud or Push Notifications on a free account — they are removed from entitlements here
+5. **⌘R** to run — app appears in the **menu bar**
 
-```ini
-task qa            # Run standard QA checks
-task qa:quick      # Quick checks (for git hooks)
-task qa:fix        # Auto-fix all fixable issues
-task qa:full       # Full QA with SonarCloud
+### Command line
+
+```bash
+task build          # SPM + lib build
+task test           # run tests
+task run            # run menu bar app (preferred for dev)
 ```
 
-Tests are required to pass in our CI/CD approval flow. For more information, see the [CI/CD Workflows Documentation](docs/devops/ci-cd-workflows.md).
+Stop the app: quit from menu bar, or **⌘.** in Xcode, or Activity Monitor.
 
-## System Requirements
+---
 
-- macOS 11.0 (Big Sur) or later
-- Any Mac with power adapter support
-- Administrator privileges for some security actions
+## Apple signing: free vs paid account
 
-## Security & Quality
+| Topic | Personal Team (free Apple ID) | Paid Developer Program ($99/year) |
+|-------|------------------------------|-----------------------------------|
+| Build & run on **your** Mac | ✅ Yes | ✅ Yes |
+| iCloud / CloudKit in app | ❌ No | ✅ Yes |
+| Push Notifications capability | ❌ No | ✅ Yes |
+| Distribute to others / notarize | ❌ No | ✅ Yes (Developer ID) |
+| TestFlight / Mac App Store | ❌ No | ✅ Yes |
 
-View our [Quality Assurance Dashboard](docs/QA.md) for security status, code coverage, and quality metrics.
+### Does the app “expire”?
 
-## Privacy & Security
+- **No time limit on the source code** — you can rebuild anytime.
+- **Development builds** are signed with a **provisioning profile** that expires (typically after **~7 days** on Personal Team).
+- When expired, the app may **refuse to open** until you **build again from Xcode** (⌘R). Xcode renews the profile automatically.
+- Paid accounts use longer-lived certificates (~1 year); same idea — rebuild or re-sign before expiry if needed.
+- This is **not** a trial of MagSafe Guard; it is standard Apple code signing.
 
-- **No tracking**: We don't collect any user data
-- **Local only**: All processing happens on your Mac
-- **Open source**: Review our code anytime
-- **Secure**: Requires authentication for all security operations
+---
 
-## Project Task Status
+## Fork-specific changes (vs upstream)
 
-For details on the project progress, planned initiatives and current status, expand the section below.
+| Item | This fork |
+|------|-----------|
+| Bundle ID | `com.sutz2001.MagSafeGuard` |
+| Development team | Your Personal Team (not upstream author's) |
+| Entitlements | iCloud / push removed for Personal Team signing |
+| Grace period default | **30 seconds** |
+| CI: OSSF Scorecard | Skipped on private repos |
+| Security action defaults | `.defaultConfig` naming (upstream rename) |
 
-<details>
-<summary>Expand task status report</summary>
+To sync with upstream:
 
-<!-- TASKMASTER_EXPORT_START -->
-> 🎯 **Taskmaster Export** - 2025-08-02 09:35:18 UTC
-> 📋 Export: without subtasks • Status filter: none
-> 🔗 Powered by [Task Master](https://task-master.dev?utm_source=github-readme&utm_medium=readme-export&utm_campaign=magsafe-buskill&utm_content=task-export-link)
+```bash
+git fetch upstream
+git merge upstream/main
+```
 
-| Project Dashboard |  |
-| :-                |:-|
-| Task Progress     | ██████████░░░░░░░░░░ 50% |
-| Done | 9 |
-| In Progress | 3 |
-| Pending | 6 |
-| Deferred | 0 |
-| Cancelled | 0 |
-|-|-|
-| Subtask Progress | █████████████░░░░░░░ 65% |
-| Completed | 73 |
-| In Progress | 3 |
-| Pending | 37 |
+---
 
-| ID | Title | Status | Priority | Dependencies | Complexity |
-| :- | :-    | :-     | :-       | :-           | :-         |
-| 1 | Setup Project Repository and Structure | ✓&nbsp;done | high | None | ● 4 |
-| 2 | Implement Power Monitoring Service | ✓&nbsp;done | high | 1 | ● 7 |
-| 3 | Implement Authentication Service | ✓&nbsp;done | high | 1 | ● 6 |
-| 4 | Implement Security Actions Service | ✓&nbsp;done | high | 1 | ● 7 |
-| 5 | Create Menu Bar UI Component | ✓&nbsp;done | high | 1 | ● 6 |
-| 6 | Implement Core Application Logic | ✓&nbsp;done | high | 2, 3, 4, 5 | ● 8 |
-| 7 | Implement Settings UI and Persistence | ✓&nbsp;done | medium | 1, 6 | ● 6 |
-| 8 | Implement Auto-Arm Feature | ✓&nbsp;done | medium | 6, 7 | ● 7 |
-| 9 | Implement Location Tracking and Evidence Collection | ►&nbsp;in-progress | low | 6 | ● 5 |
-| 10 | Implement Custom Script Execution | ○&nbsp;pending | low | 6, 7 | ● 6 |
-| 11 | Implement Network Actions | ○&nbsp;pending | low | 6, 7 | ● 6 |
-| 12 | Implement Data Protection Features | ○&nbsp;pending | low | 6, 7 | ● 7 |
-| 13 | Implement Accessibility Features | ✓&nbsp;done | medium | 5, 7 | ● 6 |
-| 14 | Implement Documentation and Help System | ○&nbsp;pending | medium | 1, 5, 6, 7 | ● 5 |
-| 15 | Implement Code Signing and Distribution | ►&nbsp;in-progress | high | 1, 2, 3, 4, 5, 6, 7, 16 | ● 8 |
-| 16 | Implement ViewInspector for SwiftUI Testing | ○&nbsp;pending | medium | 6, 13 | N/A |
-| 17 | Implement Feature Flag Framework with Sentry Integration and Dynamic Management | ►&nbsp;in-progress | medium | 6, 13 | N/A |
-| 18 | Refactor PowerMonitorService for Testability with Protocol-Based Dependency Injection | ○&nbsp;pending | medium | 2, 3 | N/A |
+## Versioning
 
-> 📋 **End of Taskmaster Export** - Tasks are synced from your project using the `sync-readme` command.
-<!-- TASKMASTER_EXPORT_END -->
+| File / place | Purpose |
+|--------------|---------|
+| `MagSafeGuard.xcodeproj` → `MARKETING_VERSION` | User-visible version (e.g. `1.0`) |
+| `MagSafeGuard.xcodeproj` → `CURRENT_PROJECT_VERSION` | Build number |
+| `docs/CHANGELOG.md` | Release notes |
+| Git tags | Releases (e.g. `v1.0.0`) |
 
-</details>
+When bumping a version, update **both README files** (EN + DE) if behavior or defaults change. See `.cursor/rules/project-conventions.mdc`.
+
+---
+
+## Testing & quality
+
+```bash
+task test              # unit tests
+task qa:quick          # fast checks
+task qa                # full local QA
+```
+
+CI runs on GitHub Actions (tests, security scans). See [docs/devops/ci-cd-workflows.md](docs/devops/ci-cd-workflows.md).
+
+---
+
+## Documentation
+
+| Doc | Audience |
+|-----|----------|
+| [README.de.md](README.de.md) | German version of this file |
+| [AGENTS.md](AGENTS.md) | AI agent index (Cursor + Copilot — keep in sync) |
+| [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub Copilot repository rules |
+| [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) | Cursor rules |
+| [docs/README.md](docs/README.md) | Full upstream documentation index |
+| [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Detailed build guide |
+| [docs/maintainers/code-signing.md](docs/maintainers/code-signing.md) | Signing & distribution |
+| [docs/architecture/architecture-overview.md](docs/architecture/architecture-overview.md) | Architecture |
+
+---
+
+## License & credits
+
+MIT License — see [LICENSE](LICENSE).
+
+- Original concept: [BusKill](https://github.com/BusKill/buskill-app)
+- Upstream maintainer: [Tobias Lekman / lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)

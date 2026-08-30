@@ -26,7 +26,7 @@ public final class ResourceProtectionPolicyAdapter: ResourceProtectionPolicy {
     }
 
     /// Convenience initializer with configuration
-    public convenience init(config: ResourceProtectorConfig = .default) {
+    public convenience init(config: ResourceProtectorConfig = .defaultConfig) {
         let protector = ResourceProtector(
             rateLimiterConfig: config.rateLimiter,
             circuitBreakerConfig: config.circuitBreaker

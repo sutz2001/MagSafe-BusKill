@@ -39,11 +39,10 @@ public struct Settings: Codable {
   /// Duration of grace period before security actions execute.
   ///
   /// This value determines how long users have to cancel security actions
-  /// after power disconnection. Valid range is 5-30 seconds.
-  /// A value of 0 disables the grace period entirely.
+  /// after power disconnection. Valid range is 5-30 seconds (default: 30).
   ///
   /// - Note: Changes take effect immediately for new security events
-  public var gracePeriodDuration: TimeInterval = 10.0
+  public var gracePeriodDuration: TimeInterval = 30.0
 
   /// Whether users can cancel security actions during the grace period.
   ///

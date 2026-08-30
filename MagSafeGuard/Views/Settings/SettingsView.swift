@@ -140,7 +140,7 @@ struct GeneralSettingsView: View {
 
       gracePeriodSlider
 
-      Text("Time before security actions execute after power disconnection")
+      Text("Default 30s — time before security actions execute after power disconnection")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -157,7 +157,7 @@ struct GeneralSettingsView: View {
           get: { settingsManager.settings.gracePeriodDuration },
           set: { settingsManager.updateSetting(\.gracePeriodDuration, value: $0) }
         ),
-        in: 0...30,
+        in: 5...30,
         step: 1
       )
 

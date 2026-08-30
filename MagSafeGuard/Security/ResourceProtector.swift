@@ -65,8 +65,8 @@ public actor ResourceProtector {
     ///   - rateLimiterConfig: Rate limiting configuration
     ///   - circuitBreakerConfig: Circuit breaker configuration
     public init(
-        rateLimiterConfig: RateLimiterConfig = .default,
-        circuitBreakerConfig: CircuitBreakerConfig = .default
+        rateLimiterConfig: RateLimiterConfig = .defaultConfig,
+        circuitBreakerConfig: CircuitBreakerConfig = .defaultConfig
     ) {
         self.rateLimiter = RateLimiter()
         self.circuitBreaker = CircuitBreaker()

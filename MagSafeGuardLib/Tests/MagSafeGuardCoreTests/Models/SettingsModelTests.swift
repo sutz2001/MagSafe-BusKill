@@ -19,7 +19,7 @@ final class SettingsModelTests: XCTestCase {
   func testDefaultSettings() {
     let settings = Settings()
 
-    XCTAssertEqual(settings.gracePeriodDuration, 10.0)
+    XCTAssertEqual(settings.gracePeriodDuration, 30.0)
     XCTAssertTrue(settings.allowGracePeriodCancellation)
     XCTAssertEqual(settings.securityActions, [.lockScreen, .soundAlarm])
     XCTAssertFalse(settings.autoArmEnabled)
