@@ -66,7 +66,7 @@
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
-- [ ] If README or agent rules changed: updated **README.md** + **README.de.md** and **`.github/copilot-instructions.md`** + **`.cursor/rules/project-conventions.mdc`** together
+- [ ] If README or agent rules changed: updated **README.md** + **README.de.md** and **[AGENTS.md](AGENTS.md)** (stubs in `.github/copilot-instructions.md` + `.cursor/rules/project-conventions.mdc` only if critical inline bullets changed)
 - [ ] My changes generate no new warnings
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing unit tests pass locally with my changes

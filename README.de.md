@@ -188,9 +188,9 @@ CI auf GitHub Actions. Details: [docs/devops/ci-cd-workflows.md](docs/devops/ci-
 | Dokument | Zielgruppe |
 |----------|------------|
 | [README.md](README.md) | Englische Version |
-| [AGENTS.md](AGENTS.md) | KI-Agenten-Index (Cursor + Copilot — gemeinsam pflegen) |
-| [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub-Copilot-Regeln |
-| [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) | Cursor-Regeln |
+| [AGENTS.md](AGENTS.md) | **Kanonisch** KI-Agenten-Regeln (Cursor + Copilot) |
+| [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub-Copilot-Stub → AGENTS.md |
+| [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) | Cursor-Stub → AGENTS.md |
 | [docs/README.md](docs/README.md) | Vollständiger Doku-Index (Upstream) |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Ausführliche Build-Anleitung |
 | [docs/maintainers/code-signing.md](docs/maintainers/code-signing.md) | Signing & Verteilung |

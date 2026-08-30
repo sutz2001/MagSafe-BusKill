@@ -1,70 +1,27 @@
 ---
-description: Fork conventions — README sync, versioning, commits, build; keep in sync with GitHub Copilot
+description: Fork conventions — critical rules inline; full details in AGENTS.md
 alwaysApply: true
 ---
 
 # MagSafe Guard (sutz2001 fork)
 
-> **Keep in sync with:** `.github/copilot-instructions.md` and `AGENTS.md`  
-> Update **both** Cursor and Copilot instruction files in the same commit when conventions change.
+**Canonical rules:** [AGENTS.md](../../AGENTS.md) — read for versioning, commits, README sync, upstream, and safety.
 
-## README (required)
+## Non-negotiable (always apply)
 
-- **English:** `README.md` (primary)
-- **German:** `README.de.md` (must stay in sync)
-- Cross-link at the top of both files
-- When changing features, defaults, actions, build steps, or fork-specific settings → update **both** READMEs in the same PR/commit
+- **README:** update [README.md](../../README.md) + [README.de.md](../../README.de.md) together
+- **Version:** edit [version.json](../../version.json) only → `task version:sync`; suggest bump before user-facing commits (see AGENTS.md)
+- **Bundle ID:** `com.sutz2001.MagSafeGuard` — never `com.LekmanConsulting.*`
+- **Commits:** English body with `## Summary` + `## Changes` — see [.github/instructions/commits.instructions.md](../../.github/instructions/commits.instructions.md)
+- **No `Co-authored-by` trailers** — CI fails on `co-authored`, `claude`, `anthropic` anywhere in the message (including subject). Strip Cursor auto-trailers before push.
 
-## Fork identity
-
-- Remote fork: `sutz2001/MagSafe-BusKill`
-- Upstream: `lekman/magsafe-buskill` (remote `upstream`)
-- Bundle ID: `com.sutz2001.MagSafeGuard` — never restore `com.LekmanConsulting.*` or team `PW6K4BERFV`
-- Personal Team: no iCloud/Push in `MagSafeGuard/MagSafeGuard.entitlements`
-
-## Version (single source of truth)
-
-- Edit **`version.json`** only (`marketingVersion`, `buildNumber`)
-- Run **`task version:sync`** → updates `AppVersion.swift` + Xcode `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`
-- Fork semver is **independent** from upstream `1.11.0`
-- Bump: `task version:bump:patch` or `task version:bump:minor`, then `docs/CHANGELOG.md`
-
-## Every commit (required for agents)
-
-Use **English** body with detailed change list:
-
-```text
-<type>(scope): subject
-
-## Summary
-Why this change exists.
-
-## Changes
-- Bullet list of all meaningful changes by area (App, Docs, CI, …)
-```
-
-See `.github/instructions/commits.instructions.md`.
-
-### No `Co-authored-by` trailers (CI will fail)
-
-- **Never** add `Co-authored-by:` lines to commit messages — not for Cursor, Copilot, or any tool.
-- CI blocks these words anywhere in the message (case-insensitive): `claude`, `anthropic`, `co-authored`.
-- Cursor may auto-append `Co-authored-by: Cursor <cursoragent@cursor.com>` — **strip it before committing** or rewrite the commit without that trailer.
-- If a bad commit was already pushed: rewrite history (e.g. replay commits with `git commit-tree` and remove the trailer), then `git push --force-with-lease`.
-
-## Build commands (prefer Taskfile)
+## Build
 
 ```bash
 task setup && task build && task test
 task version:show
-open MagSafeGuard.xcodeproj
 ```
 
-## Security actions (only these five)
+## Security actions (only five)
 
 `lockScreen`, `soundAlarm`, `forceLogout`, `shutdown`, `customScript`
-
-## Safety
-
-- Do not run/build the armed app without user intent
-- No secrets in commits

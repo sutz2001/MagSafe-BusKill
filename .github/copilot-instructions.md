@@ -1,77 +1,25 @@
 # GitHub Copilot — repository instructions
 
-> **Keep in sync with:** `.cursor/rules/project-conventions.mdc`  
-> When you change project conventions, defaults, or agent rules, update **both** files in the same commit.
+**Canonical rules:** [AGENTS.md](../AGENTS.md) — read for full project, versioning, commits, README sync, upstream, and safety.
 
-## Project
+When conventions change, update **AGENTS.md** first; keep this file as a thin stub unless critical inline bullets need updating.
 
-**MagSafe Guard** — macOS menu bar security app (dead-man's switch on power disconnect).  
-Fork: `sutz2001/MagSafe-BusKill` · Upstream: `lekman/magsafe-buskill`.
+## Non-negotiable (always apply)
 
-User docs: [README.md](../README.md) (EN) · [README.de.md](../README.de.md) (DE) — **always update both** when behavior, defaults, or build steps change.
+- **README:** update [README.md](../README.md) + [README.de.md](../README.de.md) together
+- **Version:** [version.json](../version.json) → `task version:sync`; suggest bump before user-facing commits (see AGENTS.md)
+- **Bundle ID:** `com.sutz2001.MagSafeGuard`
+- **Commits:** `## Summary` + `## Changes` — [.github/instructions/commits.instructions.md](instructions/commits.instructions.md)
+- **No `Co-authored-by` trailers** — CI fails on `co-authored`, `claude`, `anthropic` anywhere in the message. Strip Cursor auto-trailers before push.
 
-## Taskfile first
+## Taskfile
 
 ```bash
 task setup && task build && task test
 task version:show
-task version:sync    # after editing version.json
-open MagSafeGuard.xcodeproj
+task version:sync
 ```
 
-## Fork-specific (do not revert)
-
-| Setting | Value |
-|---------|--------|
-| Bundle ID | `com.sutz2001.MagSafeGuard` |
-| Version file | `version.json` → `task version:sync` |
-| Current fork version | `0.2.1` (independent from upstream `1.11.0`) |
-| Grace period default | **30 s** |
-| Config statics | `.defaultConfig` not `.default` |
-
-## Versioning
-
-- **Source:** `version.json` (`marketingVersion`, `buildNumber`)
-- **Sync:** `task version:sync` → `AppVersion.swift` + Xcode project
-- **Bump:** `task version:bump:patch` (0.2.0→0.2.1) or `task version:bump:minor` (0.2.0→0.3.0)
-- **Semver (fork):** `0.MINOR.PATCH` until `1.0.0` stable; patch=fixes, minor=features
-
-## Every commit (required)
-
-English commit body with full change list. Format:
-
-```text
-<type>(scope): subject
-
-## Summary
-Why.
-
-## Changes
-- Detailed bullets by area (App, Docs, CI, Assets, Tests, …)
-```
-
-Details: `.github/instructions/commits.instructions.md`
-
-### No `Co-authored-by` trailers (CI will fail)
-
-- **Never** add `Co-authored-by:` lines — not for Cursor, Copilot, or any assistant.
-- CI blocks anywhere in the message (case-insensitive): `claude`, `anthropic`, `co-authored`.
-- Cursor may auto-append `Co-authored-by: Cursor <cursoragent@cursor.com>` — remove it before push.
-- Already pushed? Replay commits without the trailer, then `git push --force-with-lease`.
-
-## Security actions (only these five)
+## Security actions (only five)
 
 `lockScreen`, `soundAlarm`, `forceLogout`, `shutdown`, `customScript`
-
-## Safety
-
-- Never suggest running the app when armed without user intent
-- No secrets in commits
-
-## Sync upstream
-
-```bash
-git fetch upstream && git merge upstream/main
-```
-
-Preserve fork bundle ID, entitlements, `version.json`, and README fork notes.

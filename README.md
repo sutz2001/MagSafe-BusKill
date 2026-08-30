@@ -190,9 +190,9 @@ CI runs on GitHub Actions (tests, security scans). See [docs/devops/ci-cd-workfl
 | Doc | Audience |
 |-----|----------|
 | [README.de.md](README.de.md) | German version of this file |
-| [AGENTS.md](AGENTS.md) | AI agent index (Cursor + Copilot — keep in sync) |
-| [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub Copilot repository rules |
-| [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) | Cursor rules |
+| [AGENTS.md](AGENTS.md) | **Canonical** AI agent rules (Cursor + Copilot) |
+| [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub Copilot stub → AGENTS.md |
+| [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) | Cursor stub → AGENTS.md |
 | [docs/README.md](docs/README.md) | Full upstream documentation index |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Detailed build guide |
 | [docs/maintainers/code-signing.md](docs/maintainers/code-signing.md) | Signing & distribution |

@@ -13,5 +13,5 @@ When editing any project README:
 5. Security actions: only the five implemented types (see root README)
 6. Do not re-add Taskmaster export blocks to README.md
 
-Also update `.github/copilot-instructions.md` and `.cursor/rules/project-conventions.mdc` if conventions change.
-If `version.json` changes, run `task version:sync` in the same commit.
+Also update [AGENTS.md](../AGENTS.md) when conventions change (canonical source).
+If `version.json` changes, run `task version:sync` and update README version tables + AGENTS.md current version in the same commit.
