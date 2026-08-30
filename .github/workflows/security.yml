@@ -325,12 +325,12 @@ jobs:
           api-key: ${{ secrets.FOSSA_API_KEY }}
         continue-on-error: true # Don't fail if FOSSA is not configured
 
-  # Security Scorecard
+  # Security Scorecard (requires public repo — GITHUB_TOKEN cannot read commit history on private repos)
   scorecard:
     name: Security Scorecard
     runs-on: ubuntu-latest
     needs: check-skip
-    if: github.event_name != 'pull_request' && needs.check-skip.outputs.should-skip != 'true'
+    if: github.event_name != 'pull_request' && needs.check-skip.outputs.should-skip != 'true' && github.event.repository.visibility == 'public'
 
     permissions:
       security-events: write
@@ -372,6 +372,7 @@ jobs:
           DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
           TRUFFLEHOG_RESULT: ${{ needs.trufflehog.result }}
           SEMGREP_RESULT: ${{ needs.semgrep.result }}
+          SCORECARD_RESULT: ${{ needs.scorecard.result }}
         run: |
           echo "## Security Scan Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -401,6 +402,14 @@ jobs:
             echo "✅ SAST (Semgrep): Passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ SAST (Semgrep): Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "$SCORECARD_RESULT" == "success" ]; then
+            echo "✅ Security Scorecard: Passed" >> $GITHUB_STEP_SUMMARY
+          elif [ "$SCORECARD_RESULT" == "skipped" ]; then
+            echo "⏭️ Security Scorecard: Skipped (requires public repository)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Security Scorecard: Failed" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
