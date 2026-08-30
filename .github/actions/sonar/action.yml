@@ -45,6 +45,11 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         SONAR_TOKEN: ${{ inputs.sonar-token }}
       run: |
+        if [ -z "$SONAR_TOKEN" ]; then
+          echo "⏭️ Skipping SonarCloud (SONAR_TOKEN not configured)"
+          exit 0
+        fi
+
         echo "🔍 Running SonarCloud analysis..."
 
         # Check for coverage file
