@@ -286,15 +286,16 @@ extension NetworkMonitor {
   /// Current network status description
   public var statusDescription: String {
     if !isConnected {
-      return "Disconnected"
+      return L10n.tr("network.status.disconnected")
     }
 
     if let ssid = currentSSID {
       return isOnTrustedNetwork
-        ? "Connected to trusted network: \(ssid)" : "Connected to untrusted network: \(ssid)"
+        ? L10n.tr("network.status.trusted", ssid)
+        : L10n.tr("network.status.untrusted", ssid)
     }
 
-    return "Connected (no Wi-Fi)"
+    return L10n.tr("network.status.noWifi")
   }
 
   /// Whether auto-arm should be active based on current network

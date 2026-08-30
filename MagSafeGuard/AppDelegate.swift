@@ -19,7 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   // MARK: - Constants
 
-  private static let appName = "MagSafe Guard"
+  private static var appName: String { L10n.tr("app.name") }
 
   // MARK: - Application Lifecycle
 
@@ -39,6 +39,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // Hide dock icon as this is a menu bar app
     NSApp.setActivationPolicy(.accessory)
+
+    if NSApp.applicationIconImage == nil {
+      NSApp.applicationIconImage = NSImage(named: "AppIcon")
+    }
 
     // Setup AppController callbacks
     setupAppControllerCallbacks()
@@ -85,6 +89,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Create menu
     setupMenu()
 
+    NotificationCenter.default.addObserver(
+      forName: .appLanguageDidChange,
+      object: nil,
+      queue: .main
+    ) { [weak self] _ in
+      self?.setupMenu()
+      self?.refreshStatusItemAccessibility()
+      self?.settingsWindow?.title = L10n.tr("app.settingsWindow")
+    }
+
     // Configure accessibility features
     setupAccessibilityFeatures()
 
@@ -101,15 +115,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     AccessibilityManager.shared.configureVoiceOverSupport()
     AccessibilityManager.shared.configureKeyboardNavigation()
 
-    // Configure status item accessibility
-    if let button = statusItem?.button {
-      button.setAccessibilityLabel("MagSafe Guard")
-      button.setAccessibilityHelp(
-        "Click to open MagSafe Guard menu. Current status: \(core.appController.statusDescription)")
-      button.setAccessibilityRole(.menuButton)
-    }
+    refreshStatusItemAccessibility()
 
     Log.info("Accessibility features configured", category: .general)
+  }
+
+  private func refreshStatusItemAccessibility() {
+    guard let button = statusItem?.button else { return }
+    let statusDescription = core.appController.statusDescription
+    button.setAccessibilityLabel(L10n.tr("app.name"))
+    button.setAccessibilityHelp(L10n.tr("app.accessibility.menuHint", statusDescription))
+    button.setAccessibilityRole(.menuButton)
   }
 
   private func setupAppControllerCallbacks() {
@@ -150,14 +166,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
       button.contentTintColor = nil
 
-      button.setAccessibilityLabel("MagSafe Guard")
+      button.setAccessibilityLabel(L10n.tr("app.name"))
       button.setAccessibilityValue(statusDescription)
       button.setAccessibilityHelp(
-        "Click to open MagSafe Guard menu. Current status: \(statusDescription)")
+        L10n.tr("app.accessibility.menuHint", statusDescription))
 
       if AccessibilityManager.shared.isVoiceOverEnabled {
         AccessibilityAnnouncement.announceStateChange(
-          component: "MagSafe Guard status", newState: statusDescription)
+          component: L10n.tr("app.accessibility.statusComponent"), newState: statusDescription)
       }
     }
   }
@@ -176,7 +192,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         case .failure(let error):
           self?.showNotification(
             title: AppDelegate.appName,
-            message: "Failed to arm: \(error.localizedDescription)"
+            message: L10n.tr("app.fail.arm", error.localizedDescription)
           )
         }
       }
@@ -189,7 +205,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         case .failure(let error):
           self?.showNotification(
             title: AppDelegate.appName,
-            message: "Failed to disarm: \(error.localizedDescription)"
+            message: L10n.tr("app.fail.disarm", error.localizedDescription)
           )
         }
       }
@@ -220,7 +236,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       defer: false
     )
 
-    window.title = "MagSafe Guard Settings"
+    window.title = L10n.tr("app.settingsWindow")
 
     // Create and retain the hosting controller
     let hostingController = NSHostingController(rootView: settingsView)
@@ -266,6 +282,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     Log.info("Window visible: \(window.isVisible), frame: \(window.frame)", category: .ui)
   }
 
+  @objc func showAbout() {
+    Task { @MainActor in
+      AboutPresenter.show()
+    }
+  }
+
   private func requestNotificationPermissions() {
     UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
       if granted {
@@ -291,7 +313,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert.messageText = notificationTitle
         alert.informativeText = text
         alert.alertStyle = .warning
-        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: L10n.tr("common.ok"))
         alert.runModal()
       }
       return
@@ -356,11 +378,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if Bundle.main.bundleIdentifier == nil {
           DispatchQueue.main.async {
             let alert = NSAlert()
-            alert.messageText = "Previous Crash Detected"
-            alert.informativeText =
-              "Exception: \(crashInfo["exception"] ?? "Unknown")\nReason: \(crashInfo["reason"] ?? "Unknown")"
+            alert.messageText = L10n.tr("app.crash.title")
+            alert.informativeText = L10n.tr(
+              "app.crash.message",
+              crashInfo["exception"] as? String ?? "Unknown",
+              crashInfo["reason"] as? String ?? "Unknown"
+            )
             alert.alertStyle = .warning
-            alert.addButton(withTitle: "OK")
+            alert.addButton(withTitle: L10n.tr("common.ok"))
             alert.runModal()
           }
         }
@@ -373,12 +398,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     if core.appController.currentState == .gracePeriod {
       // Show alert asking user to confirm
       let alert = NSAlert()
-      alert.messageText = "Security Action in Progress"
-      alert.informativeText =
-        "A security action is currently in progress. Are you sure you want to quit?"
+      alert.messageText = L10n.tr("app.quit.grace.title")
+      alert.informativeText = L10n.tr("app.quit.grace.message")
       alert.alertStyle = .warning
-      alert.addButton(withTitle: "Cancel")
-      alert.addButton(withTitle: "Quit Anyway")
+      alert.addButton(withTitle: L10n.tr("app.quit.grace.cancel"))
+      alert.addButton(withTitle: L10n.tr("app.quit.grace.confirm"))
 
       let response = alert.runModal()
       if response == .alertFirstButtonReturn {

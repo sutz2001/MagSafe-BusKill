@@ -27,8 +27,8 @@ struct CloudSyncSettingsView: View {
       dataSection
     }
     .formStyle(.grouped)
-    .alert("Sync Error", isPresented: $showingError) {
-      Button("OK", role: .cancel) {
+    .alert(L10n.tr("cloudSync.error.title"), isPresented: $showingError) {
+      Button(L10n.tr("common.ok"), role: .cancel) {
         // Dismisses alert automatically
       }
     } message: {
@@ -37,9 +37,9 @@ struct CloudSyncSettingsView: View {
   }
 
   private var statusSection: some View {
-    Section(header: Label("iCloud Status", systemImage: "cloud")) {
+    Section(header: Label(L10n.tr("cloudSync.status.header"), systemImage: "cloud")) {
       HStack {
-        Label("Status", systemImage: syncService.syncStatus.symbolName)
+        Label(L10n.tr("cloudSync.status.label"), systemImage: syncService.syncStatus.symbolName)
         Spacer()
         Text(syncService.syncStatus.displayText)
           .foregroundColor(statusColor)
@@ -48,7 +48,7 @@ struct CloudSyncSettingsView: View {
 
       if let lastSync = syncService.lastSyncDate {
         HStack {
-          Label("Last Sync", systemImage: "clock.fill")
+          Label(L10n.tr("cloudSync.lastSync"), systemImage: "clock.fill")
           Spacer()
           Text(lastSync, style: .relative)
             .font(.caption)
@@ -61,7 +61,7 @@ struct CloudSyncSettingsView: View {
           HStack {
             Image(systemName: "exclamationmark.triangle.fill")
               .foregroundColor(.orange)
-            Text("iCloud not available")
+            Text(l10n: "cloudSync.unavailable")
               .font(.subheadline)
           }
           Text(unavailabilityReason)
@@ -74,10 +74,10 @@ struct CloudSyncSettingsView: View {
   }
 
   private var syncSection: some View {
-    Section(header: Label("Sync Actions", systemImage: "arrow.triangle.2.circlepath")) {
+    Section(header: Label(L10n.tr("cloudSync.actions.header"), systemImage: "arrow.triangle.2.circlepath")) {
       HStack {
         Button(action: performManualSync) {
-          Label("Sync Now", systemImage: "arrow.triangle.2.circlepath")
+          Label(L10n.tr("cloudSync.syncNow"), systemImage: "arrow.triangle.2.circlepath")
         }
         .disabled(!syncService.isAvailable || isSyncing)
 
@@ -90,7 +90,7 @@ struct CloudSyncSettingsView: View {
         Spacer()
       }
 
-      Text("Manually sync all settings and evidence to iCloud")
+      Text(l10n: "cloudSync.manualHint")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -99,15 +99,15 @@ struct CloudSyncSettingsView: View {
   }
 
   private var dataSection: some View {
-    Section(header: Label("Synced Data", systemImage: "externaldrive.badge.icloud")) {
+    Section(header: Label(L10n.tr("cloudSync.data.header"), systemImage: "externaldrive.badge.icloud")) {
       // Settings sync
       HStack {
         Image(systemName: "gearshape.fill")
           .foregroundColor(.gray)
         VStack(alignment: .leading) {
-          Text("Settings")
+          Text(l10n: "cloudSync.data.settings.title")
             .font(.subheadline)
-          Text("All app preferences and configurations")
+          Text(l10n: "cloudSync.data.settings.caption")
             .font(.caption)
             .foregroundColor(.secondary)
         }
@@ -118,9 +118,9 @@ struct CloudSyncSettingsView: View {
         Image(systemName: "camera.fill")
           .foregroundColor(.orange)
         VStack(alignment: .leading) {
-          Text("Security Evidence")
+          Text(l10n: "cloudSync.data.evidence.title")
             .font(.subheadline)
-          Text("Photos and location data (encrypted)")
+          Text(l10n: "cloudSync.data.evidence.caption")
             .font(.caption)
             .foregroundColor(.secondary)
         }
@@ -131,9 +131,9 @@ struct CloudSyncSettingsView: View {
         Image(systemName: "lock.shield.fill")
           .foregroundColor(.green)
         VStack(alignment: .leading) {
-          Text("End-to-End Encrypted")
+          Text(l10n: "cloudSync.data.encrypted.title")
             .font(.subheadline)
-          Text("Your data is encrypted before upload")
+          Text(l10n: "cloudSync.data.encrypted.caption")
             .font(.caption)
             .foregroundColor(.secondary)
         }
@@ -144,7 +144,7 @@ struct CloudSyncSettingsView: View {
   }
 
   private var enableSection: some View {
-    Section(header: Label("Enable iCloud Sync", systemImage: "icloud.and.arrow.up")) {
+    Section(header: Label(L10n.tr("cloudSync.enable.header"), systemImage: "icloud.and.arrow.up")) {
       Toggle(
         isOn: Binding(
           get: { settingsManager.settings.iCloudSyncEnabled },
@@ -152,8 +152,8 @@ struct CloudSyncSettingsView: View {
         )
       ) {
         VStack(alignment: .leading, spacing: 4) {
-          Text("Enable iCloud Sync")
-          Text("Sync settings and evidence to iCloud")
+          Text(l10n: "cloudSync.enable.title")
+          Text(l10n: "cloudSync.enable.caption")
             .font(.caption)
             .foregroundColor(.secondary)
         }
@@ -177,13 +177,13 @@ struct CloudSyncSettingsView: View {
   }
 
   private var limitsSection: some View {
-    Section(header: Label("Storage Limits", systemImage: "internaldrive")) {
+    Section(header: Label(L10n.tr("cloudSync.limits.header"), systemImage: "internaldrive")) {
       // Data size limit
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text("Maximum Storage")
+          Text(l10n: "cloudSync.limits.maxStorage")
           Spacer()
-          Text("\(Int(settingsManager.settings.iCloudDataLimitMB)) MB")
+          Text(L10n.tr("cloudSync.limits.mbUnit", Int(settingsManager.settings.iCloudDataLimitMB)))
             .font(.system(.body, design: .monospaced))
             .foregroundColor(.secondary)
         }
@@ -196,7 +196,7 @@ struct CloudSyncSettingsView: View {
           in: 10...1000,
           step: 10
         ) {
-          Text("Maximum storage in MB")
+          Text(l10n: "cloudSync.limits.maxStorage.slider")
         } minimumValueLabel: {
           Text("10")
             .font(.caption)
@@ -205,7 +205,7 @@ struct CloudSyncSettingsView: View {
             .font(.caption)
         }
 
-        Text("Evidence exceeding this limit won't be synced")
+        Text(l10n: "cloudSync.limits.maxStorage.hint")
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -213,9 +213,9 @@ struct CloudSyncSettingsView: View {
       // Data age limit
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text("Data Retention")
+          Text(l10n: "cloudSync.limits.retention")
           Spacer()
-          Text("\(Int(settingsManager.settings.iCloudDataAgeLimitDays)) days")
+          Text(L10n.tr("cloudSync.limits.daysUnit", Int(settingsManager.settings.iCloudDataAgeLimitDays)))
             .font(.system(.body, design: .monospaced))
             .foregroundColor(.secondary)
         }
@@ -228,7 +228,7 @@ struct CloudSyncSettingsView: View {
           in: 7...365,
           step: 1
         ) {
-          Text("Data retention in days")
+          Text(l10n: "cloudSync.limits.retention.slider")
         } minimumValueLabel: {
           Text("7")
             .font(.caption)
@@ -237,7 +237,7 @@ struct CloudSyncSettingsView: View {
             .font(.caption)
         }
 
-        Text("Evidence older than this will be removed from iCloud")
+        Text(l10n: "cloudSync.limits.retention.hint")
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -266,13 +266,13 @@ struct CloudSyncSettingsView: View {
   private var unavailabilityReason: String {
     switch syncService.syncStatus {
     case .noAccount:
-      return "Sign in to iCloud in System Preferences to enable sync"
+      return L10n.tr("cloudSync.unavailable.noAccount")
     case .restricted:
-      return "iCloud access is restricted by parental controls or device management"
+      return L10n.tr("cloudSync.unavailable.restricted")
     case .temporarilyUnavailable:
-      return "iCloud is temporarily unavailable. Please try again later"
+      return L10n.tr("cloudSync.unavailable.temporarilyUnavailable")
     default:
-      return "Check your iCloud settings and internet connection"
+      return L10n.tr("cloudSync.unavailable.default")
     }
   }
 

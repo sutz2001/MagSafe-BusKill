@@ -1,0 +1,251 @@
+/* Settings — sidebar tabs */
+"settings.tab.general" = "Allgemein";
+"settings.tab.security" = "Sicherheit";
+"settings.tab.autoArm" = "Auto-Arm";
+"settings.tab.notifications" = "Mitteilungen";
+"settings.tab.cloudSync" = "iCloud-Sync";
+"settings.tab.advanced" = "Erweitert";
+"settings.selectCategory" = "Kategorie auswählen";
+
+/* General */
+"settings.general.gracePeriod.title" = "Karenzzeit";
+"settings.general.gracePeriod.caption" = "Standard 30 s — Zeit bis Sicherheitsaktionen nach Stromtrennung ausgeführt werden";
+"settings.general.gracePeriod.min" = "5 s";
+"settings.general.gracePeriod.max" = "30 s";
+"settings.general.gracePeriod.value" = "%d s";
+"settings.general.cancelGrace.title" = "Karenzzeit abbrechen erlauben";
+"settings.general.cancelGrace.caption1" = "Erlaubt das Abbrechen von Sicherheitsaktionen während der Karenzzeit";
+"settings.general.cancelGrace.caption2" = "mit Authentifizierung";
+"settings.general.launchAtLogin.title" = "Beim Login starten";
+"settings.general.launchAtLogin.caption" = "MagSafe Guard automatisch beim Anmelden starten";
+"settings.general.showInDock.title" = "Im Dock anzeigen";
+"settings.general.showInDock.caption" = "App-Symbol im Dock anzeigen (Neustart erforderlich)";
+
+/* Language */
+"settings.language.title" = "Sprache";
+"settings.language.caption" = "System verwendet die macOS-Spracheinstellung. Wähle eine Sprache zum Überschreiben.";
+"settings.language.system" = "System";
+"settings.language.english" = "Englisch";
+"settings.language.german" = "Deutsch";
+
+/* Security */
+"settings.security.activeActions" = "Aktive Sicherheitsaktionen";
+"settings.security.activeActions.hint" = "Zum Sortieren ziehen, mit + hinzufügen oder mit − entfernen";
+"settings.security.availableActions" = "Verfügbare Aktionen";
+"settings.security.actionsTitle" = "Sicherheitsaktionen";
+"settings.security.actionsCaption" = "Aktionen auswählen und sortieren, die bei Stromtrennung ausgeführt werden";
+"settings.security.actionsSelected" = "%lld Aktionen ausgewählt";
+"settings.security.resetDefaults" = "Auf Standard zurücksetzen";
+"settings.security.removeAction" = "Aktion entfernen";
+
+/* Security actions */
+"securityAction.lockScreen.name" = "Bildschirm sperren";
+"securityAction.lockScreen.description" = "Bildschirm sofort sperren und Authentifizierung verlangen";
+"securityAction.soundAlarm.name" = "Alarmton";
+"securityAction.soundAlarm.description" = "Lauten Alarmton abspielen, um Diebstahl abzuschrecken";
+"securityAction.forceLogout.name" = "Abmelden erzwingen";
+"securityAction.forceLogout.description" = "Alle Benutzer abmelden und Bildschirm sperren";
+"securityAction.shutdown.name" = "Herunterfahren";
+"securityAction.shutdown.description" = "System nach Countdown herunterfahren";
+"securityAction.customScript.name" = "Eigenes Skript";
+"securityAction.customScript.description" = "Ein benutzerdefiniertes Shell-Skript ausführen";
+
+/* Auto-Arm */
+"settings.autoArm.enable.title" = "Auto-Arm aktivieren";
+"settings.autoArm.enable.caption" = "Schutz automatisch basierend auf Standort oder Netzwerk aktivieren";
+"settings.autoArm.triggers" = "Auto-Arm-Auslöser";
+"settings.autoArm.location.title" = "Standortbasiert";
+"settings.autoArm.location.caption" = "Aktivieren beim Verlassen vertrauenswürdiger Standorte";
+"settings.autoArm.network.title" = "Netzwerkbasiert";
+"settings.autoArm.network.caption" = "Aktivieren, wenn nicht mit vertrauenswürdigem WLAN verbunden";
+"settings.autoArm.trustedLocations" = "Vertrauenswürdige Standorte";
+"settings.autoArm.manageLocations" = "Standorte verwalten";
+"settings.autoArm.trustedNetworks" = "Vertrauenswürdige Netzwerke";
+"settings.autoArm.noNetworks" = "Keine vertrauenswürdigen Netzwerke konfiguriert";
+"settings.autoArm.networkSSID" = "Netzwerk-SSID";
+"settings.autoArm.add" = "Hinzufügen";
+"settings.autoArm.status" = "Auto-Arm-Status";
+"settings.autoArm.unavailable" = "Auto-Arm-Dienst nicht verfügbar";
+"settings.autoArm.cancelTempDisable" = "Temporäre Deaktivierung aufheben";
+"settings.autoArm.tempDisable" = "Temporär deaktivieren (1 Stunde)";
+
+/* Notifications */
+"settings.notifications.status" = "Status-Mitteilungen";
+"settings.notifications.showStatus.title" = "Statusänderungen anzeigen";
+"settings.notifications.showStatus.caption" = "Mitteilungen anzeigen, wenn der Schutz aktiviert oder deaktiviert wird";
+"settings.notifications.alerts" = "Alarm-Einstellungen";
+"settings.notifications.playSound.title" = "Alarmton abspielen";
+"settings.notifications.playSound.caption" = "Ton für kritische Sicherheitswarnungen abspielen";
+"settings.notifications.systemHint" = "Mitteilungsberechtigungen werden in den Systemeinstellungen verwaltet";
+"settings.notifications.openSystemSettings" = "Systemeinstellungen öffnen";
+
+/* Advanced */
+"settings.advanced.customScripts" = "Eigene Skripte";
+"settings.advanced.noScripts" = "Keine eigenen Skripte konfiguriert";
+"settings.advanced.addScript" = "Skript hinzufügen…";
+"settings.advanced.debug" = "Debug";
+"settings.advanced.debugLogging.title" = "Debug-Protokollierung aktivieren";
+"settings.advanced.debugLogging.caption" = "Detaillierte Informationen zur Fehlerbehebung protokollieren";
+"settings.advanced.management" = "Einstellungsverwaltung";
+"settings.advanced.export" = "Einstellungen exportieren…";
+"settings.advanced.import" = "Einstellungen importieren…";
+"settings.advanced.resetAll" = "Alle Einstellungen zurücksetzen";
+"settings.advanced.exported.title" = "Einstellungen exportiert";
+"settings.advanced.exported.message" = "Deine Einstellungen wurden erfolgreich exportiert.";
+
+/* Trusted locations */
+"locations.title" = "Vertrauenswürdige Standorte";
+"locations.empty.title" = "Keine vertrauenswürdigen Standorte";
+"locations.empty.caption" = "Standorte hinzufügen, an denen Auto-Arm deaktiviert sein soll";
+"locations.addFirst" = "Ersten Standort hinzufügen";
+"locations.done" = "Fertig";
+"locations.permission.title" = "Standortberechtigung erforderlich";
+"locations.permission.message" = "Standortbasierter Auto-Arm benötigt Standortberechtigung. Bitte in den Systemeinstellungen aktivieren.";
+"locations.openSettings" = "Einstellungen öffnen";
+"locations.details" = "Standortdetails";
+"locations.currentLocation" = "Aktueller Standort";
+"locations.manualEntry" = "Manuelle Eingabe";
+"locations.trustRadius" = "Vertrauensradius";
+"locations.radiusMeters" = "%lld Meter";
+"locations.radiusCaption" = "Bereich um diesen Standort, in dem Auto-Arm deaktiviert ist";
+"locations.radiusRow" = "Radius: %lld m";
+"locations.save" = "Speichern";
+"locations.add.title" = "Vertrauenswürdigen Standort hinzufügen";
+"locations.nameField" = "Standortname";
+"locations.sourcePicker" = "Standortquelle";
+
+/* iCloud sync */
+"cloudSync.error.title" = "Sync-Fehler";
+"cloudSync.status.header" = "iCloud-Status";
+"cloudSync.status.label" = "Status";
+"cloudSync.lastSync" = "Letzte Synchronisation";
+"cloudSync.unavailable" = "iCloud nicht verfügbar";
+"cloudSync.actions.header" = "Sync-Aktionen";
+"cloudSync.syncNow" = "Jetzt synchronisieren";
+"cloudSync.manualHint" = "Alle Einstellungen und Beweise manuell mit iCloud synchronisieren";
+"cloudSync.data.header" = "Synchronisierte Daten";
+"cloudSync.data.settings.title" = "Einstellungen";
+"cloudSync.data.settings.caption" = "Alle App-Einstellungen und Konfigurationen";
+"cloudSync.data.evidence.title" = "Sicherheitsnachweise";
+"cloudSync.data.evidence.caption" = "Fotos und Standortdaten (verschlüsselt)";
+"cloudSync.data.encrypted.title" = "Ende-zu-Ende-verschlüsselt";
+"cloudSync.data.encrypted.caption" = "Deine Daten werden vor dem Upload verschlüsselt";
+"cloudSync.enable.header" = "iCloud-Sync aktivieren";
+"cloudSync.enable.title" = "iCloud-Sync aktivieren";
+"cloudSync.enable.caption" = "Einstellungen und Beweise mit iCloud synchronisieren";
+"cloudSync.limits.header" = "Speicherlimits";
+"cloudSync.limits.maxStorage" = "Maximaler Speicher";
+"cloudSync.limits.maxStorage.slider" = "Maximaler Speicher in MB";
+"cloudSync.limits.maxStorage.hint" = "Nachweise über diesem Limit werden nicht synchronisiert";
+"cloudSync.limits.retention" = "Datenaufbewahrung";
+"cloudSync.limits.retention.slider" = "Datenaufbewahrung in Tagen";
+"cloudSync.limits.retention.hint" = "Ältere Nachweise werden aus iCloud entfernt";
+"cloudSync.limits.mbUnit" = "%lld MB";
+"cloudSync.limits.daysUnit" = "%lld Tage";
+
+/* Sync status */
+"sync.status.disabled" = "Deaktiviert";
+"sync.status.syncing" = "Synchronisiere…";
+"sync.status.synced" = "Synchronisiert";
+"sync.status.error" = "Sync-Fehler";
+"sync.status.notSignedIn" = "Nicht bei iCloud angemeldet";
+"sync.status.restricted" = "iCloud eingeschränkt";
+"sync.status.noAccount" = "Kein iCloud-Konto";
+"sync.status.unavailable" = "iCloud nicht verfügbar";
+"sync.status.unknown" = "Unbekannt";
+"sync.error.zoneNotReady" = "CloudKit-Zone ist nicht bereit";
+"sync.error.notAvailable" = "iCloud-Sync ist nicht verfügbar";
+"sync.error.syncInProgress" = "Synchronisation läuft bereits";
+
+/* Menu bar */
+"menu.title" = "MagSafe Guard Menü";
+"menu.description" = "Steuerung und Status des Sicherheitssystems";
+"menu.status.hint" = "Aktueller Status des MagSafe Guard Sicherheitssystems";
+"menu.arm" = "Schutz aktivieren";
+"menu.disarm" = "Schutz deaktivieren";
+"menu.arm.hint" = "Sicherheitssystem aktivieren";
+"menu.disarm.hint" = "Sicherheitssystem deaktivieren";
+"menu.cancelAction" = "Sicherheitsaktion abbrechen";
+"menu.cancelAction.hint" = "Ausstehende Sicherheitsaktion während der Karenzzeit abbrechen";
+"menu.power.connected" = "Netzteil angeschlossen";
+"menu.power.battery" = "Akkubetrieb";
+"menu.power.hint" = "Aktueller Status der Stromversorgung";
+"menu.settings" = "Einstellungen…";
+"menu.settings.label" = "Einstellungen";
+"menu.settings.hint" = "App-Einstellungen öffnen";
+"menu.eventLog" = "Ereignisprotokoll anzeigen…";
+"menu.eventLog.label" = "Ereignisprotokoll";
+"menu.eventLog.hint" = "Ereignisprotokoll der App öffnen";
+"menu.about" = "Über MagSafe Guard…";
+"menu.about.label" = "Über MagSafe Guard";
+"menu.about.hint" = "Version und Copyright anzeigen";
+"menu.quit" = "MagSafe Guard beenden";
+"menu.quit.hint" = "App vollständig beenden";
+
+/* Status */
+"status.disarmed" = "Schutz deaktiviert";
+"status.armed" = "Schutz aktiv";
+"status.gracePeriod" = "Karenzzeit – %lld s";
+"status.triggered" = "Sicherheitsaktion ausgelöst";
+
+/* App shell */
+"app.name" = "MagSafe Guard";
+"app.settingsWindow" = "MagSafe Guard Einstellungen";
+"app.accessibility.menuHint" = "Klicken, um das MagSafe Guard Menü zu öffnen. Aktueller Status: %@";
+"app.accessibility.statusComponent" = "MagSafe Guard Status";
+"app.fail.arm" = "Aktivierung fehlgeschlagen: %@";
+"app.fail.disarm" = "Deaktivierung fehlgeschlagen: %@";
+"app.crash.title" = "Vorheriger Absturz erkannt";
+"app.crash.message" = "Ausnahme: %@\nGrund: %@";
+"app.quit.grace.title" = "Sicherheitsaktion läuft";
+"app.quit.grace.message" = "Eine Sicherheitsaktion läuft gerade. Wirklich beenden?";
+"app.quit.grace.cancel" = "Abbrechen";
+"app.quit.grace.confirm" = "Trotzdem beenden";
+
+/* About */
+"about.copyright" = "Copyright © 2025–2026 Marc Seitz. Originalsoftware © 2025 Tobias Lekman.";
+"about.credits.body" = "MagSafe Guard — Fork\n\nBetreut von Marc Seitz\nhttps://github.com/sutz2001/MagSafe-BusKill\n\nOriginalsoftware: MagSafe Guard\nCopyright © 2025 Tobias Lekman\nhttps://github.com/lekman/magsafe-buskill\n\nFork-Anpassungen\nCopyright © 2025–2026 Marc Seitz\n\nMIT-Lizenz\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+
+/* Auto-arm notifications */
+"autoArm.disabled.title" = "Auto-Arm deaktiviert";
+"autoArm.disabled.message" = "Automatische Aktivierung für %lld Minuten deaktiviert";
+"autoArm.activated.title" = "Auto-Arm aktiviert";
+"autoArm.failed.title" = "Auto-Arm fehlgeschlagen";
+"autoArm.failed.message" = "System konnte nicht aktiviert werden: %@";
+"autoArm.permission.title" = "Standortberechtigung erforderlich";
+"autoArm.permission.message" = "Standortbasierter Auto-Arm benötigt Standortberechtigung";
+"autoArm.summary.disabled" = "Auto-Arm deaktiviert";
+"autoArm.summary.tempDisabled" = "Auto-Arm vorübergehend deaktiviert";
+"autoArm.summary.inTrustedLocation" = "am vertrauenswürdigen Standort";
+"autoArm.summary.outsideTrustedLocation" = "außerhalb vertrauenswürdiger Standorte";
+"autoArm.summary.location" = "Standort: %@";
+"autoArm.summary.network" = "Netzwerk: %@";
+"autoArm.reason.leftTrustedLocation" = "Vertrauenswürdigen Standort verlassen";
+"autoArm.reason.untrustedNetwork" = "Mit nicht vertrauenswürdigem Netzwerk verbunden: %@";
+"autoArm.reason.leftTrustedNetwork" = "Vertrauenswürdiges Netzwerk getrennt";
+"autoArm.reason.lostConnectivity" = "Netzwerkverbindung verloren";
+
+/* Network status */
+"network.status.disconnected" = "Getrennt";
+"network.status.trusted" = "Mit vertrauenswürdigem Netzwerk verbunden: %@";
+"network.status.untrusted" = "Mit nicht vertrauenswürdigem Netzwerk verbunden: %@";
+"network.status.noWifi" = "Verbunden (kein WLAN)";
+
+/* iCloud unavailability */
+"cloudSync.unavailable.noAccount" = "Melde dich in den Systemeinstellungen bei iCloud an, um Sync zu aktivieren";
+"cloudSync.unavailable.restricted" = "iCloud-Zugriff ist durch Kindersicherung oder Geräteverwaltung eingeschränkt";
+"cloudSync.unavailable.temporarilyUnavailable" = "iCloud ist vorübergehend nicht verfügbar. Bitte später erneut versuchen";
+"cloudSync.unavailable.default" = "Prüfe deine iCloud-Einstellungen und Internetverbindung";
+
+/* Location coordinates */
+"locations.latitude" = "Breitengrad";
+"locations.longitude" = "Längengrad";
+
+/* Common */
+"common.ok" = "OK";
+"common.cancel" = "Abbrechen";
+"common.add" = "Hinzufügen";
+"common.save" = "Speichern";
+
+/* Notification actions */
+"notification.cancelAction" = "Aktion abbrechen";

@@ -202,7 +202,8 @@ CI runs on GitHub Actions (tests, security scans). See [docs/devops/ci-cd-workfl
 
 ## License & credits
 
-MIT License — see [LICENSE](LICENSE).
+MIT License — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 - Original concept: [BusKill](https://github.com/BusKill/buskill-app)
 - Upstream maintainer: [Tobias Lekman / lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)
+- This fork: [Marc Seitz / sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) (fork modifications © 2025–2026 Marc Seitz)

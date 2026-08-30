@@ -275,11 +275,11 @@ private class AlertWindowDelivery: NotificationDeliveryProtocol {
         alert.alertStyle = .informational
       }
 
-      alert.addButton(withTitle: "OK")
+      alert.addButton(withTitle: L10n.tr("common.ok"))
 
       // For grace period notifications, add cancel option
       if message.contains("Security action in") {
-        alert.addButton(withTitle: "Cancel Action")
+        alert.addButton(withTitle: L10n.tr("notification.cancelAction"))
       }
 
       let response = alert.runModal()

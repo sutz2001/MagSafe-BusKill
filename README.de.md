@@ -199,7 +199,8 @@ CI auf GitHub Actions. Details: [docs/devops/ci-cd-workflows.md](docs/devops/ci-
 
 ## Lizenz & Danksagung
 
-MIT — siehe [LICENSE](LICENSE).
+MIT — siehe [LICENSE](LICENSE) und [NOTICE](NOTICE).
 
 - Konzept: [BusKill](https://github.com/BusKill/buskill-app)
 - Upstream: [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)
+- Dieser Fork: [Marc Seitz / sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) (Fork-Anpassungen © 2025–2026 Marc Seitz)

@@ -683,19 +683,19 @@ public enum SyncStatus {
   public var displayText: String {
     switch self {
     case .unknown:
-      return "Unknown"
+      return L10n.tr("sync.status.unknown")
     case .idle:
-      return "Synced"
+      return L10n.tr("sync.status.synced")
     case .syncing:
-      return "Syncing..."
+      return L10n.tr("sync.status.syncing")
     case .error:
-      return "Sync Error"
+      return L10n.tr("sync.status.error")
     case .noAccount:
-      return "No iCloud Account"
+      return L10n.tr("sync.status.noAccount")
     case .restricted:
-      return "iCloud Restricted"
+      return L10n.tr("sync.status.restricted")
     case .temporarilyUnavailable:
-      return "iCloud Unavailable"
+      return L10n.tr("sync.status.unavailable")
     }
   }
 
@@ -733,11 +733,11 @@ public enum SyncError: LocalizedError {
   public var errorDescription: String? {
     switch self {
     case .zoneNotReady:
-      return "iCloud zone not ready"
+      return L10n.tr("sync.error.zoneNotReady")
     case .notAvailable:
-      return "iCloud not available"
+      return L10n.tr("sync.error.notAvailable")
     case .syncInProgress:
-      return "Sync already in progress"
+      return L10n.tr("sync.error.syncInProgress")
     }
   }
 }

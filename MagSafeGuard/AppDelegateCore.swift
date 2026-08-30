@@ -139,8 +139,8 @@ public class AppDelegateCore {
 
     // Configure menu accessibility
     menu.configureAccessibility(
-      title: "MagSafe Guard Menu",
-      description: "Security system controls and status information"
+      title: L10n.tr("menu.title"),
+      description: L10n.tr("menu.description")
     )
 
     // Status item (disabled) with accessibility
@@ -148,7 +148,7 @@ public class AppDelegateCore {
     let statusItem = NSMenuItem.accessibleMenuItem(
       title: statusDescription,
       accessibilityLabel: "Security system status: \(statusDescription)",
-      hint: "Current status of the MagSafe Guard security system"
+      hint: L10n.tr("menu.status.hint")
     )
     statusItem.isEnabled = false
     menu.addItem(statusItem)
@@ -161,9 +161,7 @@ public class AppDelegateCore {
     let armItem = NSMenuItem.accessibleMenuItem(
       title: armTitle,
       accessibilityLabel: armTitle,
-      hint: isArmed
-        ? "Disarm the security system to stop protection"
-        : "Arm the security system to enable protection",
+      hint: isArmed ? L10n.tr("menu.disarm.hint") : L10n.tr("menu.arm.hint"),
       keyEquivalent: "a",
       action: #selector(AppDelegate.toggleArmed),
       target: appDelegate
@@ -173,9 +171,9 @@ public class AppDelegateCore {
     // Cancel grace period item (if in grace period) with accessibility
     if appController.isInGracePeriod && appController.allowGracePeriodCancellation {
       let cancelItem = NSMenuItem.accessibleMenuItem(
-        title: "Cancel Security Action",
-        accessibilityLabel: "Cancel Security Action",
-        hint: "Cancel the pending security action during grace period",
+        title: L10n.tr("menu.cancelAction"),
+        accessibilityLabel: L10n.tr("menu.cancelAction"),
+        hint: L10n.tr("menu.cancelAction.hint"),
         keyEquivalent: "c",
         action: #selector(AppDelegate.cancelGracePeriod),
         target: appDelegate
@@ -187,11 +185,12 @@ public class AppDelegateCore {
 
     // Power status with accessibility
     let powerStatus =
-      appController.lastPowerState == .connected ? "Power Connected" : "Running on Battery"
+      appController.lastPowerState == .connected
+        ? L10n.tr("menu.power.connected") : L10n.tr("menu.power.battery")
     let powerItem = NSMenuItem.accessibleMenuItem(
       title: powerStatus,
       accessibilityLabel: "Power status: \(powerStatus)",
-      hint: "Current power adapter connection status"
+      hint: L10n.tr("menu.power.hint")
     )
     powerItem.isEnabled = false
     menu.addItem(powerItem)
@@ -200,9 +199,9 @@ public class AppDelegateCore {
 
     // Settings item with accessibility
     let settingsItem = NSMenuItem.accessibleMenuItem(
-      title: "Settings...",
-      accessibilityLabel: "Settings",
-      hint: "Open application settings and preferences",
+      title: L10n.tr("menu.settings"),
+      accessibilityLabel: L10n.tr("menu.settings.label"),
+      hint: L10n.tr("menu.settings.hint"),
       keyEquivalent: ",",
       action: #selector(AppDelegate.showSettings),
       target: appDelegate
@@ -211,9 +210,9 @@ public class AppDelegateCore {
 
     // Event log item with accessibility
     let logItem = NSMenuItem.accessibleMenuItem(
-      title: "View Event Log...",
-      accessibilityLabel: "View Event Log",
-      hint: "Open the application event log",
+      title: L10n.tr("menu.eventLog"),
+      accessibilityLabel: L10n.tr("menu.eventLog.label"),
+      hint: L10n.tr("menu.eventLog.hint"),
       keyEquivalent: "l",
       action: #selector(AppDelegate.showEventLog)
     )
@@ -221,11 +220,22 @@ public class AppDelegateCore {
 
     menu.addItem(NSMenuItem.separator())
 
+    // About item
+    let aboutItem = NSMenuItem.accessibleMenuItem(
+      title: L10n.tr("menu.about"),
+      accessibilityLabel: L10n.tr("menu.about.label"),
+      hint: L10n.tr("menu.about.hint"),
+      action: #selector(AppDelegate.showAbout)
+    )
+    menu.addItem(aboutItem)
+
+    menu.addItem(NSMenuItem.separator())
+
     // Quit item with accessibility
     let quitItem = NSMenuItem.accessibleMenuItem(
-      title: "Quit MagSafe Guard",
-      accessibilityLabel: "Quit MagSafe Guard",
-      hint: "Exit the application completely",
+      title: L10n.tr("menu.quit"),
+      accessibilityLabel: L10n.tr("menu.quit"),
+      hint: L10n.tr("menu.quit.hint"),
       keyEquivalent: "q",
       action: #selector(NSApplication.terminate(_:))
     )

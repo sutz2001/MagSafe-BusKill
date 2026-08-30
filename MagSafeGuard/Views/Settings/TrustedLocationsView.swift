@@ -34,7 +34,7 @@ struct TrustedLocationsView: View {
           locationsList
         }
       }
-      .navigationTitle("Trusted Locations")
+      .navigationTitle(L10n.tr("locations.title"))
       .toolbar {
         toolbarContent
       }
@@ -52,21 +52,19 @@ struct TrustedLocationsView: View {
         onCancel: { showingAddLocation = false }
       )
     }
-    .alert("Location Permission Required", isPresented: $showingPermissionAlert) {
-      Button("Open Settings") {
+    .alert(L10n.tr("locations.permission.title"), isPresented: $showingPermissionAlert) {
+      Button(L10n.tr("locations.openSettings")) {
         let urlString =
           "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices"
         if let url = URL(string: urlString) {
           NSWorkspace.shared.open(url)
         }
       }
-      Button("Cancel", role: .cancel) {
+      Button(L10n.tr("common.cancel"), role: .cancel) {
         // Cancel action
       }
     } message: {
-      Text(
-        "Location-based auto-arm requires location permission. Please enable it in System Settings."
-      )
+      Text(l10n: "locations.permission.message")
     }
   }
 
@@ -76,16 +74,16 @@ struct TrustedLocationsView: View {
         .font(.system(size: 60))
         .foregroundColor(.secondary)
 
-      Text("No Trusted Locations")
+      Text(l10n: "locations.empty.title")
         .font(.title2)
         .fontWeight(.medium)
 
-      Text("Add locations where auto-arm should be disabled")
+      Text(l10n: "locations.empty.caption")
         .font(.body)
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
 
-      Button("Add First Location") {
+      Button(L10n.tr("locations.addFirst")) {
         showingAddLocation = true
       }
       .buttonStyle(.borderedProminent)
@@ -97,7 +95,7 @@ struct TrustedLocationsView: View {
   @ToolbarContentBuilder
   private var toolbarContent: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) {
-      Button("Done") {
+      Button(L10n.tr("locations.done")) {
         dismiss()
       }
     }
@@ -188,7 +186,7 @@ struct LocationRow: View {
         .font(.caption)
         .foregroundColor(.secondary)
 
-      Text("Radius: \(Int(location.radius))m")
+      Text(L10n.tr("locations.radiusRow", Int(location.radius)))
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -224,7 +222,7 @@ struct AddLocationView: View {
         locationDetailsSection
         trustRadiusSection
       }
-      .navigationTitle("Add Trusted Location")
+      .navigationTitle(L10n.tr("locations.add.title"))
       .toolbar {
         addLocationToolbar
       }
@@ -233,8 +231,8 @@ struct AddLocationView: View {
   }
 
   private var locationDetailsSection: some View {
-    Section(header: Text("Location Details")) {
-      TextField("Location Name", text: $locationName)
+    Section(header: Text(l10n: "locations.details")) {
+      TextField(L10n.tr("locations.nameField"), text: $locationName)
       locationSourcePicker
 
       if !useCurrentLocation {
@@ -244,15 +242,15 @@ struct AddLocationView: View {
   }
 
   private var locationSourcePicker: some View {
-    Picker("Location Source", selection: $useCurrentLocation) {
-      Text("Current Location").tag(true)
-      Text("Manual Entry").tag(false)
+    Picker(L10n.tr("locations.sourcePicker"), selection: $useCurrentLocation) {
+      Text(l10n: "locations.currentLocation").tag(true)
+      Text(l10n: "locations.manualEntry").tag(false)
     }
     .pickerStyle(.segmented)
   }
 
   private var trustRadiusSection: some View {
-    Section(header: Text("Trust Radius")) {
+    Section(header: Text(l10n: "locations.trustRadius")) {
       trustRadiusContent
     }
   }
@@ -295,21 +293,21 @@ struct AddLocationView: View {
 
   private var manualLocationFields: some View {
     HStack {
-      TextField("Latitude", text: $manualLatitude)
+      TextField(L10n.tr("locations.latitude"), text: $manualLatitude)
         .textFieldStyle(.roundedBorder)
-      TextField("Longitude", text: $manualLongitude)
+      TextField(L10n.tr("locations.longitude"), text: $manualLongitude)
         .textFieldStyle(.roundedBorder)
     }
   }
 
   private var trustRadiusContent: some View {
     VStack(alignment: .leading) {
-      Text("\(Int(radius)) meters")
+      Text(L10n.tr("locations.radiusMeters", Int(radius)))
         .font(.headline)
 
       Slider(value: $radius, in: 50...1000, step: 50)
 
-      Text("Area around this location where auto-arm is disabled")
+      Text(l10n: "locations.radiusCaption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -318,10 +316,10 @@ struct AddLocationView: View {
   @ToolbarContentBuilder
   private var addLocationToolbar: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) {
-      Button("Cancel", action: onCancel)
+      Button(L10n.tr("common.cancel"), action: onCancel)
     }
     ToolbarItem(placement: .confirmationAction) {
-      Button("Save") {
+      Button(L10n.tr("locations.save")) {
         if useCurrentLocation {
           getCurrentLocationAndSave()
         } else {

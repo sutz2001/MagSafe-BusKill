@@ -161,8 +161,8 @@ public class AutoArmManager: NSObject {
 
     // Show notification
     NotificationService.shared.showNotification(
-      title: "Auto-Arm Disabled",
-      message: "Automatic arming disabled for \(Int(duration / 60)) minutes"
+      title: L10n.tr("autoArm.disabled.title"),
+      message: L10n.tr("autoArm.disabled.message", Int(duration / 60))
     )
   }
 
@@ -249,7 +249,7 @@ public class AutoArmManager: NSObject {
 
     // Show notification before arming
     NotificationService.shared.showNotification(
-      title: "Auto-Arm Activated",
+      title: L10n.tr("autoArm.activated.title"),
       message: reason
     )
 
@@ -262,8 +262,8 @@ public class AutoArmManager: NSObject {
         case .failure(let error):
           Log.error("Failed to auto-arm", error: error, category: .autoArm)
           NotificationService.shared.showNotification(
-            title: "Auto-Arm Failed",
-            message: "Could not arm system: \(error.localizedDescription)"
+            title: L10n.tr("autoArm.failed.title"),
+            message: L10n.tr("autoArm.failed.message", error.localizedDescription)
           )
         }
       }
@@ -282,7 +282,7 @@ extension AutoArmManager: LocationManagerDelegate {
     let settings = settingsManager.settings
     guard settings.autoArmEnabled && settings.autoArmByLocation else { return }
 
-    triggerAutoArm(reason: "Left trusted location")
+    triggerAutoArm(reason: L10n.tr("autoArm.reason.leftTrustedLocation"))
   }
 
   /// Called when the user enters a trusted location
@@ -299,8 +299,8 @@ extension AutoArmManager: LocationManagerDelegate {
 
     if status == .denied || status == .restricted {
       NotificationService.shared.showNotification(
-        title: "Location Permission Required",
-        message: "Location-based auto-arm requires location permission"
+        title: L10n.tr("autoArm.permission.title"),
+        message: L10n.tr("autoArm.permission.message")
       )
     }
   }
@@ -318,7 +318,7 @@ extension AutoArmManager: NetworkMonitorDelegate {
     let settings = settingsManager.settings
     guard settings.autoArmEnabled && settings.autoArmOnUntrustedNetwork else { return }
 
-    triggerAutoArm(reason: "Connected to untrusted network: \(ssid)")
+    triggerAutoArm(reason: L10n.tr("autoArm.reason.untrustedNetwork", ssid))
   }
 
   /// Called when disconnecting from a trusted network
@@ -328,7 +328,7 @@ extension AutoArmManager: NetworkMonitorDelegate {
     let settings = settingsManager.settings
     guard settings.autoArmEnabled && settings.autoArmOnUntrustedNetwork else { return }
 
-    triggerAutoArm(reason: "Disconnected from trusted network")
+    triggerAutoArm(reason: L10n.tr("autoArm.reason.leftTrustedNetwork"))
   }
 
   /// Called when connecting to a trusted network
@@ -348,7 +348,7 @@ extension AutoArmManager: NetworkMonitorDelegate {
       let settings = settingsManager.settings
       guard settings.autoArmEnabled && settings.autoArmOnUntrustedNetwork else { return }
 
-      triggerAutoArm(reason: "Lost network connectivity")
+      triggerAutoArm(reason: L10n.tr("autoArm.reason.lostConnectivity"))
     }
   }
 }
@@ -361,24 +361,25 @@ extension AutoArmManager {
   /// Current auto-arm status summary
   public var statusSummary: String {
     if !settingsManager.settings.autoArmEnabled {
-      return "Auto-arm disabled"
+      return L10n.tr("autoArm.summary.disabled")
     }
 
     if isTemporarilyDisabled {
-      return "Auto-arm temporarily disabled"
+      return L10n.tr("autoArm.summary.tempDisabled")
     }
 
     var components: [String] = []
 
     if settingsManager.settings.autoArmByLocation {
-      let locationStatus =
-        locationManager.isInTrustedLocation ? "in trusted location" : "outside trusted location"
-      components.append("Location: \(locationStatus)")
+      let locationStatus = locationManager.isInTrustedLocation
+        ? L10n.tr("autoArm.summary.inTrustedLocation")
+        : L10n.tr("autoArm.summary.outsideTrustedLocation")
+      components.append(L10n.tr("autoArm.summary.location", locationStatus))
     }
 
     if settingsManager.settings.autoArmOnUntrustedNetwork {
       let networkStatus = networkMonitor.statusDescription
-      components.append("Network: \(networkStatus)")
+      components.append(L10n.tr("autoArm.summary.network", networkStatus))
     }
 
     return components.joined(separator: ", ")

@@ -596,9 +596,9 @@ extension AppController {
   public var armDisarmMenuTitle: String {
     switch currentState {
     case .disarmed:
-      return "Arm Protection"
+      return L10n.tr("menu.arm")
     case .armed, .gracePeriod, .triggered:
-      return "Disarm Protection"
+      return L10n.tr("menu.disarm")
     }
   }
 
@@ -620,13 +620,13 @@ extension AppController {
   public var statusDescription: String {
     switch currentState {
     case .disarmed:
-      return "Protection Disabled"
+      return L10n.tr("status.disarmed")
     case .armed:
-      return "Protection Active"
+      return L10n.tr("status.armed")
     case .gracePeriod:
-      return "Grace Period - \(Int(gracePeriodRemaining))s"
+      return L10n.tr("status.gracePeriod", Int(gracePeriodRemaining))
     case .triggered:
-      return "Security Action Triggered"
+      return L10n.tr("status.triggered")
     }
   }
 }

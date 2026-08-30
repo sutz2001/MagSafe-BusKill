@@ -14,6 +14,7 @@ import SwiftUI
 /// Main settings view with sidebar navigation interface
 public struct SettingsView: View {
   @ObservedObject private var settingsManager = UserDefaultsManager.shared
+  @ObservedObject private var languageManager = LanguageManager.shared
   @State private var selectedTab: SettingsTab? = .general
 
   /// Initializes the settings view with the general tab selected
@@ -22,15 +23,28 @@ public struct SettingsView: View {
     _selectedTab = State(initialValue: .general)
   }
 
-  private enum SettingsTab: String, CaseIterable, Identifiable {
-    case general = "General"
-    case security = "Security"
-    case autoArm = "Auto-Arm"
-    case notifications = "Notifications"
-    case cloudSync = "iCloud Sync"
-    case advanced = "Advanced"
+  private enum SettingsTab: CaseIterable, Identifiable {
+    case general
+    case security
+    case autoArm
+    case notifications
+    case cloudSync
+    case advanced
 
-    var id: String { rawValue }
+    var id: String { localizationKey }
+
+    var localizationKey: String {
+      switch self {
+      case .general: return "settings.tab.general"
+      case .security: return "settings.tab.security"
+      case .autoArm: return "settings.tab.autoArm"
+      case .notifications: return "settings.tab.notifications"
+      case .cloudSync: return "settings.tab.cloudSync"
+      case .advanced: return "settings.tab.advanced"
+      }
+    }
+
+    var title: String { L10n.tr(localizationKey) }
 
     var symbolName: String {
       switch self {
@@ -56,7 +70,7 @@ public struct SettingsView: View {
       // Sidebar
       List(SettingsTab.allCases, selection: $selectedTab) { tab in
         NavigationLink(value: tab) {
-          Label(tab.rawValue, systemImage: tab.symbolName)
+          Label(tab.title, systemImage: tab.symbolName)
         }
       }
       .navigationSplitViewColumnWidth(min: 200, ideal: 220, max: 300)
@@ -68,30 +82,30 @@ public struct SettingsView: View {
         case .general:
           GeneralSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(SettingsTab.general.rawValue)
+            .navigationTitle(selectedTab.title)
         case .security:
           SecuritySettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(SettingsTab.security.rawValue)
+            .navigationTitle(selectedTab.title)
         case .autoArm:
           AutoArmSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(SettingsTab.autoArm.rawValue)
+            .navigationTitle(selectedTab.title)
         case .notifications:
           NotificationSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(SettingsTab.notifications.rawValue)
+            .navigationTitle(selectedTab.title)
         case .cloudSync:
           CloudSyncSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(SettingsTab.cloudSync.rawValue)
+            .navigationTitle(selectedTab.title)
         case .advanced:
           AdvancedSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(SettingsTab.advanced.rawValue)
+            .navigationTitle(selectedTab.title)
         }
       } else {
-        Text("Select a category")
+        Text(l10n: "settings.selectCategory")
           .font(.title2)
           .foregroundColor(.secondary)
           .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -99,6 +113,7 @@ public struct SettingsView: View {
     }
     .navigationSplitViewStyle(.balanced)
     .frame(minWidth: 800, minHeight: 500)
+    .id(languageManager.preference)
   }
 }
 
@@ -106,6 +121,7 @@ public struct SettingsView: View {
 
 struct GeneralSettingsView: View {
   @EnvironmentObject var settingsManager: UserDefaultsManager
+  @ObservedObject private var languageManager = LanguageManager.shared
 
   var body: some View {
     Form {
@@ -118,6 +134,10 @@ struct GeneralSettingsView: View {
 
   private var generalSettingsContent: some View {
     VStack(alignment: .leading, spacing: 16) {
+      languageSection
+
+      Divider()
+
       gracePeriodSection
 
       Divider()
@@ -133,14 +153,42 @@ struct GeneralSettingsView: View {
     .padding()
   }
 
+  private var languageSection: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(l10n: "settings.language.title")
+        .font(.headline)
+
+      Picker(selection: languageBinding) {
+        ForEach(AppLanguage.allCases) { language in
+          Text(L10n.tr(language.displayNameKey)).tag(language)
+        }
+      } label: {
+        EmptyView()
+      }
+      .labelsHidden()
+      .pickerStyle(.segmented)
+
+      Text(l10n: "settings.language.caption")
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+  }
+
+  private var languageBinding: Binding<AppLanguage> {
+    Binding(
+      get: { languageManager.preference },
+      set: { languageManager.setPreference($0) }
+    )
+  }
+
   private var gracePeriodSection: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Grace Period Duration")
+      Text(l10n: "settings.general.gracePeriod.title")
         .font(.headline)
 
       gracePeriodSlider
 
-      Text("Default 30s — time before security actions execute after power disconnection")
+      Text(l10n: "settings.general.gracePeriod.caption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -148,7 +196,7 @@ struct GeneralSettingsView: View {
 
   private var gracePeriodSlider: some View {
     HStack {
-      Text("5s")
+      Text(l10n: "settings.general.gracePeriod.min")
         .font(.caption)
         .foregroundColor(.secondary)
 
@@ -161,11 +209,11 @@ struct GeneralSettingsView: View {
         step: 1
       )
 
-      Text("30s")
+      Text(l10n: "settings.general.gracePeriod.max")
         .font(.caption)
         .foregroundColor(.secondary)
 
-      Text("\(Int(settingsManager.settings.gracePeriodDuration))s")
+      Text(L10n.tr("settings.general.gracePeriod.value", Int(settingsManager.settings.gracePeriodDuration)))
         .font(.system(.body, design: .monospaced))
         .frame(width: 40, alignment: .trailing)
     }
@@ -179,11 +227,11 @@ struct GeneralSettingsView: View {
       )
     ) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Allow Grace Period Cancellation")
-        Text("Permits canceling security actions during grace period")
+        Text(l10n: "settings.general.cancelGrace.title")
+        Text(l10n: "settings.general.cancelGrace.caption1")
           .font(.caption)
           .foregroundColor(.secondary)
-        Text("with authentication")
+        Text(l10n: "settings.general.cancelGrace.caption2")
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -198,8 +246,8 @@ struct GeneralSettingsView: View {
       )
     ) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Launch at Login")
-        Text("Automatically start MagSafe Guard when you log in")
+        Text(l10n: "settings.general.launchAtLogin.title")
+        Text(l10n: "settings.general.launchAtLogin.caption")
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -214,8 +262,8 @@ struct GeneralSettingsView: View {
       )
     ) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Show in Dock")
-        Text("Display application icon in dock (requires restart)")
+        Text(l10n: "settings.general.showInDock.title")
+        Text(l10n: "settings.general.showInDock.caption")
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -234,7 +282,7 @@ struct SecuritySettingsView: View {
         enabledActionsSection
       }
 
-      Section(header: Text("Available Actions")) {
+      Section(header: Text(l10n: "settings.security.availableActions")) {
         ForEach(availableActions, id: \.self) { action in
           availableActionRow(for: action)
         }
@@ -249,8 +297,8 @@ struct SecuritySettingsView: View {
 
   private var securityActionsHeaderText: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("Active Security Actions")
-      Text("Drag to reorder, tap + to add or − to remove")
+      Text(l10n: "settings.security.activeActions")
+      Text(l10n: "settings.security.activeActions.hint")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -258,9 +306,9 @@ struct SecuritySettingsView: View {
 
   private var securityActionsHeader: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Security Actions")
+      Text(l10n: "settings.security.actionsTitle")
         .font(.headline)
-      Text("Select and order actions to execute when power is disconnected")
+      Text(l10n: "settings.security.actionsCaption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -281,7 +329,7 @@ struct SecuritySettingsView: View {
   }
 
   private var availableActionsSection: some View {
-    Section(header: Text("Available Actions")) {
+    Section(header: Text(l10n: "settings.security.availableActions")) {
       ForEach(availableActions, id: \.self) { action in
         availableActionRow(for: action)
       }
@@ -298,13 +346,13 @@ struct SecuritySettingsView: View {
 
   private var securityActionsFooter: some View {
     HStack {
-      Text("\(settingsManager.settings.securityActions.count) actions selected")
+      Text(L10n.tr("settings.security.actionsSelected", settingsManager.settings.securityActions.count))
         .font(.caption)
         .foregroundColor(.secondary)
 
       Spacer()
 
-      Button("Reset to Defaults") {
+      Button(L10n.tr("settings.security.resetDefaults")) {
         settingsManager.updateSetting(\.securityActions, value: [.lockScreen, .soundAlarm])
       }
       .buttonStyle(.link)
@@ -359,11 +407,11 @@ struct SecurityActionRow: View {
         .frame(width: 24)
 
       VStack(alignment: .leading, spacing: 2) {
-        Text(action.displayName)
+        Text(action.localizedName)
           .font(.body)
           .foregroundColor(isEnabled ? .primary : .secondary)
 
-        Text(action.description)
+        Text(action.localizedDescription)
           .font(.caption)
           .foregroundColor(.secondary)
       }
@@ -379,7 +427,7 @@ struct SecurityActionRow: View {
                 .foregroundColor(.red)
             }
             .buttonStyle(.plain)
-            .help("Remove action")
+            .help(L10n.tr("settings.security.removeAction"))
           }
 
           Image(systemName: "line.3.horizontal")
@@ -436,7 +484,7 @@ struct AutoArmSettingsView: View {
   }
 
   private var autoArmTriggersSection: some View {
-    Section(header: Text("Auto-Arm Triggers")) {
+    Section(header: Text(l10n: "settings.autoArm.triggers")) {
       Toggle(
         isOn: Binding(
           get: { settingsManager.settings.autoArmByLocation },
@@ -460,7 +508,7 @@ struct AutoArmSettingsView: View {
   }
 
   private var trustedLocationsSection: some View {
-    Section(header: Text("Trusted Locations")) {
+    Section(header: Text(l10n: "settings.autoArm.trustedLocations")) {
       Button {
         showingLocationManager = true
       } label: {
@@ -475,7 +523,7 @@ struct AutoArmSettingsView: View {
     HStack {
       Image(systemName: "location.circle")
         .foregroundColor(.accentColor)
-      Text("Manage Trusted Locations")
+      Text(l10n: "settings.autoArm.manageLocations")
       Spacer()
       Image(systemName: "chevron.right")
         .foregroundColor(.secondary)
@@ -484,7 +532,7 @@ struct AutoArmSettingsView: View {
   }
 
   private var trustedNetworksSection: some View {
-    Section(header: Text("Trusted Networks")) {
+    Section(header: Text(l10n: "settings.autoArm.trustedNetworks")) {
       trustedNetworksContent
       addNetworkRow
     }
@@ -495,8 +543,8 @@ struct AutoArmSettingsView: View {
 
   private var autoArmToggleLabel: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("Enable Auto-Arm")
-      Text("Automatically arm protection based on location or network")
+      Text(l10n: "settings.autoArm.enable.title")
+      Text(l10n: "settings.autoArm.enable.caption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -504,8 +552,8 @@ struct AutoArmSettingsView: View {
 
   private var locationBasedToggleLabel: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("Location-Based")
-      Text("Arm when leaving trusted locations")
+      Text(l10n: "settings.autoArm.location.title")
+      Text(l10n: "settings.autoArm.location.caption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -513,8 +561,8 @@ struct AutoArmSettingsView: View {
 
   private var untrustedNetworkToggleLabel: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("Network-Based")
-      Text("Arm when not connected to trusted Wi-Fi networks")
+      Text(l10n: "settings.autoArm.network.title")
+      Text(l10n: "settings.autoArm.network.caption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -523,7 +571,7 @@ struct AutoArmSettingsView: View {
   @ViewBuilder
   private var trustedNetworksContent: some View {
     if settingsManager.settings.trustedNetworks.isEmpty {
-      Text("No trusted networks configured")
+      Text(l10n: "settings.autoArm.noNetworks")
         .foregroundColor(.secondary)
         .italic()
     } else {
@@ -533,10 +581,10 @@ struct AutoArmSettingsView: View {
 
   private var addNetworkRow: some View {
     HStack {
-      TextField("Network SSID", text: $newNetwork)
+      TextField(L10n.tr("settings.autoArm.networkSSID"), text: $newNetwork)
         .textFieldStyle(.roundedBorder)
 
-      Button("Add") {
+      Button(L10n.tr("settings.autoArm.add")) {
         addTrustedNetwork()
       }
       .disabled(newNetwork.isEmpty)
@@ -585,7 +633,7 @@ struct AutoArmSettingsView: View {
   }
 
   private var autoArmStatusSection: some View {
-    Section(header: Text("Auto-Arm Status")) {
+    Section(header: Text(l10n: "settings.autoArm.status")) {
       autoArmStatusContent
     }
     .disabled(!settingsManager.settings.autoArmEnabled)
@@ -600,7 +648,7 @@ struct AutoArmSettingsView: View {
       }
       .padding(.vertical, 4)
     } else {
-      Text("Auto-arm service not available")
+      Text(l10n: "settings.autoArm.unavailable")
         .foregroundColor(.secondary)
     }
   }
@@ -620,12 +668,12 @@ struct AutoArmSettingsView: View {
   @ViewBuilder
   private func autoArmActionButton(_ autoArmManager: AutoArmManager) -> some View {
     if autoArmManager.isTemporarilyDisabled {
-      Button("Cancel Temporary Disable") {
+      Button(L10n.tr("settings.autoArm.cancelTempDisable")) {
         autoArmManager.cancelTemporaryDisable()
       }
       .buttonStyle(.link)
     } else if settingsManager.settings.autoArmEnabled {
-      Button("Temporarily Disable (1 hour)") {
+      Button(L10n.tr("settings.autoArm.tempDisable")) {
         autoArmManager.temporarilyDisable(for: 3600)
       }
       .buttonStyle(.link)
@@ -656,7 +704,7 @@ struct NotificationSettingsView: View {
   }
 
   private var statusNotificationsSection: some View {
-    Section(header: Text("Status Notifications")) {
+    Section(header: Text(l10n: "settings.notifications.status")) {
       Toggle(
         isOn: Binding(
           get: { settingsManager.settings.showStatusNotifications },
@@ -669,7 +717,7 @@ struct NotificationSettingsView: View {
   }
 
   private var alertSettingsSection: some View {
-    Section(header: Text("Alert Settings")) {
+    Section(header: Text(l10n: "settings.notifications.alerts")) {
       Toggle(
         isOn: Binding(
           get: { settingsManager.settings.playCriticalAlertSound },
@@ -690,8 +738,8 @@ struct NotificationSettingsView: View {
 
   private var statusNotificationToggleLabel: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("Show Status Changes")
-      Text("Display notifications when protection is armed or disarmed")
+      Text(l10n: "settings.notifications.showStatus.title")
+      Text(l10n: "settings.notifications.showStatus.caption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -699,8 +747,8 @@ struct NotificationSettingsView: View {
 
   private var alertSoundToggleLabel: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("Play Alert Sound")
-      Text("Play sound for critical security alerts")
+      Text(l10n: "settings.notifications.playSound.title")
+      Text(l10n: "settings.notifications.playSound.caption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -710,7 +758,7 @@ struct NotificationSettingsView: View {
     VStack(alignment: .leading, spacing: 12) {
       notificationPermissionsInfo
 
-      Button("Open System Settings") {
+      Button(L10n.tr("settings.notifications.openSystemSettings")) {
         openSystemNotificationSettings()
       }
     }
@@ -720,7 +768,7 @@ struct NotificationSettingsView: View {
     HStack {
       Image(systemName: "info.circle")
         .foregroundColor(.blue)
-      Text("Notification permissions are managed in System Settings")
+      Text(l10n: "settings.notifications.systemHint")
         .font(.caption)
     }
   }
@@ -748,15 +796,15 @@ struct AdvancedSettingsView: View {
     }
     .formStyle(.grouped)
     .alert(
-      "Settings Exported", isPresented: $showingExportSuccess,
+      L10n.tr("settings.advanced.exported.title"), isPresented: $showingExportSuccess,
       actions: {
-        Button("OK", role: .cancel) {
+        Button(L10n.tr("common.ok"), role: .cancel) {
           // No action needed - SwiftUI automatically dismisses the alert
           // when a button with .cancel role is tapped
         }
       },
       message: {
-        Text("Your settings have been exported successfully.")
+        Text(l10n: "settings.advanced.exported.message")
       }
     )
     .fileImporter(
@@ -791,17 +839,17 @@ struct AdvancedSettingsView: View {
   // MARK: - Computed Properties
 
   private var customScriptsSection: some View {
-    Section(header: Text("Custom Scripts")) {
+    Section(header: Text(l10n: "settings.advanced.customScripts")) {
       customScriptsContent
 
-      Button("Add Custom Script...") {
+      Button(L10n.tr("settings.advanced.addScript")) {
         addCustomScript()
       }
     }
   }
 
   private var debugSection: some View {
-    Section(header: Text("Debug")) {
+    Section(header: Text(l10n: "settings.advanced.debug")) {
       Toggle(
         isOn: Binding(
           get: { settingsManager.settings.debugLoggingEnabled },
@@ -814,7 +862,7 @@ struct AdvancedSettingsView: View {
   }
 
   private var settingsManagementSection: some View {
-    Section(header: Text("Settings Management")) {
+    Section(header: Text(l10n: "settings.advanced.management")) {
       settingsManagementButtons
     }
   }
@@ -822,7 +870,7 @@ struct AdvancedSettingsView: View {
   @ViewBuilder
   private var customScriptsContent: some View {
     if settingsManager.settings.customScripts.isEmpty {
-      Text("No custom scripts configured")
+      Text(l10n: "settings.advanced.noScripts")
         .foregroundColor(.secondary)
         .italic()
     } else {
@@ -832,8 +880,8 @@ struct AdvancedSettingsView: View {
 
   private var debugLoggingToggleLabel: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("Enable Debug Logging")
-      Text("Log detailed information for troubleshooting")
+      Text(l10n: "settings.advanced.debugLogging.title")
+      Text(l10n: "settings.advanced.debugLogging.caption")
         .font(.caption)
         .foregroundColor(.secondary)
     }
@@ -841,17 +889,17 @@ struct AdvancedSettingsView: View {
 
   private var settingsManagementButtons: some View {
     HStack {
-      Button("Export Settings...") {
+      Button(L10n.tr("settings.advanced.export")) {
         exportSettings()
       }
 
-      Button("Import Settings...") {
+      Button(L10n.tr("settings.advanced.import")) {
         showingImportDialog = true
       }
 
       Spacer()
 
-      Button("Reset All Settings") {
+      Button(L10n.tr("settings.advanced.resetAll")) {
         settingsManager.resetToDefaults()
       }
       .foregroundColor(.red)

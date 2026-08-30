@@ -1,0 +1,36 @@
+MagSafe Guard — Fork Attribution
+==================================
+
+This distribution is a fork of MagSafe Guard, maintained independently from
+the upstream project.
+
+Original software
+-----------------
+
+  MagSafe Guard
+  Copyright (c) 2025 Tobias Lekman
+  https://github.com/lekman/magsafe-buskill
+
+  Licensed under the MIT License (see LICENSE).
+
+Fork modifications
+------------------
+
+  MagSafe Guard (this fork)
+  Copyright (c) 2025–2026 Marc Seitz
+  https://github.com/sutz2001/MagSafe-BusKill
+
+  Fork changes are also licensed under the MIT License (see LICENSE).
+
+Third-party inspiration
+-----------------------
+
+  BusKill — https://github.com/BusKill/buskill-app
+
+License
+-------
+
+  SPDX-License-Identifier: MIT
+
+  The full MIT license text is in LICENSE. Redistributions must retain the
+  copyright notices above and the permission notice in LICENSE.

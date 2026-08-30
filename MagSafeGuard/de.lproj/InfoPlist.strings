@@ -1,0 +1,7 @@
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "MagSafe Guard nutzt deinen Standort, um den Schutz automatisch zu aktivieren, wenn du vertrauenswürdige Standorte verlässt.";
+"NSLocationAlwaysUsageDescription" = "MagSafe Guard benötigt Hintergrund-Standortzugriff, um zu erkennen, wenn du vertrauenswürdige Standorte verlässt, und den Schutz automatisch zu aktivieren.";
+"NSLocationWhenInUseUsageDescription" = "MagSafe Guard nutzt deinen Standort, um vertrauenswürdige Standorte zu erkennen, an denen Auto-Arm deaktiviert sein soll.";
+"NSLocationUsageDescription" = "MagSafe Guard nutzt deinen Standort, um vertrauenswürdige Standorte zu erkennen und den Schutz beim Verlassen automatisch zu aktivieren.";
+"NSUserNotificationsUsageDescription" = "MagSafe Guard sendet Mitteilungen über Sicherheitsereignisse und Statusänderungen.";
+"CFBundleDisplayName" = "MagSafe Guard";
+"NSHumanReadableCopyright" = "Copyright © 2025–2026 Marc Seitz. Originalsoftware © 2025 Tobias Lekman.";
