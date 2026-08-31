@@ -449,6 +449,14 @@ public class AppController: ObservableObject {
     executePanicResponse()
   }
 
+  /// Global panic hotkey (⌃⌘P) — only when panic-armed.
+  public func triggerPanicHotkeyResponse() {
+    guard protectionMode == .panic else { return }
+    guard currentState == .armed || currentState == .gracePeriod else { return }
+    logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.panicHotkey"))
+    executePanicResponse()
+  }
+
   // MARK: - Auto-Arm Management
 
   /// Gets the auto-arm manager instance

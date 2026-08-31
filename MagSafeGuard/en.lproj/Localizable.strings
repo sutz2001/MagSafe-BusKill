@@ -181,9 +181,9 @@
 "menu.arm.hint" = "Arm the security system to enable protection";
 "menu.disarm.hint" = "Disarm the security system to stop protection";
 "menu.armPanic" = "Arm Panic Mode…";
-"menu.armPanic.hint" = "Zero grace — immediate lock and shutdown on cable pull";
+"menu.armPanic.hint" = "Zero grace — immediate lock and shutdown on cable pull; trigger with %@ when armed";
 "menu.panicArmed" = "Panic Mode Active";
-"menu.panicArmed.hint" = "Cable disconnect triggers immediate shutdown";
+"menu.panicArmed.hint" = "Press %@ or disconnect cable to trigger immediately";
 "menu.cancelAction" = "Cancel Security Action";
 "menu.cancelAction.hint" = "Cancel the pending security action during grace period";
 "menu.power.connected" = "Power Connected";
@@ -301,6 +301,7 @@
 "panic.legal.title" = "Panic Mode";
 "panic.legal.message" = "Panic mode has zero grace period. Unplugging the cable will lock the screen, run your security actions, and shut down the Mac immediately. Unsaved work may be lost. There is no cancel during the response.";
 "panic.legal.accept" = "I Understand — Arm Panic";
+"panic.hotkey.shortcut" = "⌃⌘P";
 
 /* General settings */
 "settings.general.restoreArmed.title" = "Restore Armed State on Launch";
@@ -360,6 +361,7 @@
 "logDetail.remotePanic" = "Remote panic trigger via URL";
 "logDetail.armingPanic" = "Arming panic mode";
 "logDetail.panicTriggered" = "Panic response triggered";
+"logDetail.panicHotkey" = "Panic hotkey pressed";
 "logDetail.networkActionSucceeded" = "%@ succeeded";
 "logDetail.networkActionFailed" = "%@ failed: %@";
 

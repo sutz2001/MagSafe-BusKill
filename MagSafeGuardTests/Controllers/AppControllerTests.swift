@@ -519,6 +519,41 @@ final class AppControllerTests: XCTestCase {
     XCTAssertTrue(sut.getEventLog().contains { $0.details == L10n.tr("logDetail.panicTriggered") })
   }
 
+  func testPanicHotkeyTriggersResponseWhenPanicArmed() {
+    UserDefaultsManager.shared.updateSetting(\.panicLegalNoticeAccepted, value: true)
+    mockAuthService.shouldSucceed = true
+
+    let panicExecutor = PanicModeExecutor(
+      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
+      systemActions: mockSecurityActions
+    )
+    sut = AppController(
+      powerMonitor: PowerMonitorService.shared,
+      authService: mockAuthService.createConfiguredService(),
+      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
+      notificationService: NotificationService(deliveryMethod: mockNotificationService),
+      panicExecutor: panicExecutor
+    )
+
+    let armExpectation = expectation(description: "arm panic")
+    sut.armPanic { _ in armExpectation.fulfill() }
+    waitForExpectations(timeout: 1.0)
+
+    sut.triggerPanicHotkeyResponse()
+
+    waitUntil("panic hotkey shutdown") {
+      self.mockSecurityActions.executeImmediateShutdownCalled
+    }
+    XCTAssertTrue(
+      sut.getEventLog().contains { $0.details == L10n.tr("logDetail.panicHotkey") })
+  }
+
+  func testPanicHotkeyIgnoredWhenNotPanicArmed() {
+    armSystem()
+    sut.triggerPanicHotkeyResponse()
+    XCTAssertFalse(mockSecurityActions.executeImmediateShutdownCalled)
+  }
+
   func testEnterGracePeriodForTesting() {
     mockAuthService.shouldSucceed = true
     let armExpectation = expectation(description: "Arm")

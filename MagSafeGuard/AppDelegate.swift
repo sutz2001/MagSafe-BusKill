@@ -114,6 +114,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // AppController now handles power monitoring internally
     registerRemoteTriggerHandler()
+    registerPanicHotkey()
+  }
+
+  private func registerPanicHotkey() {
+    PanicHotkeyService.shared.start { [weak self] in
+      self?.core.appController.triggerPanicHotkeyResponse()
+    }
   }
 
   private func registerRemoteTriggerHandler() {
@@ -455,6 +462,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationWillTerminate(_ notification: Notification) {
+    PanicHotkeyService.shared.stop()
+
     // Log application termination
     core.appController.logEvent(.applicationTerminating, details: L10n.tr("logDetail.appTerminating"))
 

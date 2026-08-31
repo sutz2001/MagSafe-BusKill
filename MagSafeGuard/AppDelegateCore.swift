@@ -172,7 +172,7 @@ public class AppDelegateCore {
       let panicItem = NSMenuItem.accessibleMenuItem(
         title: L10n.tr("menu.armPanic"),
         accessibilityLabel: L10n.tr("menu.armPanic"),
-        hint: L10n.tr("menu.armPanic.hint"),
+        hint: L10n.tr("menu.armPanic.hint", PanicHotkeyService.displayShortcut),
         keyEquivalent: "p",
         action: #selector(AppDelegate.togglePanicMode),
         target: appDelegate
@@ -182,7 +182,7 @@ public class AppDelegateCore {
       let panicStatus = NSMenuItem.accessibleMenuItem(
         title: L10n.tr("menu.panicArmed"),
         accessibilityLabel: L10n.tr("menu.panicArmed"),
-        hint: L10n.tr("menu.panicArmed.hint")
+        hint: L10n.tr("menu.panicArmed.hint", PanicHotkeyService.displayShortcut)
       )
       panicStatus.isEnabled = false
       menu.addItem(panicStatus)

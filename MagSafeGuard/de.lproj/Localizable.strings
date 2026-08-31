@@ -181,9 +181,9 @@
 "menu.arm.hint" = "Sicherheitssystem aktivieren";
 "menu.disarm.hint" = "Sicherheitssystem deaktivieren";
 "menu.armPanic" = "Panic-Modus aktivieren…";
-"menu.armPanic.hint" = "Keine Karenzzeit — sofortige Sperre und Abschaltung bei Kabeltrennung";
+"menu.armPanic.hint" = "Keine Karenzzeit — sofortige Sperre und Abschaltung bei Kabeltrennung; Auslösung mit %@ wenn aktiv";
 "menu.panicArmed" = "Panic-Modus aktiv";
-"menu.panicArmed.hint" = "Kabeltrennung löst sofortige Abschaltung aus";
+"menu.panicArmed.hint" = "%@ drücken oder Kabel trennen für sofortige Auslösung";
 "menu.cancelAction" = "Sicherheitsaktion abbrechen";
 "menu.cancelAction.hint" = "Ausstehende Sicherheitsaktion während der Karenzzeit abbrechen";
 "menu.power.connected" = "Netzteil angeschlossen";
@@ -301,6 +301,7 @@
 "panic.legal.title" = "Panic-Modus";
 "panic.legal.message" = "Im Panic-Modus gibt es keine Karenzzeit. Beim Trennen des Kabels wird der Bildschirm gesperrt, Ihre Sicherheitsaktionen ausgeführt und der Mac sofort heruntergefahren. Nicht gespeicherte Arbeit kann verloren gehen. Während der Reaktion gibt es keinen Abbruch.";
 "panic.legal.accept" = "Verstanden — Panic aktivieren";
+"panic.hotkey.shortcut" = "⌃⌘P";
 
 /* General settings */
 "settings.general.restoreArmed.title" = "Scharfen Zustand nach Neustart wiederherstellen";
@@ -360,6 +361,7 @@
 "logDetail.remotePanic" = "Fern-Panic-Auslösung per URL";
 "logDetail.armingPanic" = "Panic-Modus wird aktiviert";
 "logDetail.panicTriggered" = "Panic-Reaktion ausgelöst";
+"logDetail.panicHotkey" = "Panic-Tastenkürzel gedrückt";
 "logDetail.networkActionSucceeded" = "%@ erfolgreich";
 "logDetail.networkActionFailed" = "%@ fehlgeschlagen: %@";
 
