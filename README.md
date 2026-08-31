@@ -1,5 +1,14 @@
 # MagSafe Guard
 
+<p align="center">
+  <img src="docs/assets/logo-256.png" width="128" alt="MagSafe Guard app icon" />
+</p>
+
+<p align="center">
+  <strong>MagSafe Guard</strong><br>
+  <em>Your Mac's Security Guardian</em>
+</p>
+
 **Language:** English · [Deutsch (README.de.md)](README.de.md)
 
 > **macOS security utility** — power cable as a dead-man's switch. Arm from the menu bar; unplugging triggers a grace period, then configurable protective actions.
@@ -16,7 +25,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
 | **Repository** | Private until [fork legal checklist](#repository-visibility) is complete |
 
-![Demo](docs/assets/magsafe-guard.gif)
+![Demo — power disconnect triggers protection (no Mac App Store)](docs/assets/magsafe-guard.gif)
 
 ---
 
@@ -235,6 +244,6 @@ Sync with upstream: `git fetch upstream && git merge upstream/main`
 
 - Concept: [BusKill](https://github.com/BusKill/buskill-app)
 - Upstream: Tobias Lekman · [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)
-- Fork modifications: Marc Seitz © 2025–2026
+- Fork modifications: Marc Seitz © 2025
 
 MagSafe Guard is a security utility provided **as is** without warranty. You are responsible for use on your devices, including work machines and custom scripts.

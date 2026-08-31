@@ -28,7 +28,7 @@
     <key>LSMinimumSystemVersion</key>
     <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 2025–2026 Marc Seitz. Original software © 2025 Tobias Lekman.</string>
+    <string>Copyright © 2025 Marc Seitz. Original software © 2025 Tobias Lekman.</string>
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>LSUIElement</key>

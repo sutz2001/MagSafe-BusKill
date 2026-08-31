@@ -4,4 +4,4 @@
 "NSLocationUsageDescription" = "MagSafe Guard uses your location to identify trusted locations and automatically arm protection when you leave them.";
 "NSUserNotificationsUsageDescription" = "MagSafe Guard sends notifications about security events and status changes.";
 "CFBundleDisplayName" = "MagSafe Guard";
-"NSHumanReadableCopyright" = "Copyright © 2025–2026 Marc Seitz. Original software © 2025 Tobias Lekman.";
+"NSHumanReadableCopyright" = "Copyright © 2025 Marc Seitz. Original software © 2025 Tobias Lekman.";

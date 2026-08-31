@@ -1,5 +1,14 @@
 # MagSafe Guard
 
+<p align="center">
+  <img src="docs/assets/logo-256.png" width="128" alt="MagSafe Guard App-Icon" />
+</p>
+
+<p align="center">
+  <strong>MagSafe Guard</strong><br>
+  <em>Dein Sicherheits-Wächter für den Mac</em>
+</p>
+
 **Sprache:** Deutsch · [English (README.md)](README.md)
 
 > **macOS-Sicherheitswerkzeug** — das Netzkabel als Dead-Man's-Switch. In der Menüleiste scharf schalten; beim Abziehen startet eine Grace Period, danach konfigurierbare Schutzaktionen.
@@ -16,7 +25,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
 | **Repository** | Privat, bis [rechtliche Fork-Checkliste](#repository-sichtbarkeit) erfüllt ist |
 
-![Demo](docs/assets/magsafe-guard.gif)
+![Demo — Netzteil-Abzug löst Schutz aus (kein Mac App Store)](docs/assets/magsafe-guard.gif)
 
 ---
 
@@ -235,6 +244,6 @@ Upstream: `git fetch upstream && git merge upstream/main`
 
 - Konzept: [BusKill](https://github.com/BusKill/buskill-app)
 - Upstream: Tobias Lekman · [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)
-- Fork-Anpassungen: Marc Seitz © 2025–2026
+- Fork-Anpassungen: Marc Seitz © 2025
 
 MagSafe Guard wird **ohne Gewähr** bereitgestellt. Du trägst die Verantwortung für den Einsatz — auch auf Dienstgeräten und mit eigenen Skripten.
