@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Checkout repository
         id: checkout
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
         with:
           # Need more history to properly detect changes in PRs
           fetch-depth: 0
@@ -90,7 +90,7 @@ jobs:
       - name: Cache CodeQL database
         id: cache-codeql
         if: steps.code-changes.outputs.has-code-changes == 'true'
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         with:
           path: |
             .codeql
@@ -105,7 +105,7 @@ jobs:
 
       - name: Initialize CodeQL
         if: steps.code-changes.outputs.has-code-changes == 'true'
-        uses: github/codeql-action/init@19b2f06db2b6f5108140aeb04014ef02b648f789 # v4.31.11
+        uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           languages: swift
           build-mode: manual
@@ -143,7 +143,7 @@ jobs:
 
       - name: Perform CodeQL Analysis
         if: steps.code-changes.outputs.has-code-changes == 'true'
-        uses: github/codeql-action/analyze@19b2f06db2b6f5108140aeb04014ef02b648f789 # v4.31.11
+        uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           category: "/language:swift"
           upload: true

@@ -63,7 +63,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
         with:
           fetch-depth: 0
 
@@ -156,10 +156,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
 
       - name: Dependency Review
-        uses: actions/dependency-review-action@98884d411b0f1c583e5ee579e7e897d4623019c2 # v3
+        uses: actions/dependency-review-action@1e966ba708e4b64bb0c9bfb7abb5a232840be16a # v3
         with:
           # Fail on high severity vulnerabilities
           fail-on-severity: high
@@ -179,13 +179,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
         with:
           fetch-depth: 0 # Fetch all history for scanning
 
       - name: TruffleHog OSS
         id: trufflehog
-        uses: trufflesecurity/trufflehog@94fdf01214232715294e27e66eab2a6dad568d21 # v3
+        uses: trufflesecurity/trufflehog@2b75fd2307181da49bb79cd95cdf117e125a3bc7 # v3
         with:
           path: ./
           base: ${{ github.event.repository.default_branch }}
@@ -227,7 +227,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
 
       - name: Check for security policy
         run: |
@@ -251,7 +251,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
 
       # Run Semgrep - automatically uses cloud rules if SEMGREP_APP_TOKEN is set
       - name: Run Semgrep
@@ -264,7 +264,7 @@ jobs:
 
       # Upload Semgrep results to GitHub Security tab
       - name: Upload SARIF results
-        uses: github/codeql-action/upload-sarif@19b2f06db2b6f5108140aeb04014ef02b648f789 # v4.31.11
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         if: always() # Upload even if Semgrep step fails
         with:
           sarif_file: semgrep.sarif
@@ -281,10 +281,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
 
       - name: Run License Scan
-        uses: fossas/fossa-action@ba7c3dfb1bf67d00ed62e6f182274062c80e3c04 # v1
+        uses: fossas/fossa-action@fd2efee83cb65c9525e431ad55986fbd49771910 # v1
         with:
           api-key: ${{ secrets.FOSSA_API_KEY }}
         continue-on-error: true # Don't fail if FOSSA is not configured
@@ -304,19 +304,19 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
+        uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
         with:
           persist-credentials: false
 
       - name: Run Scorecard
-        uses: ossf/scorecard-action@4a0b87a20cc42672e6c80e82e63b5cd8f25f108a # v2
+        uses: ossf/scorecard-action@e8e61e86ea0a152be84d03729c02a7300065c17d # v2
         with:
           results_file: results.sarif
           results_format: sarif
           publish_results: false
 
       - name: Upload results to code scanning
-        uses: github/codeql-action/upload-sarif@19b2f06db2b6f5108140aeb04014ef02b648f789 # v4.31.11
+        uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4.37.9
         with:
           sarif_file: results.sarif
 
