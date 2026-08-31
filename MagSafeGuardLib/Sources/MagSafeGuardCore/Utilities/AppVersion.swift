@@ -3,9 +3,9 @@ import Foundation
 
 public enum AppVersion {
   /// User-facing semver (e.g. 0.2.0)
-  public static let marketing = "0.4.2"
+  public static let marketing = "0.4.3"
   /// Build number (integer, increments per release)
-  public static let build = 7
+  public static let build = 8
   /// Display string for About / diagnostics
   public static var full: String { "\(marketing) (\(build))" }
 }

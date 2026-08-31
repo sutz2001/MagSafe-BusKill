@@ -3,6 +3,12 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.4.3] — 2026-08-31
+
+### Added
+
+- Discreet operation: optional status alerts, security alerts, and alert sounds (menu bar icon only)
+
 ## [0.4.2] — 2026-08-31
 
 ### Added

@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.4.2` (build `7`) |
+| **Version** | `0.4.3` (build `8`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
