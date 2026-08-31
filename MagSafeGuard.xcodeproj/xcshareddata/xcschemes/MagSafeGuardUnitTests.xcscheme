@@ -43,32 +43,13 @@
       selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES"
-      shouldAutocreateTestPlan = "YES">
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "CI"
-            value = "true"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "MAGSAFE_GUARD_TEST_MODE"
-            value = "1"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "193DA6B72E3B164D00DE6E06"
-               BuildableName = "MagSafeGuardTests.xctest"
-               BlueprintName = "MagSafeGuardTests"
-               ReferencedContainer = "container:MagSafeGuard.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
+      shouldAutocreateTestPlan = "NO">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:MagSafeGuard.xcodeproj/xcshareddata/xctestplans/MagSafeGuardUnit.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

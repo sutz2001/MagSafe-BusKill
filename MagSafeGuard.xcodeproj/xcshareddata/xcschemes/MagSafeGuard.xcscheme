@@ -42,31 +42,16 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "193DA6B72E3B164D00DE6E06"
-               BuildableName = "MagSafeGuardTests.xctest"
-               BlueprintName = "MagSafeGuardTests"
-               ReferencedContainer = "container:MagSafeGuard.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "193DA6C12E3B164D00DE6E06"
-               BuildableName = "MagSafeGuardUITests.xctest"
-               BlueprintName = "MagSafeGuardUITests"
-               ReferencedContainer = "container:MagSafeGuard.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
+      shouldAutocreateTestPlan = "NO">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:MagSafeGuard.xcodeproj/xcshareddata/xctestplans/MagSafeGuardUnit.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:MagSafeGuard.xcodeproj/xcshareddata/xctestplans/MagSafeGuardFull.xctestplan">
+         </TestPlanReference>
+      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

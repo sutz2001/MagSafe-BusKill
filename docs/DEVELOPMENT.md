@@ -140,15 +140,27 @@ public class AppController {
 #### Running Tests
 
 ```bash
-# Run all tests
+# Domain/core unit tests (Swift Package Manager — fastest)
 task test
+
+# App-layer unit tests in Xcode (no UI tests)
+task xcode:test
+
+# All Xcode tests including UI tests
+task xcode:test:full
 
 # Run with coverage reporting
 task test:coverage
-
-# Generate HTML coverage report
-task test:coverage:html
 ```
+
+**Xcode test plans** (in `MagSafeGuard.xcodeproj/xcshareddata/xctestplans/`):
+
+| Plan | Contents |
+|------|----------|
+| `MagSafeGuardUnit` | `MagSafeGuardTests` only (default for ⌘U) |
+| `MagSafeGuardFull` | Unit + `MagSafeGuardUITests` |
+
+In Xcode: open `MagSafeGuard.xcodeproj`, scheme **MagSafeGuard**, then **Product → Test** (⌘U). Switch plans via **Product → Test Plan**.
 
 #### What to Test
 

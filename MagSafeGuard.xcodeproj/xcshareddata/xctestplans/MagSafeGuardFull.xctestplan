@@ -1,0 +1,52 @@
+{
+  "configurations" : [
+    {
+      "id" : "8D5F0B23-4C6E-5A9F-0B2D-3E7F9A1B5C8D",
+      "name" : "Full",
+      "options" : {
+        "targetForVariableExpansion" : {
+          "containerPath" : "container:MagSafeGuard.xcodeproj",
+          "identifier" : "193DA6A72E3B164A00DE6E06",
+          "name" : "MagSafeGuard"
+        }
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : true,
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "true"
+      },
+      {
+        "key" : "MAGSAFE_GUARD_TEST_MODE",
+        "value" : "1"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:MagSafeGuard.xcodeproj",
+      "identifier" : "193DA6A72E3B164A00DE6E06",
+      "name" : "MagSafeGuard"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:MagSafeGuard.xcodeproj",
+        "identifier" : "193DA6B72E3B164D00DE6E06",
+        "name" : "MagSafeGuardTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:MagSafeGuard.xcodeproj",
+        "identifier" : "193DA6C12E3B164D00DE6E06",
+        "name" : "MagSafeGuardUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

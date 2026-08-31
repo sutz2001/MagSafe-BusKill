@@ -4,6 +4,7 @@ version: "3"
 vars:
   PROJECT_PATH: "MagSafeGuard.xcodeproj"
   SCHEME: "MagSafeGuard"
+  TEST_PLAN: "MagSafeGuardUnit"
   CONFIGURATION: "Debug"
   DESTINATION: "platform=macOS"
   DERIVED_DATA_PATH: ".build/xcode"
@@ -110,7 +111,29 @@ tasks:
           {{.BUILD_SETTINGS}}
 
   test:
-    desc: Run Xcode tests (includes app-layer tests like AppControllerTests)
+    desc: Run Xcode unit tests (MagSafeGuardUnit test plan, no UI tests)
+    silent: true
+    vars:
+      TEST_SETTINGS: >-
+        CODE_SIGN_IDENTITY=""
+        CODE_SIGNING_REQUIRED=NO
+        CODE_SIGNING_ALLOWED=NO
+    cmds:
+      - task: test:plan
+        vars:
+          TEST_PLAN: "{{.TEST_PLAN}}"
+
+  test:full:
+    desc: Run all Xcode tests including UI tests (MagSafeGuardFull test plan)
+    silent: true
+    cmds:
+      - task: test:plan
+        vars:
+          TEST_PLAN: "MagSafeGuardFull"
+
+  test:plan:
+    desc: Run Xcode tests for a specific test plan (TEST_PLAN variable)
+    internal: true
     silent: true
     vars:
       TEST_SETTINGS: >-
@@ -119,8 +142,8 @@ tasks:
         CODE_SIGNING_ALLOWED=NO
     cmds:
       - |
-        echo "🧪 Running Xcode tests..."
-        echo "This includes app-layer tests not covered by SPM tests"
+        echo "🧪 Running Xcode tests (test plan: {{.TEST_PLAN}})..."
+        echo "App-layer tests in MagSafeGuardTests; SPM domain tests: task test"
         echo ""
 
         # Check if Xcode is available
@@ -130,15 +153,10 @@ tasks:
         fi
 
         # Clean up UITests-Runner to prevent "damaged app" popup
-        echo "🧹 Cleaning up UITests-Runner..."
-        find . -name "MagSafeGuardUITests-Runner.app" -type d -exec rm -rf {} + 2>/dev/null || true
-        find . -name "MagSafeGuardUITests-Runner" -type f -exec rm -f {} + 2>/dev/null || true
-
-        # Determine if UI tests should be skipped
-        SKIP_TESTING_ARGS=""
-        if [ "${SKIP_UI_TESTS}" = "true" ]; then
-          echo "⏭️  Skipping UI tests (SKIP_UI_TESTS=true)"
-          SKIP_TESTING_ARGS="-skip-testing:MagSafeGuardUITests"
+        if [ "{{.TEST_PLAN}}" = "MagSafeGuardFull" ]; then
+          echo "🧹 Cleaning up UITests-Runner..."
+          find . -name "MagSafeGuardUITests-Runner.app" -type d -exec rm -rf {} + 2>/dev/null || true
+          find . -name "MagSafeGuardUITests-Runner" -type f -exec rm -f {} + 2>/dev/null || true
         fi
 
         # Run tests with optional xcbeautify
@@ -146,10 +164,10 @@ tasks:
           xcodebuild test \
             -project "{{.PROJECT_PATH}}" \
             -scheme "{{.SCHEME}}" \
+            -testPlan "{{.TEST_PLAN}}" \
             -configuration "{{.CONFIGURATION}}" \
             -destination "{{.DESTINATION}}" \
             -derivedDataPath "{{.DERIVED_DATA_PATH}}" \
-            ${SKIP_TESTING_ARGS} \
             {{.TEST_SETTINGS}} \
             2>&1 | xcbeautify --quiet --is-ci || {
               exit_code=$?
@@ -165,10 +183,10 @@ tasks:
           xcodebuild test \
             -project "{{.PROJECT_PATH}}" \
             -scheme "{{.SCHEME}}" \
+            -testPlan "{{.TEST_PLAN}}" \
             -configuration "{{.CONFIGURATION}}" \
             -destination "{{.DESTINATION}}" \
             -derivedDataPath "{{.DERIVED_DATA_PATH}}" \
-            ${SKIP_TESTING_ARGS} \
             {{.TEST_SETTINGS}} || {
               exit_code=$?
               echo ""
@@ -181,7 +199,7 @@ tasks:
         echo "✅ All tests passed!"
 
   test:verbose:
-    desc: Run tests with verbose output
+    desc: Run unit tests with verbose output (MagSafeGuardUnit test plan)
     silent: true
     vars:
       TEST_SETTINGS: >-
@@ -190,25 +208,13 @@ tasks:
         CODE_SIGNING_ALLOWED=NO
     cmds:
       - |
-        # Clean up UITests-Runner to prevent "damaged app" popup
-        echo "🧹 Cleaning up UITests-Runner..."
-        find . -name "MagSafeGuardUITests-Runner.app" -type d -exec rm -rf {} + 2>/dev/null || true
-        find . -name "MagSafeGuardUITests-Runner" -type f -exec rm -f {} + 2>/dev/null || true
-
-        # Determine if UI tests should be skipped
-        SKIP_TESTING_ARGS=""
-        if [ "${SKIP_UI_TESTS}" = "true" ]; then
-          echo "⏭️  Skipping UI tests (SKIP_UI_TESTS=true)"
-          SKIP_TESTING_ARGS="-skip-testing:MagSafeGuardUITests"
-        fi
-
         xcodebuild test \
           -project "{{.PROJECT_PATH}}" \
           -scheme "{{.SCHEME}}" \
+          -testPlan "{{.TEST_PLAN}}" \
           -configuration "{{.CONFIGURATION}}" \
           -destination "{{.DESTINATION}}" \
           -derivedDataPath "{{.DERIVED_DATA_PATH}}" \
-          ${SKIP_TESTING_ARGS} \
           {{.TEST_SETTINGS}}
 
   build-test:
