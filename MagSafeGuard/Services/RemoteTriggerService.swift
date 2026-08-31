@@ -45,6 +45,9 @@ public final class RemoteTriggerService {
     case "arm":
       armIfDisarmed()
       return true
+    case "panic":
+      appController.triggerRemotePanicResponse()
+      return true
     default:
       Log.warning("Unknown remote trigger host: \(host)", category: .security)
       return true

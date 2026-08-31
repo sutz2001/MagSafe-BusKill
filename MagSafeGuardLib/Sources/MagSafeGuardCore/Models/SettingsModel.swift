@@ -117,6 +117,9 @@ public struct Settings: Codable {
   /// `showStatusNotifications` off for discreet operation (icon only).
   public var showSecurityAlerts: Bool = true
 
+  /// User accepted the panic-mode impact notice (required before arming panic).
+  public var panicLegalNoticeAccepted: Bool = false
+
   /// Enable audio alerts for critical security events.
   ///
   /// When enabled, critical alerts (power disconnection, grace period warnings)

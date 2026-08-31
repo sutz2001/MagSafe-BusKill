@@ -17,14 +17,14 @@ final class NotificationServiceDiscreetTests: XCTestCase {
     NotificationService.disableForTesting = false
     mockDelivery = MockNotificationDeliveryForDiscreet()
     sut = NotificationService(deliveryMethod: mockDelivery)
-    UserDefaultsManager.shared.settings.showSecurityAlerts = true
-    UserDefaultsManager.shared.settings.playCriticalAlertSound = false
+    UserDefaultsManager.shared.updateSetting(\.showSecurityAlerts, value: true)
+    UserDefaultsManager.shared.updateSetting(\.playCriticalAlertSound, value: false)
   }
 
   override func tearDown() {
     NotificationService.disableForTesting = true
-    UserDefaultsManager.shared.settings.showSecurityAlerts = true
-    UserDefaultsManager.shared.settings.playCriticalAlertSound = true
+    UserDefaultsManager.shared.updateSetting(\.showSecurityAlerts, value: true)
+    UserDefaultsManager.shared.updateSetting(\.playCriticalAlertSound, value: true)
     sut = nil
     mockDelivery = nil
     super.tearDown()
@@ -37,7 +37,7 @@ final class NotificationServiceDiscreetTests: XCTestCase {
   }
 
   func testShowCriticalAlertSkipsVisualWhenSecurityAlertsDisabled() {
-    UserDefaultsManager.shared.settings.showSecurityAlerts = false
+    UserDefaultsManager.shared.updateSetting(\.showSecurityAlerts, value: false)
 
     sut.showCriticalAlert(title: "Security Alert", message: "Grace started")
 

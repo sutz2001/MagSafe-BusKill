@@ -48,6 +48,7 @@
 "settings.network.remote.example" = "Example: %@";
 "settings.network.remote.triggerExample" = "Trigger actions: %@";
 "settings.network.remote.armExample" = "Arm remotely: %@";
+"settings.network.remote.panicExample" = "Panic trigger (panic-armed only): %@";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
@@ -179,6 +180,10 @@
 "menu.disarm" = "Disarm Protection";
 "menu.arm.hint" = "Arm the security system to enable protection";
 "menu.disarm.hint" = "Disarm the security system to stop protection";
+"menu.armPanic" = "Arm Panic Mode…";
+"menu.armPanic.hint" = "Zero grace — immediate lock and shutdown on cable pull";
+"menu.panicArmed" = "Panic Mode Active";
+"menu.panicArmed.hint" = "Cable disconnect triggers immediate shutdown";
 "menu.cancelAction" = "Cancel Security Action";
 "menu.cancelAction.hint" = "Cancel the pending security action during grace period";
 "menu.power.connected" = "Power Connected";
@@ -199,6 +204,7 @@
 /* Status */
 "status.disarmed" = "Protection Disabled";
 "status.armed" = "Protection Active";
+"status.panicArmed" = "Panic Mode Active";
 "status.gracePeriod" = "Grace Period - %llds";
 "status.triggered" = "Security Action Triggered";
 
@@ -209,6 +215,7 @@
 "app.accessibility.statusComponent" = "MagSafe Guard status";
 "app.fail.arm" = "Failed to arm: %@";
 "app.fail.disarm" = "Failed to disarm: %@";
+"app.fail.armPanic" = "Failed to arm panic mode: %@";
 "app.crash.title" = "Previous Crash Detected";
 "app.crash.message" = "Exception: %@\nReason: %@";
 "app.quit.grace.title" = "Security Action in Progress";
@@ -267,10 +274,13 @@
 "auth.reason.arm" = "Authenticate to arm MagSafe Guard";
 "auth.reason.disarm" = "Authenticate to disarm MagSafe Guard";
 "auth.reason.cancelGrace" = "Authenticate to cancel security action";
+"auth.reason.armPanic" = "Authenticate to arm panic mode";
 
 /* Notifications */
 "notification.armed.title" = "MagSafe Guard Armed";
 "notification.armed.message" = "Protection is now active";
+"notification.panicArmed.title" = "Panic Mode Armed";
+"notification.panicArmed.message" = "Cable disconnect will lock and shut down immediately";
 "notification.disarmed.title" = "MagSafe Guard Disarmed";
 "notification.disarmed.message" = "Protection is now inactive";
 "notification.graceCancelled.title" = "Security Action Cancelled";
@@ -285,6 +295,12 @@
 /* Errors */
 "error.gracePeriodNotCancellable" = "Grace period cancellation is not allowed";
 "error.authenticationRequired" = "Authentication is required for this operation";
+"error.panicLegalNoticeRequired" = "Accept the panic mode notice before arming";
+
+/* Panic mode */
+"panic.legal.title" = "Panic Mode";
+"panic.legal.message" = "Panic mode has zero grace period. Unplugging the cable will lock the screen, run your security actions, and shut down the Mac immediately. Unsaved work may be lost. There is no cancel during the response.";
+"panic.legal.accept" = "I Understand — Arm Panic";
 
 /* General settings */
 "settings.general.restoreArmed.title" = "Restore Armed State on Launch";
@@ -341,6 +357,9 @@
 "logDetail.systemDisarmed" = "System disarmed";
 "logDetail.appTerminating" = "App terminating";
 "logDetail.remoteArm" = "Remote arm via URL";
+"logDetail.remotePanic" = "Remote panic trigger via URL";
+"logDetail.armingPanic" = "Arming panic mode";
+"logDetail.panicTriggered" = "Panic response triggered";
 "logDetail.networkActionSucceeded" = "%@ succeeded";
 "logDetail.networkActionFailed" = "%@ failed: %@";
 

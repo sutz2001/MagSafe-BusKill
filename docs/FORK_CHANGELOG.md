@@ -3,6 +3,14 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.0] — 2026-08-31
+
+### Added
+
+- **Panic mode:** zero grace, protection-first security actions, immediate shutdown on cable pull
+- Menu item **Arm Panic Mode…** with legal notice; `magsafeguard://panic?token=…` remote trigger
+- Protection-first theft trigger path (GAP-15): lock first, bypass rate limit / circuit breaker
+
 ## [0.4.3] — 2026-08-31
 
 ### Added

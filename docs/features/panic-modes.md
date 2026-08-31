@@ -220,12 +220,12 @@ Do not conflate `trigger` with panic or paranoid.
 
 ### v0.5.0 — Panic
 
-- [ ] `PanicModeExecutor` + immediate shutdown path
-- [ ] Panic arming UI + lightweight legal notice (EN + DE)
-- [ ] Distinct menu bar icon
-- [ ] Hotkey + `magsafeguard://panic`
-- [ ] `operating-modes.md` updated when shipped
-- [ ] Unit tests with mocks
+- [x] `PanicModeExecutor` + immediate shutdown path
+- [x] Panic arming UI + lightweight legal notice (EN + DE)
+- [x] Distinct menu bar icon
+- [ ] Hotkey + `magsafeguard://panic` (URL shipped; global hotkey pending)
+- [x] `operating-modes.md` updated when shipped
+- [x] Unit tests with mocks
 
 ### v0.6.0 — Paranoid
 

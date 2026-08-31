@@ -452,6 +452,73 @@ final class AppControllerTests: XCTestCase {
     XCTAssertEqual(sut.statusMenuBarImageName, "MenuBarIconArmed")
   }
 
+  // MARK: - Panic Mode Tests
+
+  func testArmPanicRequiresLegalNotice() {
+    UserDefaultsManager.shared.updateSetting(\.panicLegalNoticeAccepted, value: false)
+    mockAuthService.shouldSucceed = true
+
+    let expectation = expectation(description: "arm panic without legal")
+    sut.armPanic { result in
+      guard case .failure(AppControllerError.panicLegalNoticeRequired) = result else {
+        XCTFail("Expected panicLegalNoticeRequired")
+        return
+      }
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+    XCTAssertEqual(sut.currentState, .disarmed)
+  }
+
+  func testArmPanicSucceedsWhenLegalNoticeAccepted() {
+    UserDefaultsManager.shared.updateSetting(\.panicLegalNoticeAccepted, value: true)
+    mockAuthService.shouldSucceed = true
+
+    let expectation = expectation(description: "arm panic")
+    sut.armPanic { result in
+      if case .failure = result {
+        XCTFail("Panic arm should succeed")
+      }
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+
+    XCTAssertEqual(sut.currentState, .armed)
+    XCTAssertEqual(sut.protectionMode, .panic)
+    XCTAssertEqual(sut.statusMenuBarImageName, "MenuBarIconTriggered")
+    XCTAssertEqual(sut.statusDescription, L10n.tr("status.panicArmed"))
+  }
+
+  func testPanicPowerDisconnectSkipsGracePeriod() {
+    UserDefaultsManager.shared.updateSetting(\.panicLegalNoticeAccepted, value: true)
+    mockAuthService.shouldSucceed = true
+
+    let panicExecutor = PanicModeExecutor(
+      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
+      systemActions: mockSecurityActions
+    )
+    sut = AppController(
+      powerMonitor: PowerMonitorService.shared,
+      authService: mockAuthService.createConfiguredService(),
+      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
+      notificationService: NotificationService(deliveryMethod: mockNotificationService),
+      panicExecutor: panicExecutor
+    )
+
+    let armExpectation = expectation(description: "arm panic")
+    sut.armPanic { _ in armExpectation.fulfill() }
+    waitForExpectations(timeout: 1.0)
+
+    sut.simulatePowerDisconnectForTesting()
+
+    XCTAssertFalse(sut.isInGracePeriod)
+    XCTAssertNotEqual(sut.currentState, .gracePeriod)
+    waitUntil("panic immediate shutdown") {
+      self.mockSecurityActions.executeImmediateShutdownCalled
+    }
+    XCTAssertTrue(sut.getEventLog().contains { $0.details == L10n.tr("logDetail.panicTriggered") })
+  }
+
   func testEnterGracePeriodForTesting() {
     mockAuthService.shouldSucceed = true
     let armExpectation = expectation(description: "Arm")

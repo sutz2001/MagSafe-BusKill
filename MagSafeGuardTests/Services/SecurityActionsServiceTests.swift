@@ -57,6 +57,23 @@ final class SecurityActionsServiceTests: XCTestCase {
     XCTAssertEqual(mockSystemActions.lockScreenCallCount, 1)
   }
 
+  func testTheftTriggerBypassesRateLimit() {
+    sut.configureRateLimitForTesting(minimumInterval: 10, maxExecutions: 100, window: 60)
+    sut.resetProtectionStateForTesting()
+
+    let first = expectation(description: "first execution")
+    sut.executeActions { _ in first.fulfill() }
+    waitForExpectations(timeout: 2)
+
+    let second = expectation(description: "theft trigger bypasses rate limit")
+    sut.executeActions(context: .theftTrigger) { result in
+      XCTAssertTrue(result.executedActions.contains(.lockScreen))
+      second.fulfill()
+    }
+    waitForExpectations(timeout: 2)
+    XCTAssertEqual(mockSystemActions.lockScreenCallCount, 2)
+  }
+
   func testCircuitBreakerOpensAfterRepeatedFailures() {
     sut.configureCircuitBreakerForTesting(maxFailures: 2, openDuration: 120)
     mockSystemActions.lockScreenShouldSucceed = false

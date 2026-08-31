@@ -292,6 +292,44 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
   }
 
+  @objc func togglePanicMode() {
+    let controller = core.appController
+
+    if controller.protectionMode == .panic, controller.currentState != .disarmed {
+      controller.disarm { [weak self] result in
+        if case .failure(let error) = result {
+          self?.showNotification(
+            title: AppDelegate.appName,
+            message: L10n.tr("app.fail.disarm", error.localizedDescription)
+          )
+        }
+      }
+      return
+    }
+
+    guard controller.currentState == .disarmed else { return }
+
+    if !UserDefaultsManager.shared.settings.panicLegalNoticeAccepted {
+      let alert = NSAlert()
+      alert.messageText = L10n.tr("panic.legal.title")
+      alert.informativeText = L10n.tr("panic.legal.message")
+      alert.alertStyle = .warning
+      alert.addButton(withTitle: L10n.tr("panic.legal.accept"))
+      alert.addButton(withTitle: L10n.tr("common.cancel"))
+      guard alert.runModal() == .alertFirstButtonReturn else { return }
+      UserDefaultsManager.shared.updateSetting(\.panicLegalNoticeAccepted, value: true)
+    }
+
+    controller.armPanic { [weak self] result in
+      if case .failure(let error) = result {
+        self?.showNotification(
+          title: AppDelegate.appName,
+          message: L10n.tr("app.fail.armPanic", error.localizedDescription)
+        )
+      }
+    }
+  }
+
   @objc func showSettings() {
     Log.info("showSettings called", category: .ui)
 

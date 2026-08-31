@@ -2,7 +2,7 @@
 
 Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches and their resolution status.
 
-**Last resolved batch:** 2026-08-31 (P2 fixes in 0.4.2)
+**Last resolved batch:** 2026-08-31 (GAP-15 protection-first path in 0.5.0)
 
 ---
 
@@ -31,6 +31,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 | GAP-12 | iCloud sync omits network + remote settings | `SyncServiceSettings` syncs `enabledNetworkActions`, `webhookURL`, `remoteTrigger` |
 | GAP-13 | Dual enums (`SecurityActionType` vs service enum) | `SecurityActionsService` uses domain `SecurityActionType`; legacy `screen_lock` decode |
 | GAP-14 | Auto-arm required interactive auth | `armAutomatically()` for auto-arm and remote `arm` URL (opt-in flows) |
+| GAP-15 | Theft trigger used user action order; lock not prioritized; rate limit / circuit breaker could block lock | v0.5 — `SecurityActionExecutionContext.theftTrigger` / `.panic` protection-first path; rate limit and breaker only for `.standard` |
 
 ---
 
@@ -42,19 +43,22 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 - [x] `playCriticalAlertSound` plays audio on grace alert
 - [x] Toggle launch at login → `SMAppService` register/unregister
 - [x] Toggle show in dock → activation policy updates (when settings closed)
-- [x] Toggle debug logging → Release `Log.debug` gated
+- [x] Toggle debug logging → `Log.debug` gated
 - [x] Remote trigger settings show trigger + arm URL examples
 - [x] Network action success/failure appears in event log
 - [x] iCloud sync includes network actions and remote trigger settings
 - [x] Auto-arm arms without Touch ID prompt after notification delay
+- [x] Cable disconnect in normal armed mode uses protection-first path (lock first, no rate limit)
+- [x] Panic mode skips grace and runs immediate shutdown pipeline
 
 ---
 
-## Open (planned — response speed / v0.5)
+## Open (planned)
 
 | ID | Issue | Target |
 |----|-------|--------|
-| GAP-15 | Theft trigger uses user action order; lock not prioritized; sequential default; rate limit / circuit breaker can block lock | v0.5 — protection-first path (see [panic-modes.md](panic-modes.md)) |
+| — | Panic global hotkey | v0.5.x |
+| — | Paranoid mode (data destruction) | v0.6 — see [panic-modes.md](panic-modes.md) |
 
 ---
 

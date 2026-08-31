@@ -51,6 +51,7 @@ final class SyncServiceSettings {
     record["showStatusNotifications"] = settings.showStatusNotifications ? 1 : 0
     record["showSecurityAlerts"] = settings.showSecurityAlerts ? 1 : 0
     record["playCriticalAlertSound"] = settings.playCriticalAlertSound ? 1 : 0
+    record["panicLegalNoticeAccepted"] = settings.panicLegalNoticeAccepted ? 1 : 0
 
     // General settings
     record["launchAtLogin"] = settings.launchAtLogin ? 1 : 0
@@ -153,6 +154,7 @@ final class SyncServiceSettings {
       ("showStatusNotifications", \.showStatusNotifications),
       ("showSecurityAlerts", \.showSecurityAlerts),
       ("playCriticalAlertSound", \.playCriticalAlertSound),
+      ("panicLegalNoticeAccepted", \.panicLegalNoticeAccepted),
       ("launchAtLogin", \.launchAtLogin),
       ("showInDock", \.showInDock),
       ("debugLoggingEnabled", \.debugLoggingEnabled),

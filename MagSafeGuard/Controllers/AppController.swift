@@ -135,6 +135,9 @@ public class AppController: ObservableObject {
   /// countdown displays. Value is 0 when grace period is not active.
   @Published public private(set) var gracePeriodRemaining: TimeInterval = 0
 
+  /// Active protection profile when armed (`normal` or `panic`).
+  @Published public private(set) var protectionMode: ProtectionMode = .normal
+
   /// Last known power adapter connection state.
   ///
   /// Tracks the most recent power state for debugging and state management.
@@ -147,6 +150,7 @@ public class AppController: ObservableObject {
   private let authService: AuthenticationService
   private let securityActions: SecurityActionsService
   private let notificationService: NotificationService
+  private let panicExecutor: PanicModeExecutor
   private var autoArmManager: AutoArmManager?
 
   // MARK: - Configuration
@@ -220,12 +224,14 @@ public class AppController: ObservableObject {
     powerMonitor: PowerMonitorService = .shared,
     authService: AuthenticationService = .shared,
     securityActions: SecurityActionsService = .shared,
-    notificationService: NotificationService = .shared
+    notificationService: NotificationService = .shared,
+    panicExecutor: PanicModeExecutor = PanicModeExecutor()
   ) {
     self.powerMonitor = powerMonitor
     self.authService = authService
     self.securityActions = securityActions
     self.notificationService = notificationService
+    self.panicExecutor = panicExecutor
 
     setupPowerMonitoring()
     loadConfiguration()
@@ -244,6 +250,7 @@ public class AppController: ObservableObject {
     }
 
     logEventInternal(.authenticationSucceeded, details: details)
+    protectionMode = .normal
     transitionToState(.armed)
     onNotification?(
       L10n.tr("notification.armed.title"), L10n.tr("notification.armed.message"))
@@ -266,6 +273,7 @@ public class AppController: ObservableObject {
       switch result {
       case .success:
         self.logEventInternal(.authenticationSucceeded, details: L10n.tr("logDetail.armingSystem"))
+        self.protectionMode = .normal
         self.transitionToState(.armed)
         self.onNotification?(
           L10n.tr("notification.armed.title"), L10n.tr("notification.armed.message"))
@@ -282,6 +290,44 @@ public class AppController: ObservableObject {
         AccessibilityAnnouncement.announceAlert(
           "Failed to arm system: \(error.localizedDescription)")
 
+        completion(.failure(error))
+
+      case .cancelled:
+        self.logEventInternal(.authenticationFailed, details: AppController.userCancelledMessage)
+        completion(.failure(AppControllerError.authenticationRequired))
+      }
+    }
+  }
+
+  /// Arms panic mode (zero grace, immediate shutdown on cable pull). Requires legal notice acceptance.
+  public func armPanic(completion: @escaping (Result<Void, Error>) -> Void) {
+    guard currentState == .disarmed else {
+      completion(
+        .failure(AppControllerError.invalidState("Cannot arm panic from state: \(currentState)")))
+      return
+    }
+
+    guard settingsManager.settings.panicLegalNoticeAccepted else {
+      completion(.failure(AppControllerError.panicLegalNoticeRequired))
+      return
+    }
+
+    authService.authenticate(reason: L10n.tr("auth.reason.armPanic")) { [weak self] result in
+      guard let self = self else { return }
+
+      switch result {
+      case .success:
+        self.logEventInternal(.authenticationSucceeded, details: L10n.tr("logDetail.armingPanic"))
+        self.protectionMode = .panic
+        self.transitionToState(.armed)
+        self.onNotification?(
+          L10n.tr("notification.panicArmed.title"), L10n.tr("notification.panicArmed.message"))
+        AccessibilityAnnouncement.announceStateChange(
+          component: "MagSafe Guard", newState: "panic armed")
+        completion(.success(()))
+
+      case .failure(let error):
+        self.logEventInternal(.authenticationFailed, details: error.localizedDescription)
         completion(.failure(error))
 
       case .cancelled:
@@ -311,6 +357,7 @@ public class AppController: ObservableObject {
       switch result {
       case .success:
         self.logEventInternal(.authenticationSucceeded, details: L10n.tr("logDetail.disarmingSystem"))
+        self.protectionMode = .normal
         self.transitionToState(.disarmed)
         self.onNotification?(
           L10n.tr("notification.disarmed.title"), L10n.tr("notification.disarmed.message"))
@@ -387,7 +434,19 @@ public class AppController: ObservableObject {
   public func triggerRemoteSecurityResponse() {
     guard currentState == .armed || currentState == .gracePeriod else { return }
     logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.remoteTrigger"))
-    executeSecurityActions(allowFromArmedState: currentState == .armed)
+    if protectionMode == .panic {
+      executePanicResponse()
+    } else {
+      executeSecurityActions(allowFromArmedState: currentState == .armed)
+    }
+  }
+
+  /// Remote panic URL (`magsafeguard://panic`) — only when panic-armed.
+  public func triggerRemotePanicResponse() {
+    guard protectionMode == .panic else { return }
+    guard currentState == .armed || currentState == .gracePeriod else { return }
+    logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.remotePanic"))
+    executePanicResponse()
   }
 
   // MARK: - Auto-Arm Management
@@ -453,6 +512,11 @@ public class AppController: ObservableObject {
   private func handlePowerDisconnected() {
     logEventInternal(.powerDisconnected, details: L10n.tr("logDetail.powerDisconnected"))
 
+    if protectionMode == .panic {
+      executePanicResponse()
+      return
+    }
+
     if effectiveGracePeriodDuration > 0 {
       startGracePeriod()
     } else {
@@ -516,7 +580,7 @@ public class AppController: ObservableObject {
     logNetworkActionResults(
       NetworkActionsService.shared.executeActions(event: "security_trigger"))
 
-    securityActions.executeActions { [weak self] result in
+    securityActions.executeActions(context: .theftTrigger) { [weak self] result in
       guard let self = self else { return }
 
       if result.allSucceeded {
@@ -536,6 +600,21 @@ public class AppController: ObservableObject {
 
       // Return to armed state after execution
       self.transitionToState(.armed)
+    }
+  }
+
+  private func executePanicResponse() {
+    guard currentState == .armed || currentState == .gracePeriod else { return }
+
+    transitionToState(.triggered)
+    cancelGracePeriod()
+    logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.panicTriggered"))
+
+    panicExecutor.execute { [weak self] in
+      guard let self else { return }
+      if self.currentState == .triggered {
+        self.transitionToState(.armed)
+      }
     }
   }
 
@@ -663,6 +742,8 @@ public enum AppControllerError: LocalizedError {
   case gracePeriodNotCancellable
   /// User authentication is required for this operation
   case authenticationRequired
+  /// Panic legal notice must be accepted in Settings before arming panic mode
+  case panicLegalNoticeRequired
 
   /// Localized error description for user display.
   public var errorDescription: String? {
@@ -673,6 +754,8 @@ public enum AppControllerError: LocalizedError {
       return L10n.tr("error.gracePeriodNotCancellable")
     case .authenticationRequired:
       return L10n.tr("error.authenticationRequired")
+    case .panicLegalNoticeRequired:
+      return L10n.tr("error.panicLegalNoticeRequired")
     }
   }
 }
@@ -706,7 +789,10 @@ extension AppController {
 
   /// Asset catalog name for the menu bar icon matching the current state.
   public var statusMenuBarImageName: String {
-    Self.menuBarImageName(for: currentState)
+    if currentState == .armed && protectionMode == .panic {
+      return "MenuBarIconTriggered"
+    }
+    return Self.menuBarImageName(for: currentState)
   }
 
   /// Maps application state to menu bar asset name.
@@ -729,6 +815,9 @@ extension AppController {
     case .disarmed:
       return L10n.tr("status.disarmed")
     case .armed:
+      if protectionMode == .panic {
+        return L10n.tr("status.panicArmed")
+      }
       return L10n.tr("status.armed")
     case .gracePeriod:
       return L10n.tr("status.gracePeriod", Int(gracePeriodRemaining))

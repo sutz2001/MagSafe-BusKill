@@ -48,6 +48,7 @@
 "settings.network.remote.example" = "Beispiel: %@";
 "settings.network.remote.triggerExample" = "Aktionen auslösen: %@";
 "settings.network.remote.armExample" = "Fern scharfschalten: %@";
+"settings.network.remote.panicExample" = "Panic-Auslösung (nur im Panic-Modus): %@";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Bildschirm sperren";
@@ -179,6 +180,10 @@
 "menu.disarm" = "Schutz deaktivieren";
 "menu.arm.hint" = "Sicherheitssystem aktivieren";
 "menu.disarm.hint" = "Sicherheitssystem deaktivieren";
+"menu.armPanic" = "Panic-Modus aktivieren…";
+"menu.armPanic.hint" = "Keine Karenzzeit — sofortige Sperre und Abschaltung bei Kabeltrennung";
+"menu.panicArmed" = "Panic-Modus aktiv";
+"menu.panicArmed.hint" = "Kabeltrennung löst sofortige Abschaltung aus";
 "menu.cancelAction" = "Sicherheitsaktion abbrechen";
 "menu.cancelAction.hint" = "Ausstehende Sicherheitsaktion während der Karenzzeit abbrechen";
 "menu.power.connected" = "Netzteil angeschlossen";
@@ -199,6 +204,7 @@
 /* Status */
 "status.disarmed" = "Schutz deaktiviert";
 "status.armed" = "Schutz aktiv";
+"status.panicArmed" = "Panic-Modus aktiv";
 "status.gracePeriod" = "Karenzzeit – %lld s";
 "status.triggered" = "Sicherheitsaktion ausgelöst";
 
@@ -209,6 +215,7 @@
 "app.accessibility.statusComponent" = "MagSafe Guard Status";
 "app.fail.arm" = "Aktivierung fehlgeschlagen: %@";
 "app.fail.disarm" = "Deaktivierung fehlgeschlagen: %@";
+"app.fail.armPanic" = "Panic-Modus konnte nicht aktiviert werden: %@";
 "app.crash.title" = "Vorheriger Absturz erkannt";
 "app.crash.message" = "Ausnahme: %@\nGrund: %@";
 "app.quit.grace.title" = "Sicherheitsaktion läuft";
@@ -267,10 +274,13 @@
 "auth.reason.arm" = "Authentifizieren, um MagSafe Guard zu scharfschalten";
 "auth.reason.disarm" = "Authentifizieren, um MagSafe Guard zu entschärfen";
 "auth.reason.cancelGrace" = "Authentifizieren, um die Sicherheitsaktion abzubrechen";
+"auth.reason.armPanic" = "Authentifizieren, um den Panic-Modus zu aktivieren";
 
 /* Notifications */
 "notification.armed.title" = "MagSafe Guard scharf";
 "notification.armed.message" = "Schutz ist jetzt aktiv";
+"notification.panicArmed.title" = "Panic-Modus aktiv";
+"notification.panicArmed.message" = "Kabeltrennung sperrt und fährt den Mac sofort herunter";
 "notification.disarmed.title" = "MagSafe Guard entschärft";
 "notification.disarmed.message" = "Schutz ist jetzt inaktiv";
 "notification.graceCancelled.title" = "Sicherheitsaktion abgebrochen";
@@ -285,6 +295,12 @@
 /* Errors */
 "error.gracePeriodNotCancellable" = "Abbruch der Karenzzeit ist nicht erlaubt";
 "error.authenticationRequired" = "Für diese Aktion ist eine Authentifizierung erforderlich";
+"error.panicLegalNoticeRequired" = "Bitte bestätigen Sie den Panic-Hinweis vor der Aktivierung";
+
+/* Panic mode */
+"panic.legal.title" = "Panic-Modus";
+"panic.legal.message" = "Im Panic-Modus gibt es keine Karenzzeit. Beim Trennen des Kabels wird der Bildschirm gesperrt, Ihre Sicherheitsaktionen ausgeführt und der Mac sofort heruntergefahren. Nicht gespeicherte Arbeit kann verloren gehen. Während der Reaktion gibt es keinen Abbruch.";
+"panic.legal.accept" = "Verstanden — Panic aktivieren";
 
 /* General settings */
 "settings.general.restoreArmed.title" = "Scharfen Zustand nach Neustart wiederherstellen";
@@ -341,6 +357,9 @@
 "logDetail.systemDisarmed" = "System entschärft";
 "logDetail.appTerminating" = "Anwendung wird beendet";
 "logDetail.remoteArm" = "Fern-Scharfschaltung per URL";
+"logDetail.remotePanic" = "Fern-Panic-Auslösung per URL";
+"logDetail.armingPanic" = "Panic-Modus wird aktiviert";
+"logDetail.panicTriggered" = "Panic-Reaktion ausgelöst";
 "logDetail.networkActionSucceeded" = "%@ erfolgreich";
 "logDetail.networkActionFailed" = "%@ fehlgeschlagen: %@";
 

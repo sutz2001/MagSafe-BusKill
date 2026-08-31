@@ -200,6 +200,7 @@ public class SecurityActionsService {
 
   /// Flag to track if actions are currently executing
   private var isCurrentlyExecuting = false
+  private var activeExecutionContext: SecurityActionExecutionContext = .standard
   private let executingLock = NSLock()
 
   /// Whether security actions are currently being executed.
@@ -308,31 +309,34 @@ public class SecurityActionsService {
   ///
   /// - Note: Only one execution can be active at a time. Subsequent
   ///   calls while executing are ignored to prevent conflicts.
-  public func executeActions(completion: @escaping (ExecutionResult) -> Void) {
-    // Check circuit breaker first
-    if let circuitError = checkCircuitBreaker() {
-      Log.warning("Circuit breaker open: \(circuitError)", category: .security)
-      DispatchQueue.main.async {
-        completion(ExecutionResult(
-          executedActions: [],
-          failedActions: [(SecurityActionType.lockScreen, circuitError)],
-          timestamp: Date()
-        ))
+  public func executeActions(
+    context: SecurityActionExecutionContext = .standard,
+    completion: @escaping (ExecutionResult) -> Void
+  ) {
+    if context == .standard {
+      if let circuitError = checkCircuitBreaker() {
+        Log.warning("Circuit breaker open: \(circuitError)", category: .security)
+        DispatchQueue.main.async {
+          completion(ExecutionResult(
+            executedActions: [],
+            failedActions: [(SecurityActionType.lockScreen, circuitError)],
+            timestamp: Date()
+          ))
+        }
+        return
       }
-      return
-    }
 
-    // Check rate limiting
-    if !checkRateLimit() {
-      Log.warning("Rate limit exceeded for security actions", category: .security)
-      DispatchQueue.main.async {
-        completion(ExecutionResult(
-          executedActions: [],
-          failedActions: [(SecurityActionType.lockScreen, SecurityActionError.rateLimitExceeded)],
-          timestamp: Date()
-        ))
+      if !checkRateLimit() {
+        Log.warning("Rate limit exceeded for security actions", category: .security)
+        DispatchQueue.main.async {
+          completion(ExecutionResult(
+            executedActions: [],
+            failedActions: [(SecurityActionType.lockScreen, SecurityActionError.rateLimitExceeded)],
+            timestamp: Date()
+          ))
+        }
+        return
       }
-      return
     }
 
     guard trySetExecuting() else {
@@ -342,6 +346,7 @@ public class SecurityActionsService {
 
     queue.async { [weak self] in
       guard let self = self else { return }
+      self.activeExecutionContext = context
       self.performExecution(completion: completion)
     }
   }
@@ -470,15 +475,22 @@ public class SecurityActionsService {
   /// Perform the actual execution of actions
   private func performExecution(completion: @escaping (ExecutionResult) -> Void) {
     let startTime = Date()
+    let context = activeExecutionContext
 
-    // Apply configured delay
-    applyActionDelay()
+    if context == .standard {
+      applyActionDelay()
+    }
 
-    // Execute actions and collect results
-    let (executedActions, failedActions) = executeEnabledActions()
+    let (executedActions, failedActions): ([SecurityAction], [(SecurityAction, Error)])
+    switch context {
+    case .standard:
+      (executedActions, failedActions) = executeEnabledActions()
+    case .theftTrigger, .panic:
+      (executedActions, failedActions) = executeProtectionFirstActions(context: context)
+    }
 
-    // Clear executing flag and create result
     clearExecuting()
+    activeExecutionContext = .standard
 
     let result = ExecutionResult(
       executedActions: executedActions,
@@ -496,6 +508,70 @@ public class SecurityActionsService {
     DispatchQueue.main.async {
       completion(result)
     }
+  }
+
+  /// Protection-first ordering for theft and panic triggers: lock, then parallel tier-2, then tier-3.
+  private func executeProtectionFirstActions(
+    context: SecurityActionExecutionContext
+  ) -> ([SecurityAction], [(SecurityAction, Error)]) {
+    let enabled = getSortedActions()
+    var executed: [SecurityAction] = []
+    var failed: [(SecurityAction, Error)] = []
+
+    let tier2: Set<SecurityAction> = [.forceLogout, .soundAlarm]
+    let tier3: Set<SecurityAction> = [.shutdown, .customScript]
+
+    if enabled.contains(.lockScreen) {
+      do {
+        try executeAction(.lockScreen)
+        executed.append(.lockScreen)
+      } catch {
+        failed.append((.lockScreen, error))
+        Log.error("Failed to execute lockScreen", error: error, category: .security)
+      }
+    }
+
+    let parallelActions = enabled.filter { tier2.contains($0) }
+    if !parallelActions.isEmpty {
+      let group = DispatchGroup()
+      let resultsQueue = DispatchQueue(label: "com.magsafeguard.protection-first.results")
+      for action in parallelActions {
+        group.enter()
+        DispatchQueue.global(qos: .userInitiated).async {
+          do {
+            try self.executeAction(action)
+            resultsQueue.sync { executed.append(action) }
+          } catch {
+            resultsQueue.sync { failed.append((action, error)) }
+            Log.error("Failed to execute \(action)", error: error, category: .security)
+          }
+          group.leave()
+        }
+      }
+      group.wait()
+    }
+
+    let deferredActions = enabled.filter { tier3.contains($0) }
+    for action in deferredActions {
+      if action == .shutdown, context == .panic {
+        do {
+          try systemActions.executeImmediateShutdown()
+          executed.append(.shutdown)
+        } catch {
+          failed.append((.shutdown, error))
+        }
+      } else {
+        do {
+          try executeAction(action)
+          executed.append(action)
+        } catch {
+          failed.append((action, error))
+          Log.error("Failed to execute \(action)", error: error, category: .security)
+        }
+      }
+    }
+
+    return (executed, failed)
   }
 
   /// Apply configured delay before executing actions

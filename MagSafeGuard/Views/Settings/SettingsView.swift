@@ -358,6 +358,10 @@ struct SecuritySettingsView: View {
           .font(.caption)
           .foregroundColor(.secondary)
           .textSelection(.enabled)
+        Text(L10n.tr("settings.network.remote.panicExample", exampleRemotePanicURL))
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .textSelection(.enabled)
       }
     }
   }
@@ -372,6 +376,12 @@ struct SecuritySettingsView: View {
     let token = settingsManager.settings.remoteTrigger.token.isEmpty
       ? "YOUR_TOKEN" : settingsManager.settings.remoteTrigger.token
     return "magsafeguard://arm?token=\(token)"
+  }
+
+  private var exampleRemotePanicURL: String {
+    let token = settingsManager.settings.remoteTrigger.token.isEmpty
+      ? "YOUR_TOKEN" : settingsManager.settings.remoteTrigger.token
+    return "magsafeguard://panic?token=\(token)"
   }
 
   private func networkActionBinding(_ action: NetworkActionType) -> Binding<Bool> {

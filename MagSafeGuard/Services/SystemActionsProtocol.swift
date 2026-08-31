@@ -70,6 +70,13 @@ public protocol SystemActionsProtocol {
   /// - Throws: `SystemActionError.shutdownFailed` if shutdown cannot be scheduled
   func scheduleShutdown(afterSeconds: TimeInterval) throws
 
+  /// Shut down the system immediately without confirmation dialogs.
+  ///
+  /// Used by panic mode. Prefer `scheduleShutdown` for normal armed triggers.
+  ///
+  /// - Throws: `SystemActionError.shutdownFailed` if shutdown cannot be started
+  func executeImmediateShutdown() throws
+
   /// Execute a custom script at the specified path.
   ///
   /// Runs a user-defined script to perform custom security actions.

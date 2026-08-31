@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.4.3` (build `8`) |
+| **Version** | `0.5.0` (build `9`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -82,7 +82,7 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | Auto-arm (location / network) | **Shipped** | Optional permissions |
 | Event log, onboarding, EN/DE | **Shipped** | v0.3.0 |
 | Network actions + remote trigger | **Shipped** | v0.4.0 — webhook, VPN, SSH, Wi‑Fi; `magsafeguard://` |
-| Panic mode | **Planned** | v0.5.0 — immediate shutdown, no data loss · [design](docs/features/panic-modes.md) |
+| Panic mode | **Shipped** | v0.5.0 — zero grace, immediate shutdown · [design](docs/features/panic-modes.md) |
 | Paranoid mode | **Planned** | v0.6.0 — destruction + shutdown (FileVault + setup required) |
 | Notarized DMG for others | **Later** | v1.0 · paid Apple Dev optional |
 | Mac App Store | **Out of scope** | App Sandbox incompatible |

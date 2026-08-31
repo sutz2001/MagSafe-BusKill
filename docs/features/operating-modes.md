@@ -2,7 +2,7 @@
 
 **Audience:** Users, contributors, and maintainers who need to know what the app *actually does* at runtime (not what the UI implies).
 
-**Version:** documents behavior as of fork **0.4.2** (build 7).  
+**Version:** documents behavior as of fork **0.5.0** (build 9).  
 **Primary code:** `MagSafeGuard/Controllers/AppController.swift`, services under `MagSafeGuard/Services/`.
 
 **Related:** [Behavior gaps & fix backlog](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) (planned features) · [README](../../README.md)
@@ -20,7 +20,7 @@ MagSafe Guard is a **menu bar dead-man's switch**: when **armed**, unplugging ex
 | **Network action** | Webhook, VPN disconnect, SSH agent clear, Wi‑Fi off (v0.4.0) |
 | **Auto-arm** | Optional automatic *attempt* to arm when location/network rules fire |
 | **Remote trigger** | Optional `magsafeguard://` URL to arm or fire actions from Shortcuts |
-| **Panic mode** | **Not implemented** — planned v0.5.0 (see [Planned: Panic mode](#planned-panic-mode-v050)) |
+| **Panic mode** | Optional high-assurance profile: **0 grace**, protection-first actions, immediate shutdown on cable pull (see [§10 Panic mode](#10-panic--paranoid-modes)) |
 
 ---
 
@@ -197,17 +197,14 @@ flowchart LR
     SA --> SYS
 ```
 
-**`SecurityActionsService` behavior (today):**
+**`SecurityActionsService` behavior:**
 
-- Runs actions **sequentially** by default (`executeInParallel` false; not in Settings UI).
-- Runs actions in **Settings → Security** drag order (`actionOrder` synced on save) — **no automatic lock-first**.
-- **Rate limit:** minimum 5 s between runs; max 10 per 60 s window — applies to trigger path too.
-- **Circuit breaker:** 3 consecutive failures → open for 60 s — can block all actions.
+- **Standard context** (manual runs from Settings): sequential by default; **rate limit** (5 s minimum, 10 per 60 s) and **circuit breaker** (3 failures → 60 s open) apply.
+- **Theft / panic context** (`theftTrigger`, `panic`): **protection-first** — lock screen first, then parallel tier-2 (logout, alarm), then tier-3 (shutdown / scripts). **No rate limit or circuit breaker** on these paths.
+- Panic shutdown uses `executeImmediateShutdown()` (no dialog, no minimum delay).
 - Second `executeActions` call while running is **ignored**.
 
-**Planned (v0.5):** protection-first trigger path — lock immediately, parallel tier-2 actions, bypass rate limit on theft trigger. See [panic-modes.md § Response speed](panic-modes.md#response-speed--normal-armed-mode-v05).
-
-**Allowed script paths** (README): `~/.magsafe/scripts/`, `/usr/local/magsafe-scripts/`.
+Allowed script paths (README): `~/.magsafe/scripts/`, `/usr/local/magsafe-scripts/`.
 
 ---
 
@@ -377,33 +374,23 @@ Full gap list: [behavior-gaps.md](behavior-gaps.md).
 
 ---
 
-## 10. Planned: Panic & Paranoid modes
+## 10. Panic & Paranoid modes
 
-**Status:** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md).
+**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md).
 
-### Discreet operation (shipped)
+### Panic mode (shipped v0.5.0)
 
-Normal armed / grace modes can run **without notifications or sounds** — only the menu bar icon changes (grace uses a distinct icon; no countdown text when security alerts are off).
+Arm via menu **Arm Panic Mode…** (legal notice on first use) or disarm with the normal **Disarm** item. While panic-armed, the menu bar uses the triggered icon asset.
 
-| Setting | Controls |
+| Trigger | Behavior |
 |---------|----------|
-| `showStatusNotifications` | Arm / disarm toasts |
-| `showSecurityAlerts` | Grace-period banner + menu bar countdown |
-| `playCriticalAlertSound` | Basso/beep on grace start |
+| Cable disconnect | `PanicModeExecutor` — network actions, protection-first security actions, immediate shutdown |
+| `magsafeguard://panic?token=…` | Same pipeline when already panic-armed |
+| `magsafeguard://trigger?token=…` | Normal armed/grace path only (not panic) |
 
-All three off → `isDiscreetOperation` (icon only). Panic/Paranoid will **not** use discreet defaults (0 grace, no cancel).
+`ProtectionMode` is `.panic` until disarm. No grace period; reconnect during response does not cancel.
 
-### Panic (v0.5.0) — protect, no data loss
-
-| Aspect | Normal (armed) | Panic |
-|--------|----------------|-------|
-| Grace period | 5–30 s | **0 s** |
-| Execution | Sequential + rate limits | Parallel, breaker off |
-| Cancel | Auth / reconnect | **None** |
-| Triggers | Cable, remote `trigger` | Cable + hotkey + `magsafeguard://panic` |
-| Data | — | **No deletion** — immediate lock, logout, hard shutdown |
-
-### Paranoid (v0.6.0) — destroy + shutdown
+**Not yet shipped:** global panic hotkey (roadmap).
 
 | Aspect | Panic | Paranoid |
 |--------|-------|----------|

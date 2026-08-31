@@ -168,6 +168,26 @@ public class AppDelegateCore {
     )
     menu.addItem(armItem)
 
+    if appController.currentState == .disarmed {
+      let panicItem = NSMenuItem.accessibleMenuItem(
+        title: L10n.tr("menu.armPanic"),
+        accessibilityLabel: L10n.tr("menu.armPanic"),
+        hint: L10n.tr("menu.armPanic.hint"),
+        keyEquivalent: "p",
+        action: #selector(AppDelegate.togglePanicMode),
+        target: appDelegate
+      )
+      menu.addItem(panicItem)
+    } else if appController.protectionMode == .panic {
+      let panicStatus = NSMenuItem.accessibleMenuItem(
+        title: L10n.tr("menu.panicArmed"),
+        accessibilityLabel: L10n.tr("menu.panicArmed"),
+        hint: L10n.tr("menu.panicArmed.hint")
+      )
+      panicStatus.isEnabled = false
+      menu.addItem(panicStatus)
+    }
+
     // Cancel grace period item (if in grace period) with accessibility
     if appController.isInGracePeriod && appController.allowGracePeriodCancellation {
       let cancelItem = NSMenuItem.accessibleMenuItem(

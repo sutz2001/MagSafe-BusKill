@@ -337,6 +337,28 @@ public class MacSystemActions: SystemActionsProtocol {
     }
   }
 
+  /// Immediate shutdown for panic mode (no dialog, no minimum delay).
+  public func executeImmediateShutdown() throws {
+    if isTestMode {
+      Log.warning("TEST MODE: Simulating immediate shutdown", category: .security)
+      return
+    }
+
+    Log.info("Executing immediate system shutdown", category: .security)
+
+    let task = Process()
+    task.launchPath = systemPaths.osascriptPath
+    task.arguments = ["-e", "tell application \"System Events\" to shut down"]
+
+    do {
+      try task.run()
+      // Do not wait — shutdown is asynchronous; panic path must not block.
+    } catch {
+      Log.error("Immediate shutdown failed", error: error, category: .security)
+      throw SystemActionError.shutdownFailed
+    }
+  }
+
   /// Executes a shell script at the specified path
   /// - Parameter path: Path to the script file
   /// - Throws: SystemActionError if script doesn't exist, is invalid, or execution fails

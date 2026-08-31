@@ -61,6 +61,7 @@ class MockSystemActions: SystemActionsProtocol {
     scheduleShutdownCalled = false
     shutdownDelaySeconds = nil
     lastShutdownDelay = nil
+    executeImmediateShutdownCalled = false
     executeScriptCalled = false
     executedScriptPath = nil
     lastScriptPath = nil
@@ -122,6 +123,15 @@ class MockSystemActions: SystemActionsProtocol {
     shutdownDelaySeconds = afterSeconds
     lastShutdownDelay = afterSeconds
 
+    if !scheduleShutdownShouldSucceed || shouldFailShutdown {
+      throw SystemActionError.shutdownFailed
+    }
+  }
+
+  var executeImmediateShutdownCalled = false
+
+  func executeImmediateShutdown() throws {
+    executeImmediateShutdownCalled = true
     if !scheduleShutdownShouldSucceed || shouldFailShutdown {
       throw SystemActionError.shutdownFailed
     }
