@@ -1,7 +1,9 @@
 # Fork-Roadmap (sutz2001)
 
 Planung für [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
-Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
+Stand: nach **0.5.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
+
+**Kurzanleitung:** [user-guide.de.md](features/user-guide.de.md) · [user-guide.md](features/user-guide.md) (EN)
 
 ---
 
@@ -12,9 +14,9 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | Power-Trigger, Grace Period, 5 Security Actions | ✅ produktiv |
 | Auto-Arm (Standort/Netzwerk), Event-Log, Onboarding | ✅ produktiv |
 | EN/DE, `task release`, CI grün | ✅ produktiv |
-| Netzwerk-**Aktionen** (bei Trigger ausführen) | ✅ v0.4.0 |
-| Fernauslösung (`magsafeguard://`) | ✅ v0.4.0 |
-| **Panic-Modus** | ❌ geplant v0.5.0 |
+| Netzwerk-Aktionen + Fernauslösung (`magsafeguard://`) | ✅ v0.4.0 |
+| Diskreter Betrieb (nur Menüleisten-Icon) | ✅ v0.4.3 |
+| **Panic-Modus** (0 Grace, Hotkey ⌃⌘P, sofort Shutdown) | ✅ v0.5.0 |
 | **Paranoid-Modus** | ❌ geplant v0.6.0 |
 | Notarisierung (Developer ID) | ⏸️ wenn App reif + Paid Dev |
 | Mac App Store | ❌ **ausgeschlossen** (Sandbox) |
@@ -28,7 +30,7 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | `NOTICE` (Upstream, Fork, BusKill) | ✅ |
 | README EN/DE (Fork vs. Upstream) | ✅ |
 | `LICENSE` + `NOTICE` in Release-Binaries | 📋 bei erstem GitHub Release |
-| Panic-Rechtstexte in der App | erst v0.5.0 |
+| Panic-Rechtstexte in der App | ✅ v0.5.0 (kurzer Hinweis EN/DE) |
 
 Öffentlich seit August 2026 (nach Prüfung der ersten drei Punkte auf `main`).
 
@@ -40,7 +42,7 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 |---|--------|--------------|
 | 1 | **Modus-Namen** | **Panic** (Schutz, Shutdown) und **Paranoid** (Vernichtung) — öffentlich in UI, Docs, Releases |
 | 2 | **Netzwerk-Aktionen** | **Vollpaket:** Webhook + VPN + SSH-Agent + WLAN (+ optional Proxy/DNS) |
-| 3 | **Panic-Auslöser** | **Hotkey** + Kabel + **Fernauslösung** (URL-Scheme / Shortcuts, später Polling/Push) |
+| 3 | **Panic-Auslöser** | **Hotkey ⌃⌘P** + Kabel + **Fernauslösung** (`magsafeguard://panic`) |
 | 4 | **Verteilung** | **GitHub** (Quellcode + optionale Releases) + **notarisierte DMG** — **kein App Store** |
 | 5 | **Paid Apple Dev** | Wenn App veröffentlichungsreif: für **notarisierte Binaries**; nicht nötig zum Hosten von Quellcode auf GitHub |
 | 6 | **Repository** | **Öffentlich** seit August 2026 (siehe [README](../README.md#repository-visibility)) |
@@ -53,77 +55,58 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 2. **Geschwindigkeit bei Schutz** — Lock/Logout zuerst und schnell (auch normal armed); Panic/Paranoid: 0 Grace, parallel, kein Circuit-Breaker-Block.
 3. **Testbarkeit** — Panic nur mit Mocks; **kein** E2E mit echter Löschung.
 4. **Verteilung** — Volle Features nur außerhalb des Mac App Store (Direct / GitHub).
-5. **Rechtliches vor Panic** — Siehe [Pflicht-Checkliste](#pflicht-checkliste-vor-panic-modus) unten.
+5. **Rechtliches** — Panic: kurzer Hinweis (shipped). Paranoid: volle Prüfung vor v0.6.
 
 ---
 
-## Phase 1 — Netzwerk-Aktionen (~0.4.0)
+## Phase 1 — Netzwerk-Aktionen (0.4.0) ✅
 
-**Ziel:** Beim Sicherheits-Trigger und im Panic-Modus Netzwerk-Reaktionen ausführen — inkl. **Fernauslösung**.
-
-### Aktionstypen (alles in 0.4.0)
-
-| Aktion | Kurz |
-|--------|------|
-| **HTTP Webhook (outbound)** | `POST` bei Event; Token in Keychain |
-| **VPN trennen** | WireGuard, Tunnelblick, `networksetup` |
-| **SSH-Agent leeren** | `ssh-add -D` |
-| **WLAN aus** | `networksetup -setairportpower off` |
-| **DNS / Proxy reset** | Advanced |
-
-### Fernauslösung (Inbound)
-
-| Variante | Priorität |
-|----------|-----------|
-| **URL-Scheme** (`magsafeguard://panic?token=…`) + iOS Shortcuts | hoch |
-| **Webhook-Polling** (Mac fragt Endpoint ab) | mittel |
-| **Push (APNs)** | nach Paid Dev |
+**Ziel:** Beim Sicherheits-Trigger Netzwerk-Reaktionen ausführen — inkl. **Fernauslösung**.
 
 ### Lieferumfang
 
 - [x] Outbound network actions (webhook, VPN, SSH, Wi‑Fi)
 - [x] Settings → Security → Network + Remote Trigger
-- [ ] Domain Use Cases refactor (optional)
-- [ ] Shortcuts-Dokumentation
+- [x] `magsafeguard://arm` + `magsafeguard://trigger`
 - [x] EN/DE · README · FORK_CHANGELOG (0.4.0)
 
 **Aufwand:** mittel–hoch · **Risiko:** niedrig (outbound)
 
 ---
 
-## Phase 2 — Panic-Modus (~0.5.0)
+## Phase 1b — Diskreter Betrieb (0.4.3) ✅
+
+- [x] `showStatusNotifications`, `showSecurityAlerts`, `playCriticalAlertSound`
+- [x] `isDiscreetOperation` wenn alle drei aus
+- [x] Docs: [user-guide](features/user-guide.md), [operating-modes](features/operating-modes.md)
+
+---
+
+## Phase 2 — Panic-Modus (0.5.0) ✅
 
 **Ziel:** **Panic** — Gerät sofort unzugänglich machen **ohne** Daten zu löschen.  
-Design: [docs/features/panic-modes.md](features/panic-modes.md)
+Design: [docs/features/panic-modes.md](features/panic-modes.md) · Anleitung: [user-guide.de.md §4](features/user-guide.de.md#4-panic-modus-v050)
 
-### Verhalten (Panic)
+### Verhalten (Panic) — ausgeliefert
 
 | Aspekt | Normal (armed) | Panic |
 |--------|----------------|-------|
 | Grace Period | 5–30 s | **0 s** |
-| Ablauf | konfiguriert | **parallel** |
-| Circuit Breaker | aktiv | **aus** |
-| Auslöser | Kabel | Kabel + **Hotkey** + `magsafeguard://panic` |
+| Ablauf bei Kabel-Trigger | protection-first | **parallel + sofort Shutdown** |
+| Circuit Breaker / Rate Limit | nur Standard-Kontext | **aus** bei Theft/Panic |
+| Auslöser | Kabel, `trigger` URL | Kabel + **⌃⌘P** + `panic` URL |
 | Abbruch | Auth möglich | **nein** |
 | Daten löschen | — | **nein** |
 
-**Sofort:** Lock + Logout + Netzwerk-Aktionen + **harter Shutdown** (neuer Pfad, kein 1-Minuten-Dialog).
+### Checkliste v0.5.0 — erledigt
 
-### Arming (Panic)
-
-- Eine starke Bestätigung
-- **Kurzer** Rechtshinweis (EN + DE): unsaved work, kein Abbruch, Vorsicht Dienstgerät — **kein** Codewort
-- Eigenes Menüleisten-Icon
-
-### Pflicht-Checkliste vor Panic (v0.5.0)
-
-- [ ] **Protection-first trigger path** — lock under 500 ms; parallel tier-2; bypass rate limit on theft trigger ([GAP-15](features/behavior-gaps.md))
-- [ ] `PanicModeExecutor` + sofortiger Shutdown (nicht `scheduleShutdown`)
-- [ ] Panic-Arming-UI + kurzer Rechtshinweis (EN + DE)
-- [ ] Eigenes Menüleisten-Icon (panic armed)
-- [ ] Hotkey + `magsafeguard://panic`
-- [ ] `MockPanicExecutor` (CI) — kein destruktiver Testlauf
-- [ ] [panic-modes.md](features/panic-modes.md) · `operating-modes.md` · README EN/DE
+- [x] Protection-first trigger path (GAP-15)
+- [x] `PanicModeExecutor` + `executeImmediateShutdown()`
+- [x] Panic-Arming-UI + kurzer Rechtshinweis (EN + DE)
+- [x] Eigenes Menüleisten-Icon (panic armed)
+- [x] Hotkey **⌃⌘P** + `magsafeguard://panic`
+- [x] Unit-Tests mit Mocks (`PanicModeExecutorTests`, `AppControllerTests`)
+- [x] `operating-modes.md` · `panic-modes.md` · README EN/DE · [user-guide](features/user-guide.md)
 
 ---
 
@@ -204,7 +187,8 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 
 ```
 Jetzt ──► 0.4.x  Netzwerk + Fernauslösung (done)
-       ──► 0.5.0  Panic (Shutdown, 0 Grace, kein Datenverlust)
+       ──► 0.4.3  Diskreter Betrieb (done)
+       ──► 0.5.0  Panic (Shutdown, 0 Grace, Hotkey ⌃⌘P) (done)
        ──► 0.6.0  Paranoid (Vernichtung + Shutdown, Setup-Modus)
        ──► 1.0.0  Stabil + notarisierte DMG (optional Paid Dev)
 ```
@@ -224,7 +208,7 @@ Jetzt ──► 0.4.x  Netzwerk + Fernauslösung (done)
 
 ### Deutschland / EU (Panic-Modus)
 
-Security-Tools sind bei **informierter Einwilligung** grundsätzlich zulässig. Panic erhöht das Risiko (eigene Daten, **Dienstgeräte**, fernausgelöste Zerstörung) → **Pflicht-Checkliste** oben ist verbindlich geplant.
+Security-Tools sind bei **informierter Einwilligung** grundsätzlich zulässig. Panic erhöht das Risiko (eigene Daten, **Dienstgeräte**, fernausgelöste Zerstörung). Kurzer Hinweis in der App (v0.5.0) ist ausgeliefert; Paranoid erfordert volle Prüfung vor v0.6.
 
 ### Mac App Store — warum ausgeschlossen
 
@@ -238,3 +222,4 @@ Apple Sandbox erlaubt die aktuelle Architektur (System-Shutdown, AppleScript-Log
 - [docs/PRD.md](PRD.md) (Upstream)
 - [AGENTS.md](../AGENTS.md)
 - [README.md](../README.md) · [README.de.md](../README.de.md)
+- [user-guide.md](features/user-guide.md) · [user-guide.de.md](features/user-guide.de.md)

@@ -1,9 +1,10 @@
-# Panic & Paranoid Modes (planned)
+# Panic & Paranoid Modes
 
-Design document for **v0.5.0** (Panic) and **v0.6.0** (Paranoid).  
+Design and reference for **v0.5.0** (Panic — **shipped**) and **v0.6.0** (Paranoid — planned).  
+**User guide:** [user-guide.md §4](user-guide.md#4-panic-mode-v050) · [user-guide.de.md §4](user-guide.de.md#4-panic-modus-v050)  
 Companion: [operating-modes.md](operating-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md)
 
-**Status:** planning only — not implemented in code.
+**Status:** Panic mode is implemented (0.5.0). Paranoid mode is planning only.
 
 ---
 
@@ -40,14 +41,14 @@ Shutdown is the terminal action; do not rely on “quit all apps” alone (macOS
 ### Triggers
 
 - Power cable disconnect (when panic-armed)
-- Global hotkey (configurable)
+- Global hotkey **⌃⌘P** (Control+Command+P) while the app is running
 - Remote: `magsafeguard://panic?token=…`
 
 ### Arming
 
 | Step | Requirement |
 |------|-------------|
-| Enable | Settings toggle + **one strong confirmation** |
+| Enable | Menu **Arm Panic Mode…** + **one strong confirmation** (Touch ID / password) |
 | Legal | **Short impact notice** (EN + DE) — see [Legal notices](#legal-notices) |
 | Icon | Distinct menu bar icon when panic-armed |
 | Codeword | **Not required** |
@@ -223,7 +224,7 @@ Do not conflate `trigger` with panic or paranoid.
 - [x] `PanicModeExecutor` + immediate shutdown path
 - [x] Panic arming UI + lightweight legal notice (EN + DE)
 - [x] Distinct menu bar icon
-- [ ] Hotkey + `magsafeguard://panic` (URL shipped; global hotkey pending)
+- [x] Hotkey + `magsafeguard://panic` (⌃⌘P global hotkey; URL shipped)
 - [x] `operating-modes.md` updated when shipped
 - [x] Unit tests with mocks
 

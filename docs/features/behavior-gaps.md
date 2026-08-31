@@ -2,7 +2,7 @@
 
 Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches and their resolution status.
 
-**Last resolved batch:** 2026-08-31 (GAP-15 protection-first path in 0.5.0)
+**Last resolved batch:** 2026-08-31 (0.5.0: GAP-15 protection-first path, panic hotkey)
 
 ---
 
@@ -50,6 +50,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 - [x] Auto-arm arms without Touch ID prompt after notification delay
 - [x] Cable disconnect in normal armed mode uses protection-first path (lock first, no rate limit)
 - [x] Panic mode skips grace and runs immediate shutdown pipeline
+- [x] Panic hotkey ⌃⌘P triggers response when panic-armed
 
 ---
 
@@ -57,7 +58,6 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 
 | ID | Issue | Target |
 |----|-------|--------|
-| — | Panic global hotkey | v0.5.x |
 | — | Paranoid mode (data destruction) | v0.6 — see [panic-modes.md](panic-modes.md) |
 
 ---

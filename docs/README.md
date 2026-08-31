@@ -8,12 +8,13 @@ This documentation is organized by audience and role to help you find the inform
 
 ### For Users
 
+- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): normal mode, discreet operation, panic mode, hotkey
 - [Operating Modes & Flows](features/operating-modes.md) - What each state/mode does (with diagrams)
 - [Behavior Gaps](features/behavior-gaps.md) - Known UI vs runtime mismatches
+- [Panic & Paranoid modes](features/panic-modes.md) - Panic shipped (v0.5); Paranoid planned (v0.6)
 - [Building and Running](maintainers/building-and-running.md) - Get MagSafe Guard running on your Mac
 - [Troubleshooting](maintainers/troubleshooting.md) - Common issues and solutions
 - [Feature Flags](features/flags.md) - Configure advanced features
-- [Panic & Paranoid modes (planned)](features/panic-modes.md) - High-assurance modes design (v0.5 / v0.6)
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 
 ### For Contributors
@@ -99,6 +100,9 @@ Archived upstream-only: [SSDLC case study](archive/ssdlc-case-study.md) · [Secu
 
 ### Features & Configuration
 
+- [User guide (mini)](features/user-guide.md) · [DE](features/user-guide.de.md)
+- [Operating modes](features/operating-modes.md)
+- [Panic & Paranoid modes](features/panic-modes.md)
 - [Feature Flags](features/flags.md) - Runtime configuration options
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 

@@ -61,6 +61,8 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 
 **Daily use:** menu bar icon → **Arm** → work with adapter connected → on theft risk, pull cable or wait for grace → actions execute.
 
+**User guide (normal, discreet, panic):** [docs/features/user-guide.md](docs/features/user-guide.md) · [DE](docs/features/user-guide.de.md)
+
 **Detailed behavior (states, grace, auto-arm, remote trigger):** [docs/features/operating-modes.md](docs/features/operating-modes.md)
 
 | Shortcut / tip | |
@@ -82,7 +84,8 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | Auto-arm (location / network) | **Shipped** | Optional permissions |
 | Event log, onboarding, EN/DE | **Shipped** | v0.3.0 |
 | Network actions + remote trigger | **Shipped** | v0.4.0 — webhook, VPN, SSH, Wi‑Fi; `magsafeguard://` |
-| Panic mode | **Shipped** | v0.5.0 — zero grace, immediate shutdown · [design](docs/features/panic-modes.md) |
+| Discreet operation | **Shipped** | v0.4.3 — icon only; optional alerts/sounds off · [guide](docs/features/user-guide.md#3-discreet-operation-v043) |
+| Panic mode | **Shipped** | v0.5.0 — zero grace, **⌃⌘P** hotkey, immediate shutdown · [guide](docs/features/user-guide.md#4-panic-mode-v050) |
 | Paranoid mode | **Planned** | v0.6.0 — destruction + shutdown (FileVault + setup required) |
 | Notarized DMG for others | **Later** | v1.0 · paid Apple Dev optional |
 | Mac App Store | **Out of scope** | App Sandbox incompatible |
@@ -177,30 +180,23 @@ task release:clean                   # remove dist/
 
 | Phase | Version | Focus |
 | --- | --- | --- |
-| Now | **0.3.0** | Core dead-man's switch, event log, i18n, `task release` |
-| Next | **0.4.0** | Network actions (webhook, VPN, SSH, Wi‑Fi) + remote trigger |
-| Then | **0.5.0** | Panic mode — immediate shutdown, 0 grace |
-| After | **0.6.0** | Paranoid mode — data destruction (setup required) |
+| Done | **0.4.x** | Network actions, remote trigger, discreet operation |
+| Done | **0.5.0** | Panic mode — 0 grace, **⌃⌘P** hotkey, immediate shutdown |
+| Next | **0.6.0** | Paranoid mode — data destruction (setup required) |
 | Stable | **1.0.0** | Notarized Developer ID distribution |
 
-Full plan: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)**
+Full plan: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)** · **User guide:** [EN](docs/features/user-guide.md) · [DE](docs/features/user-guide.de.md)
 
-### Before panic & paranoid ship
+### Paranoid mode (v0.6.0 — not shipped)
 
 > Design: **[docs/features/panic-modes.md](docs/features/panic-modes.md)**
-
-**Panic (v0.5.0)** — lightweight notice at first enable:
-
-- [ ] Short impact notice (EN + DE): unsaved work, no cancel after trigger, caution on work devices
-- [ ] One strong confirmation to arm (no codeword)
-- [ ] No destructive test run in production builds
-
-**Paranoid (v0.6.0)** — full checklist:
 
 - [ ] Full legal disclaimer (EN + DE): irreversible data loss, user responsibility, work-device warning
 - [ ] Double confirmation + mandatory codeword
 - [ ] Setup wizard (FileVault, wipe paths/volumes)
 - [ ] Legal review for DE/EU (not legal advice — consult a lawyer)
+
+**Panic (v0.5.0)** is shipped — see [user guide §4](docs/features/user-guide.md#4-panic-mode-v050).
 
 ---
 
@@ -214,7 +210,7 @@ The repository is **public** at [github.com/sutz2001/MagSafe-BusKill](https://gi
 | [`NOTICE`](NOTICE) — attribution, upstream link, BusKill credit | Done |
 | README — fork vs upstream, maintainer, license pointers | Done |
 | Binary releases include `LICENSE` + `NOTICE` | To do when publishing GitHub Releases |
-| Panic-mode legal UI (only if feature ships) | Not applicable until v0.5.0 |
+| Panic-mode legal UI | Shipped in v0.5.0 (short notice EN/DE at first arm) |
 
 The first three items were verified on `main` before the repository was made public (August 2026).
 

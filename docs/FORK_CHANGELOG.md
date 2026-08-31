@@ -8,8 +8,10 @@ Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archiv
 ### Added
 
 - **Panic mode:** zero grace, protection-first security actions, immediate shutdown on cable pull
-- Menu item **Arm Panic Mode…** with legal notice; `magsafeguard://panic?token=…` remote trigger
-- Protection-first theft trigger path (GAP-15): lock first, bypass rate limit / circuit breaker
+- Menu item **Arm Panic Mode…** with legal notice (EN + DE)
+- Global panic hotkey **⌃⌘P** (Control+Command+P) while app is running
+- Remote trigger `magsafeguard://panic?token=…` when panic-armed
+- Protection-first theft trigger path (GAP-15): lock first, bypass rate limit / circuit breaker on cable trigger
 
 ## [0.4.3] — 2026-08-31
 

@@ -369,14 +369,31 @@ Auto-arm uses `armAutomatically()` after a 2 s notification delay — **no Touch
 | Launch at login, show in dock (General) | **Yes** — `SMAppService` + activation policy |
 | Custom scripts list (Advanced) | **Yes** when custom script action enabled |
 | Debug logging (Advanced) | **Yes** — Release `Log.debug` |
+| Panic legal notice accepted | **Yes** — required before first panic arm (stored in settings) |
 
 Full gap list: [behavior-gaps.md](behavior-gaps.md).
 
 ---
 
+## 9b. Discreet operation (v0.4.3)
+
+Optional low-visibility mode: **menu bar icon only** — no macOS notifications and no alert sounds.
+
+| Setting (`Settings → Notifications`) | Effect when disabled |
+|--------------------------------------|----------------------|
+| `showStatusNotifications` | No arm/disarm toasts |
+| `showSecurityAlerts` | No grace banner; no countdown text in menu bar |
+| `playCriticalAlertSound` | No beep on grace start |
+
+All three off → `isDiscreetOperation`. Grace period and state changes still run; only feedback is suppressed.
+
+**User guide:** [user-guide.md §3](user-guide.md#3-discreet-operation-v043) · [user-guide.de.md §3](user-guide.de.md#3-diskreter-betrieb-v043)
+
+---
+
 ## 10. Panic & Paranoid modes
 
-**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md).
+**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md) · **Mini guide:** [user-guide.md](user-guide.md#4-panic-mode-v050)
 
 ### Panic mode (shipped v0.5.0)
 
@@ -385,12 +402,13 @@ Arm via menu **Arm Panic Mode…** (legal notice on first use) or disarm with th
 | Trigger | Behavior |
 |---------|----------|
 | Cable disconnect | `PanicModeExecutor` — network actions, protection-first security actions, immediate shutdown |
+| **⌃⌘P** (global hotkey) | Same pipeline when panic-armed (app must be running) |
 | `magsafeguard://panic?token=…` | Same pipeline when already panic-armed |
 | `magsafeguard://trigger?token=…` | Normal armed/grace path only (not panic) |
 
 `ProtectionMode` is `.panic` until disarm. No grace period; reconnect during response does not cancel.
 
-**Not yet shipped:** global panic hotkey (roadmap).
+**Hotkey:** **⌃⌘P** (Control+Command+P) — mnemonic for Panic; Control avoids the system **⌘P** (Print) shortcut. Active while MagSafe Guard is running; no Accessibility permission required.
 
 | Aspect | Panic | Paranoid |
 |--------|-------|----------|
@@ -436,10 +454,11 @@ flowchart TD
 | Security actions | `MagSafeGuard/Services/SecurityActionsService.swift`, `MacSystemActions.swift` |
 | Network actions | `NetworkActionsService.swift`, `MacNetworkActions.swift` |
 | Remote URLs | `RemoteTriggerService.swift`, `AppDelegate.swift` |
+| Panic mode | `ProtectionMode.swift`, `PanicModeExecutor.swift`, `PanicHotkeyService.swift`, `AppController.armPanic()` |
 | Auto-arm | `AutoArmManager.swift`, `LocationManager.swift`, `NetworkMonitor.swift` |
 | Settings model | `MagSafeGuardLib/.../SettingsModel.swift`, `SettingsView.swift` |
 | Event log UI | `MagSafeGuard/Views/EventLog/EventLogView.swift` |
 
 ---
 
-*Last updated: 2026-08-31 (fork 0.4.0 analysis).*
+*Last updated: 2026-08-31 (fork 0.5.0).*
