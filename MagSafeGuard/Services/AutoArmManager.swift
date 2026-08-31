@@ -432,8 +432,7 @@ extension AutoArmManager {
     }
 
     if let lastTime = lastAutoArmTime,
-      Date().timeIntervalSince(lastTime) < autoArmCooldown
-    {
+      Date().timeIntervalSince(lastTime) < autoArmCooldown {
       return L10n.tr("autoArm.reason.cooldown")
     }
 

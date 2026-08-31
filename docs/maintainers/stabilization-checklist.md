@@ -49,7 +49,7 @@ Optional stretch: first **GitHub Release** with `.dmg` + `LICENSE` + `NOTICE`.
 ### P2 — nice to have
 
 - [x] `ResourceProtectionPolicyAdapter` tests (testing-guide P2).
-- [ ] `AuthenticationService` app-layer tests (testing-guide P3).
+- [x] `AuthenticationService` app-layer tests (testing-guide P3).
 - [ ] Coverage stays ≥ 80% (`COVERAGE_THRESHOLD`).
 
 **Commands:**
@@ -117,9 +117,9 @@ Full manual checklist: [acceptance-tests.md](acceptance-tests.md) (includes disc
 
 ## 3. Release & install
 
-- [ ] `task version:show` matches [version.json](../../version.json) and About box.
-- [ ] `task release` completes (or `SKIP_TESTS=true` only if tests temporarily blocked — document why).
-- [ ] `task release:install` → app in `/Applications`, menu bar app runs.
+- [x] `task version:show` matches [version.json](../../version.json) and About box.
+- [x] `task release` completes (xattr cleanup added to `package-release.sh` for codesign).
+- [x] `task release:install` → app in `/Applications`, menu bar app runs.
 - [ ] Personal Team **~7-day signing** noted — calendar reminder to rebuild.
 - [ ] **Daily driver trial:** run armed (normal mode) for **≥ 3–7 days** without blocker bugs.
 

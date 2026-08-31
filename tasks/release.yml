@@ -66,7 +66,7 @@ tasks:
     desc: Full release — sync version, test, build, DMG, checksum
     silent: true
     cmds:
-      - task: version:sync
+      - task: :version:sync
       - |
         if [ "${SKIP_TESTS:-}" = "true" ]; then
           echo "⏭️  Skipping tests (SKIP_TESTS=true)"

@@ -16,10 +16,10 @@ public final class PanicHotkeyService {
   public static let shared = PanicHotkeyService()
 
   /// Virtual key code for `P` (`kVK_ANSI_P`).
-  public static let keyCode: UInt32 = UInt32(kVK_ANSI_P)
+  public static let keyCode = UInt32(kVK_ANSI_P)
 
   /// Control + Command — memorable “P for Panic”, distinct from ⌘P (Print).
-  public static let modifiers: UInt32 = UInt32(controlKey | cmdKey)
+  public static let modifiers = UInt32(controlKey | cmdKey)
 
   /// Localized shortcut label for UI (e.g. menu hints).
   public static var displayShortcut: String { L10n.tr("panic.hotkey.shortcut") }

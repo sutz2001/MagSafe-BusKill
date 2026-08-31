@@ -85,8 +85,7 @@ final class SecurityActionsServiceTests: XCTestCase {
     sut.executeActions { result in
       XCTAssertTrue(result.failedActions.isEmpty == false)
       if let error = result.failedActions.first?.error as? SecurityActionError,
-        case .systemError = error
-      {
+        case .systemError = error {
         // expected
       } else {
         XCTFail("Expected circuit breaker system error")

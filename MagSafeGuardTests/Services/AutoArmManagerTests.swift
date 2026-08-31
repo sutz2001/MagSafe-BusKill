@@ -3,8 +3,8 @@
 //  MagSafe Guard
 //
 
-@testable import MagSafeGuard
 import CoreLocation
+@testable import MagSafeGuard
 import MagSafeGuardDomain
 import XCTest
 

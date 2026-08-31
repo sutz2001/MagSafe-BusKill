@@ -20,7 +20,7 @@ enum AboutPresenter {
     var options: [NSApplication.AboutPanelOptionKey: Any] = [
       .applicationName: L10n.tr("app.name"),
       .applicationVersion: AppVersion.full,
-      .credits: creditsAttributedString(),
+      .credits: creditsAttributedString()
     ]
 
     NSApp.orderFrontStandardAboutPanel(options: options)
@@ -37,7 +37,7 @@ enum AboutPresenter {
       attributes: [
         .font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize),
         .foregroundColor: NSColor.labelColor,
-        .paragraphStyle: paragraph,
+        .paragraphStyle: paragraph
       ]
     )
   }

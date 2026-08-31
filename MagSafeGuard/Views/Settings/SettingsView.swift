@@ -1097,7 +1097,7 @@ struct AdvancedSettingsView: View {
     let path = url.path
     let allowedPrefixes = [
       "/usr/local/magsafe-scripts/",
-      NSHomeDirectory() + "/.magsafe/scripts/",
+      NSHomeDirectory() + "/.magsafe/scripts/"
     ]
     guard allowedPrefixes.contains(where: { path.hasPrefix($0) }) else {
       let alert = NSAlert()

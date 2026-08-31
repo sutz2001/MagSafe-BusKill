@@ -247,7 +247,7 @@ Domain/core logic is well covered. Highest value is in the **app layer**, especi
 | ~~**P1**~~ | `SecurityActionsService` | Done | `SecurityActionsServiceTests.swift` |
 | ~~**P2**~~ | `ResourceProtectionPolicyAdapter` | Done | `ResourceProtectionPolicyAdapterTests.swift` |
 | ~~**P2**~~ | `AutoArmManager` | Done | `AutoArmManagerTests.swift` |
-| **P3** | `AuthenticationService` | Open | App-layer LA wrapper success/failure paths |
+| ~~**P3**~~ | `AuthenticationService` | Done | `AuthenticationServiceTests.swift` |
 
 **Not worth automating (by design):** raw IOKit, CoreLocation hardware, CloudKit sync, real screen lock/shutdown — see [acceptance-tests.md](acceptance-tests.md).
 

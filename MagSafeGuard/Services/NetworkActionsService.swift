@@ -66,7 +66,7 @@ public final class NetworkActionsService {
     let query: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: keychainService,
-      kSecAttrAccount as String: webhookTokenAccount,
+      kSecAttrAccount as String: webhookTokenAccount
     ]
     SecItemDelete(query as CFDictionary)
     guard !token.isEmpty else { return }
@@ -81,7 +81,7 @@ public final class NetworkActionsService {
       kSecAttrService as String: keychainService,
       kSecAttrAccount as String: webhookTokenAccount,
       kSecReturnData as String: true,
-      kSecMatchLimit as String: kSecMatchLimitOne,
+      kSecMatchLimit as String: kSecMatchLimitOne
     ]
     var item: CFTypeRef?
     let status = SecItemCopyMatching(query as CFDictionary, &item)

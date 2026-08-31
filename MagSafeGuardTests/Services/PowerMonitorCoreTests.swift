@@ -28,7 +28,7 @@ final class PowerMonitorCoreTests: XCTestCase {
         "Current Capacity": 80,
         "Max Capacity": 100,
         "Is Charging": true,
-        "AdapterDetails": ["Watts": 67],
+        "AdapterDetails": ["Watts": 67]
       ]
     ]
 
@@ -46,7 +46,7 @@ final class PowerMonitorCoreTests: XCTestCase {
         "Power Source State": "Battery Power",
         "Current Capacity": 42,
         "Max Capacity": 100,
-        "Is Charging": false,
+        "Is Charging": false
       ]
     ]
 

@@ -90,6 +90,9 @@ cmd_build() {
 
   mkdir -p "$DIST_DIR"
 
+  # Extended attributes (e.g. from Finder) break Release codesign on some machines.
+  xattr -cr "$ROOT/MagSafeGuard" "$ROOT/MagSafeGuardTests" 2>/dev/null || true
+
   log "📦 Release build — MagSafe Guard ${MARKETING} (build ${BUILD_NUM})"
   log "   Sign mode: ${SIGN_MODE}"
   log "   Output:    ${STAGED_APP}"

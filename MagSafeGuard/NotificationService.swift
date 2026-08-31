@@ -188,8 +188,7 @@ public class NotificationService {
   ///   - message: The alert message describing the security event
   public func showCriticalAlert(title: String, message: String) {
     if NotificationService.disableForTesting
-      && !String(describing: type(of: deliveryMethod)).contains("Mock")
-    {
+      && !String(describing: type(of: deliveryMethod)).contains("Mock") {
       Log.debug("Skipping critical alert - disabled for testing")
       return
     }

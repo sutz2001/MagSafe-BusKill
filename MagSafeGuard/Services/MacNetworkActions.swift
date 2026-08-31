@@ -30,7 +30,7 @@ public final class MacNetworkActions: NetworkActionsProtocol {
     let body: [String: String] = [
       "event": event,
       "source": "MagSafeGuard",
-      "timestamp": ISO8601DateFormatter().string(from: Date()),
+      "timestamp": ISO8601DateFormatter().string(from: Date())
     ]
     request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
@@ -66,7 +66,7 @@ public final class MacNetworkActions: NetworkActionsProtocol {
           do shell script "scutil --nc list | grep Connected | head -1 | sed 's/.*\"\\(.*\\)\".*/\\1/' | xargs -I{} scutil --nc stop '{}'"
         end try
       end tell
-      """,
+      """
     ])
   }
 
@@ -83,8 +83,7 @@ public final class MacNetworkActions: NetworkActionsProtocol {
     let output = try captureShell("/usr/sbin/networksetup", args: ["-listallhardwareports"])
     let blocks = output.components(separatedBy: "\n\n")
     for block in blocks where block.contains("Hardware Port: Wi-Fi")
-      || block.contains("Hardware Port: AirPort")
-    {
+      || block.contains("Hardware Port: AirPort") {
       for line in block.components(separatedBy: "\n") where line.hasPrefix("Device: ") {
         return String(line.dropFirst("Device: ".count)).trimmingCharacters(in: .whitespaces)
       }

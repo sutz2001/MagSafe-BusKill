@@ -223,8 +223,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         && UserDefaultsManager.shared.settings.showSecurityAlerts
 
       if let image = NSImage(named: imageName),
-        let templateImage = image.copy() as? NSImage
-      {
+        let templateImage = image.copy() as? NSImage {
         templateImage.isTemplate = true
         button.image = templateImage
         if showGraceCountdown {
