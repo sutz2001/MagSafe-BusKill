@@ -42,7 +42,7 @@ Stand: nach **0.5.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 |---|--------|--------------|
 | 1 | **Modus-Namen** | **Panic** (Schutz, Shutdown) und **Paranoid** (Vernichtung) — öffentlich in UI, Docs, Releases |
 | 2 | **Netzwerk-Aktionen** | **Vollpaket:** Webhook + VPN + SSH-Agent + WLAN (+ optional Proxy/DNS) |
-| 3 | **Panic-Auslöser** | **Hotkey ⌃⌘P** + Kabel + **Fernauslösung** (`magsafeguard://panic`) |
+| 3 | **Panic-Auslöser** | **Hotkey ⌃⌘P** + Kabel + **Fernauslösung** (`magsafeguard://panic`); LAN/Web vom Handy → [Idee](features/future-ideas.md) |
 | 4 | **Verteilung** | **GitHub** (Quellcode + optionale Releases) + **notarisierte DMG** — **kein App Store** |
 | 5 | **Paid Apple Dev** | Wenn App veröffentlichungsreif: für **notarisierte Binaries**; nicht nötig zum Hosten von Quellcode auf GitHub |
 | 6 | **Repository** | **Öffentlich** seit August 2026 (siehe [README](../README.md#repository-visibility)) |
@@ -176,6 +176,7 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 
 ## Phase 4 — Nice-to-have (nach 1.0)
 
+- **LAN trigger from phone** (same Wi‑Fi, minimal web UI?) — [Gedankenfetzen](features/future-ideas.md#lan-trigger-from-phone-same-wi-fi); heute nur `magsafeguard://` + Shortcuts
 - Home Assistant / MQTT Presets
 - Evidence / Forensik-Paket
 - Hardware-BusKill (USB)
@@ -223,3 +224,4 @@ Apple Sandbox erlaubt die aktuelle Architektur (System-Shutdown, AppleScript-Log
 - [AGENTS.md](../AGENTS.md)
 - [README.md](../README.md) · [README.de.md](../README.de.md)
 - [user-guide.md](features/user-guide.md) · [user-guide.de.md](features/user-guide.de.md)
+- [Future ideas (scratch pad)](features/future-ideas.md) — uncommitted thought fragments

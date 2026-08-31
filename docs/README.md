@@ -12,6 +12,7 @@ This documentation is organized by audience and role to help you find the inform
 - [Operating Modes & Flows](features/operating-modes.md) - What each state/mode does (with diagrams)
 - [Behavior Gaps](features/behavior-gaps.md) - Known UI vs runtime mismatches
 - [Panic & Paranoid modes](features/panic-modes.md) - Panic shipped (v0.5); Paranoid planned (v0.6)
+- [Future ideas (scratch pad)](features/future-ideas.md) - Uncommitted thought fragments (e.g. LAN trigger from phone)
 - [Building and Running](maintainers/building-and-running.md) - Get MagSafe Guard running on your Mac
 - [Troubleshooting](maintainers/troubleshooting.md) - Common issues and solutions
 - [Feature Flags](features/flags.md) - Configure advanced features
