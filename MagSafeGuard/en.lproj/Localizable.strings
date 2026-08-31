@@ -84,6 +84,9 @@
 "settings.notifications.status" = "Status Notifications";
 "settings.notifications.showStatus.title" = "Show Status Changes";
 "settings.notifications.showStatus.caption" = "Display notifications when protection is armed or disarmed";
+"settings.notifications.showSecurityAlerts.title" = "Show security alerts";
+"settings.notifications.showSecurityAlerts.caption" = "Banner when grace period starts; countdown in menu bar when on";
+"settings.notifications.discreet.footer" = "Turn off status, security alerts, and alert sound to run discreetly — only the menu bar icon shows state.";
 "settings.notifications.alerts" = "Alert Settings";
 "settings.notifications.playSound.title" = "Play Alert Sound";
 "settings.notifications.playSound.caption" = "Play sound for critical security alerts";

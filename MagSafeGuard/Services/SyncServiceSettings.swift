@@ -49,6 +49,7 @@ final class SyncServiceSettings {
 
     // Notification settings
     record["showStatusNotifications"] = settings.showStatusNotifications ? 1 : 0
+    record["showSecurityAlerts"] = settings.showSecurityAlerts ? 1 : 0
     record["playCriticalAlertSound"] = settings.playCriticalAlertSound ? 1 : 0
 
     // General settings
@@ -150,6 +151,7 @@ final class SyncServiceSettings {
       ("autoArmByLocation", \.autoArmByLocation),
       ("autoArmOnUntrustedNetwork", \.autoArmOnUntrustedNetwork),
       ("showStatusNotifications", \.showStatusNotifications),
+      ("showSecurityAlerts", \.showSecurityAlerts),
       ("playCriticalAlertSound", \.playCriticalAlertSound),
       ("launchAtLogin", \.launchAtLogin),
       ("showInDock", \.showInDock),

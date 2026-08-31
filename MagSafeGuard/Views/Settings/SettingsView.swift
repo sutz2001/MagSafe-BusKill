@@ -852,15 +852,44 @@ struct NotificationSettingsView: View {
   }
 
   private var alertSettingsSection: some View {
-    Section(header: Text(l10n: "settings.notifications.alerts")) {
-      Toggle(
-        isOn: Binding(
-          get: { settingsManager.settings.playCriticalAlertSound },
-          set: { settingsManager.updateSetting(\.playCriticalAlertSound, value: $0) }
-        )
-      ) {
-        alertSoundToggleLabel
-      }
+    Section {
+      securityAlertsToggle
+      alertSoundToggle
+    } header: {
+      Text(l10n: "settings.notifications.alerts")
+    } footer: {
+      Text(l10n: "settings.notifications.discreet.footer")
+    }
+  }
+
+  private var securityAlertsToggle: some View {
+    Toggle(
+      isOn: Binding(
+        get: { settingsManager.settings.showSecurityAlerts },
+        set: { settingsManager.updateSetting(\.showSecurityAlerts, value: $0) }
+      )
+    ) {
+      securityAlertsToggleLabel
+    }
+  }
+
+  private var alertSoundToggle: some View {
+    Toggle(
+      isOn: Binding(
+        get: { settingsManager.settings.playCriticalAlertSound },
+        set: { settingsManager.updateSetting(\.playCriticalAlertSound, value: $0) }
+      )
+    ) {
+      alertSoundToggleLabel
+    }
+  }
+
+  private var securityAlertsToggleLabel: some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(l10n: "settings.notifications.showSecurityAlerts.title")
+      Text(l10n: "settings.notifications.showSecurityAlerts.caption")
+        .font(.caption)
+        .foregroundColor(.secondary)
     }
   }
 

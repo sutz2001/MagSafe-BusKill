@@ -84,6 +84,9 @@
 "settings.notifications.status" = "Status-Mitteilungen";
 "settings.notifications.showStatus.title" = "Statusänderungen anzeigen";
 "settings.notifications.showStatus.caption" = "Mitteilungen anzeigen, wenn der Schutz aktiviert oder deaktiviert wird";
+"settings.notifications.showSecurityAlerts.title" = "Sicherheitswarnungen anzeigen";
+"settings.notifications.showSecurityAlerts.caption" = "Hinweis bei Grace Period; Countdown in der Menüleiste wenn aktiv";
+"settings.notifications.discreet.footer" = "Status, Sicherheitswarnungen und Alarmton aus = diskret — nur das Menüleisten-Icon zeigt den Zustand.";
 "settings.notifications.alerts" = "Alarm-Einstellungen";
 "settings.notifications.playSound.title" = "Alarmton abspielen";
 "settings.notifications.playSound.caption" = "Ton für kritische Sicherheitswarnungen abspielen";

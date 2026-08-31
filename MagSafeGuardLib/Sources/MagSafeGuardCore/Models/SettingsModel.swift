@@ -107,8 +107,15 @@ public struct Settings: Codable {
   /// - Auto-arm activation
   /// - Settings changes
   ///
-  /// Critical security alerts bypass this setting and are always shown.
+  /// Does not affect grace-period security alerts (`showSecurityAlerts`).
   public var showStatusNotifications: Bool = true
+
+  /// Show grace-period and other security alert banners (macOS notifications).
+  ///
+  /// When disabled, grace period still runs and the menu bar icon changes, but no
+  /// system notification is shown. Combine with `playCriticalAlertSound` off and
+  /// `showStatusNotifications` off for discreet operation (icon only).
+  public var showSecurityAlerts: Bool = true
 
   /// Enable audio alerts for critical security events.
   ///
@@ -225,6 +232,11 @@ public struct Settings: Codable {
     }
 
     return validated
+  }
+
+  /// True when status, visual security alerts, and alert sounds are all disabled (menu bar icon only).
+  public var isDiscreetOperation: Bool {
+    !showStatusNotifications && !showSecurityAlerts && !playCriticalAlertSound
   }
 }
 

@@ -211,7 +211,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     if let button = statusItem?.button {
       let statusDescription = core.appController.statusDescription
       let imageName = core.statusMenuBarImageName()
-      let showGraceCountdown = core.appController.currentState == .gracePeriod
+      let showGraceCountdown =
+        core.appController.currentState == .gracePeriod
+        && UserDefaultsManager.shared.settings.showSecurityAlerts
 
       if let image = NSImage(named: imageName),
         let templateImage = image.copy() as? NSImage

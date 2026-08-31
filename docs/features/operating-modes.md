@@ -366,8 +366,9 @@ Auto-arm uses `armAutomatically()` after a 2 s notification delay — **no Touch
 | Network actions + webhook (Security) | **Yes** |
 | Remote trigger token (Security) | **Yes** |
 | Auto-arm toggles + trusted networks (Auto-Arm) | **Yes** |
-| Status notifications (Notifications) | **Yes** for normal notifications |
-| Critical alert sound (Notifications) | **Yes** — on grace critical alerts |
+| Status notifications (Notifications) | **Yes** — arm/disarm toasts |
+| Security alerts (Notifications) | **Yes** — grace banner + menu countdown; off = icon only |
+| Critical alert sound (Notifications) | **Yes** — on grace start (independent of banner) |
 | Launch at login, show in dock (General) | **Yes** — `SMAppService` + activation policy |
 | Custom scripts list (Advanced) | **Yes** when custom script action enabled |
 | Debug logging (Advanced) | **Yes** — Release `Log.debug` |
@@ -379,6 +380,18 @@ Full gap list: [behavior-gaps.md](behavior-gaps.md).
 ## 10. Planned: Panic & Paranoid modes
 
 **Status:** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md).
+
+### Discreet operation (shipped)
+
+Normal armed / grace modes can run **without notifications or sounds** — only the menu bar icon changes (grace uses a distinct icon; no countdown text when security alerts are off).
+
+| Setting | Controls |
+|---------|----------|
+| `showStatusNotifications` | Arm / disarm toasts |
+| `showSecurityAlerts` | Grace-period banner + menu bar countdown |
+| `playCriticalAlertSound` | Basso/beep on grace start |
+
+All three off → `isDiscreetOperation` (icon only). Panic/Paranoid will **not** use discreet defaults (0 grace, no cancel).
 
 ### Panic (v0.5.0) — protect, no data loss
 

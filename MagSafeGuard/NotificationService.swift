@@ -64,6 +64,7 @@ public protocol NotificationDeliveryProtocol {
 ///
 /// The service respects user preferences from `UserDefaultsManager`:
 /// - `showStatusNotifications`: Controls standard notifications
+/// - `showSecurityAlerts`: Controls grace-period and security alert banners
 /// - `playCriticalAlertSound`: Controls audio for critical alerts
 ///
 /// ## Thread Safety
@@ -176,14 +177,11 @@ public class NotificationService {
     }
   }
 
-  /// Displays a critical security alert that bypasses user preferences.
+  /// Displays a critical security alert respecting user preferences.
   ///
-  /// Critical alerts are used for security events that require immediate user attention,
-  /// such as power disconnection or grace period warnings. These notifications:
-  /// - Bypass the `showStatusNotifications` setting
-  /// - Use critical alert priority when available
-  /// - Fall back to alert windows if permissions are denied
-  /// - Are not suppressed during testing (unless using mocks)
+  /// Critical alerts are used for security events such as grace period start.
+  /// Visual delivery is controlled by `showSecurityAlerts`; audio by `playCriticalAlertSound`.
+  /// When both status and security alerts are off, operation is discreet (menu bar icon only).
   ///
   /// - Parameters:
   ///   - title: The alert title (typically "Security Alert")
@@ -200,16 +198,28 @@ public class NotificationService {
       playCriticalAlertSound()
     }
 
+    guard UserDefaultsManager.shared.settings.showSecurityAlerts else {
+      Log.debug("Security alert notifications disabled in settings")
+      return
+    }
+
     if !permissionsGranted {
       requestPermissions()
     }
 
     let identifier = "MagSafeGuard-critical-\(UUID().uuidString)"
 
-    if permissionsGranted, deliveryMethod is UserNotificationDelivery {
-      deliverCriticalNotification(title: title, message: message, identifier: identifier)
+    if deliveryMethod is UserNotificationDelivery {
+      if !permissionsGranted {
+        requestPermissions()
+      }
+      if permissionsGranted {
+        deliverCriticalNotification(title: title, message: message, identifier: identifier)
+      } else {
+        AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+      }
     } else {
-      AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+      deliveryMethod.deliver(title: title, message: message, identifier: identifier)
     }
   }
 

@@ -24,10 +24,23 @@ final class SettingsModelTests: XCTestCase {
     XCTAssertEqual(settings.securityActions, [.lockScreen, .soundAlarm])
     XCTAssertFalse(settings.autoArmEnabled)
     XCTAssertTrue(settings.showStatusNotifications)
+    XCTAssertTrue(settings.showSecurityAlerts)
     XCTAssertTrue(settings.playCriticalAlertSound)
+    XCTAssertFalse(settings.isDiscreetOperation)
     XCTAssertFalse(settings.launchAtLogin)
     XCTAssertFalse(settings.showInDock)
     XCTAssertFalse(settings.debugLoggingEnabled)
+  }
+
+  func testDiscreetOperationWhenAllAlertsDisabled() {
+    var settings = Settings()
+    settings.showStatusNotifications = false
+    settings.showSecurityAlerts = false
+    settings.playCriticalAlertSound = false
+    XCTAssertTrue(settings.isDiscreetOperation)
+
+    settings.showSecurityAlerts = true
+    XCTAssertFalse(settings.isDiscreetOperation)
   }
 
   // MARK: - Validation Tests
