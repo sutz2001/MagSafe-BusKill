@@ -15,7 +15,7 @@
 
 Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork of [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill).
 
-[![Tests](https://github.com/sutz2001/MagSafe-BusKill/actions/workflows/test.yml/badge.svg)](https://github.com/sutz2001/MagSafe-BusKill/actions/workflows/test.yml)
+**CI:** GitHub Actions disabled (free-tier minutes). Run `task test` locally before pushing.
 
 | | |
 | --- | --- |

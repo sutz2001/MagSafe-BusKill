@@ -1,11 +1,7 @@
 name: Tests (Cached Coverage)
 
+# CI disabled for free-tier Actions minutes
 on:
-  push:
-    branches: [main]
-    paths:
-      - "coverage.lcov"
-      - "coverage.xml"
   workflow_dispatch:
 
 permissions:

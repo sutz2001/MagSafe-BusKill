@@ -1,8 +1,8 @@
 name: Fork PR Security Check
 
+# CI disabled for free-tier Actions minutes
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read

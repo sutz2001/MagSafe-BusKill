@@ -1,17 +1,8 @@
 name: Release Please
 
+# CI disabled for free-tier Actions minutes — releases via task release locally
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened]
-    # Only run on files that release-please modifies
-    paths:
-      - ".github/.release-please-manifest.json"
-      - "**/CHANGELOG.md"
-      - "**/package.json"
-      - "**/package-lock.json"
+  workflow_dispatch:
 
 permissions:
   contents: read
