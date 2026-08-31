@@ -13,7 +13,7 @@ This documentation is organized by audience and role to help you find the inform
 - [Building and Running](maintainers/building-and-running.md) - Get MagSafe Guard running on your Mac
 - [Troubleshooting](maintainers/troubleshooting.md) - Common issues and solutions
 - [Feature Flags](features/flags.md) - Configure advanced features
-- [Operating Modes](features/operating-modes.md) - States, grace period, auto-arm, remote trigger
+- [Panic & Paranoid modes (planned)](features/panic-modes.md) - High-assurance modes design (v0.5 / v0.6)
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 
 ### For Contributors

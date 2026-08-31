@@ -50,4 +50,12 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 
 ---
 
+## Open (planned — response speed / v0.5)
+
+| ID | Issue | Target |
+|----|-------|--------|
+| GAP-15 | Theft trigger uses user action order; lock not prioritized; sequential default; rate limit / circuit breaker can block lock | v0.5 — protection-first path (see [panic-modes.md](panic-modes.md)) |
+
+---
+
 *See [operating-modes.md](operating-modes.md) for current behavior.*

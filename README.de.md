@@ -82,7 +82,8 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 | Auto-Arm (Standort / Netzwerk) | **Ausgeliefert** | Optionale Berechtigungen |
 | Event-Log, Onboarding, EN/DE | **Ausgeliefert** | v0.3.0 |
 | Netzwerk-Aktionen + Fernauslösung | **Ausgeliefert** | v0.4.0 — Webhook, VPN, SSH, WLAN; `magsafeguard://` |
-| Panic-Modus | **Geplant** | v0.5.0 · [rechtliche Voraussetzungen](#vor-dem-panic-modus) |
+| Panic-Modus | **Geplant** | v0.5.0 — sofort Shutdown, kein Datenverlust · [Design](docs/features/panic-modes.md) |
+| Paranoid-Modus | **Geplant** | v0.6.0 — Vernichtung + Shutdown (FileVault + Setup nötig) |
 | Notarisierte DMG für Dritte | **Später** | v1.0 · Paid Dev optional |
 | Mac App Store | **Ausgeschlossen** | Sandbox inkompatibel |
 
@@ -178,18 +179,27 @@ task release:clean
 | --- | --- | --- |
 | Jetzt | **0.3.0** | Kern-Dead-Man's-Switch, Event-Log, i18n, `task release` |
 | Als Nächstes | **0.4.0** | Netzwerk-Aktionen + Fernauslösung |
-| Danach | **0.5.0** | Panic-Modus — nach rechtlicher Checkliste |
+| Danach | **0.5.0** | Panic-Modus — sofort Shutdown, 0 Grace |
+| Anschließend | **0.6.0** | Paranoid-Modus — Datenvernichtung (Setup nötig) |
 | Stabil | **1.0.0** | Notarisierte Developer-ID-Verteilung |
 
 Details: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)**
 
-### Vor dem Panic-Modus
+### Vor Panic & Paranoid
 
-> **Pflicht vor jeder Panic-Veröffentlichung** (auch Beta):
+> Design: **[docs/features/panic-modes.md](docs/features/panic-modes.md)**
 
-- [ ] Rechtshinweis in der App (DE + EN): irreversibler Datenverlust, eigene Verantwortung, Warnung Dienstgerät/Arbeitslaptop
+**Panic (v0.5.0)** — kurzer Hinweis beim ersten Aktivieren:
+
+- [ ] Kurzer Wirkhinweis (DE + EN): ungespeicherte Arbeit, kein Abbruch nach Auslösung, Vorsicht Dienstgerät
+- [ ] Eine starke Bestätigung zum Arming (kein Codewort)
+- [ ] Kein destruktiver Testlauf in Produktions-Builds
+
+**Paranoid (v0.6.0)** — volle Checkliste:
+
+- [ ] Voller Rechtshinweis (DE + EN): irreversibler Datenverlust, eigene Verantwortung, Dienstgerät-Warnung
 - [ ] Doppelte Bestätigung + Pflicht-Codewort
-- [ ] Kein destruktiver „Testlauf“ in Produktions-Builds
+- [ ] Setup-Wizard (FileVault, Wipe-Pfade/Volumes)
 - [ ] Rechtliche Prüfung DE/EU (keine Rechtsberatung — ggf. Anwalt)
 
 ---

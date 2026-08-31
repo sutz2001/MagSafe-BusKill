@@ -82,7 +82,8 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | Auto-arm (location / network) | **Shipped** | Optional permissions |
 | Event log, onboarding, EN/DE | **Shipped** | v0.3.0 |
 | Network actions + remote trigger | **Shipped** | v0.4.0 — webhook, VPN, SSH, Wi‑Fi; `magsafeguard://` |
-| Panic mode | **Planned** | v0.5.0 · [legal prerequisites](#before-panic-mode-ships) |
+| Panic mode | **Planned** | v0.5.0 — immediate shutdown, no data loss · [design](docs/features/panic-modes.md) |
+| Paranoid mode | **Planned** | v0.6.0 — destruction + shutdown (FileVault + setup required) |
 | Notarized DMG for others | **Later** | v1.0 · paid Apple Dev optional |
 | Mac App Store | **Out of scope** | App Sandbox incompatible |
 
@@ -178,19 +179,28 @@ task release:clean                   # remove dist/
 | --- | --- | --- |
 | Now | **0.3.0** | Core dead-man's switch, event log, i18n, `task release` |
 | Next | **0.4.0** | Network actions (webhook, VPN, SSH, Wi‑Fi) + remote trigger |
-| Then | **0.5.0** | Panic mode (hotkey, remote) — after legal checklist |
+| Then | **0.5.0** | Panic mode — immediate shutdown, 0 grace |
+| After | **0.6.0** | Paranoid mode — data destruction (setup required) |
 | Stable | **1.0.0** | Notarized Developer ID distribution |
 
 Full plan: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)**
 
-### Before panic mode ships
+### Before panic & paranoid ship
 
-> **Required before any panic-mode release** (including beta):
+> Design: **[docs/features/panic-modes.md](docs/features/panic-modes.md)**
 
-- [ ] In-app legal disclaimer (EN + DE): irreversible data loss, user responsibility, employer/work-device warning
-- [ ] Double confirmation + mandatory codeword to arm panic mode
-- [ ] No destructive “test run” in production builds
-- [ ] Legal review for DE/EU publication (not legal advice — consult a lawyer)
+**Panic (v0.5.0)** — lightweight notice at first enable:
+
+- [ ] Short impact notice (EN + DE): unsaved work, no cancel after trigger, caution on work devices
+- [ ] One strong confirmation to arm (no codeword)
+- [ ] No destructive test run in production builds
+
+**Paranoid (v0.6.0)** — full checklist:
+
+- [ ] Full legal disclaimer (EN + DE): irreversible data loss, user responsibility, work-device warning
+- [ ] Double confirmation + mandatory codeword
+- [ ] Setup wizard (FileVault, wipe paths/volumes)
+- [ ] Legal review for DE/EU (not legal advice — consult a lawyer)
 
 ---
 

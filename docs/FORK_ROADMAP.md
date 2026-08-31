@@ -14,7 +14,8 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | EN/DE, `task release`, CI grün | ✅ produktiv |
 | Netzwerk-**Aktionen** (bei Trigger ausführen) | ✅ v0.4.0 |
 | Fernauslösung (`magsafeguard://`) | ✅ v0.4.0 |
-| **Panic-Modus** | ❌ geplant |
+| **Panic-Modus** | ❌ geplant v0.5.0 |
+| **Paranoid-Modus** | ❌ geplant v0.6.0 |
 | Notarisierung (Developer ID) | ⏸️ wenn App reif + Paid Dev |
 | Mac App Store | ❌ **ausgeschlossen** (Sandbox) |
 | Repository | ✅ öffentlich — [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
@@ -37,7 +38,7 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 
 | # | Thema | Entscheidung |
 |---|--------|--------------|
-| 1 | **Modus-Name** | Nur **„Panic-Modus“** in UI, Docs und Releases — kein alternativer Codename in öffentlichen Artefakten |
+| 1 | **Modus-Namen** | **Panic** (Schutz, Shutdown) und **Paranoid** (Vernichtung) — öffentlich in UI, Docs, Releases |
 | 2 | **Netzwerk-Aktionen** | **Vollpaket:** Webhook + VPN + SSH-Agent + WLAN (+ optional Proxy/DNS) |
 | 3 | **Panic-Auslöser** | **Hotkey** + Kabel + **Fernauslösung** (URL-Scheme / Shortcuts, später Polling/Push) |
 | 4 | **Verteilung** | **GitHub** (Quellcode + optionale Releases) + **notarisierte DMG** — **kein App Store** |
@@ -49,7 +50,7 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 ## Leitplanken
 
 1. **Sicherheit zuerst** — Destruktive Features nur opt-in, mit klarer Warnung und starker Bestätigung.
-2. **Geschwindigkeit bei Panic** — Keine Grace Period; parallel und fire-and-forget.
+2. **Geschwindigkeit bei Schutz** — Lock/Logout zuerst und schnell (auch normal armed); Panic/Paranoid: 0 Grace, parallel, kein Circuit-Breaker-Block.
 3. **Testbarkeit** — Panic nur mit Mocks; **kein** E2E mit echter Löschung.
 4. **Verteilung** — Volle Features nur außerhalb des Mac App Store (Direct / GitHub).
 5. **Rechtliches vor Panic** — Siehe [Pflicht-Checkliste](#pflicht-checkliste-vor-panic-modus) unten.
@@ -92,45 +93,81 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 
 ## Phase 2 — Panic-Modus (~0.5.0)
 
-**Ziel:** Separater **Panic-Modus** — Gerät in Sekunden unbrauchbar machen. Öffentlicher Name ausschließlich **„Panic-Modus“**.
+**Ziel:** **Panic** — Gerät sofort unzugänglich machen **ohne** Daten zu löschen.  
+Design: [docs/features/panic-modes.md](features/panic-modes.md)
 
-### Verhalten
+### Verhalten (Panic)
 
 | Aspekt | Normal (armed) | Panic |
 |--------|----------------|-------|
 | Grace Period | 5–30 s | **0 s** |
 | Ablauf | konfiguriert | **parallel** |
 | Circuit Breaker | aktiv | **aus** |
-| Auslöser | Kabel | Kabel + **Hotkey** + **Fernauslösung** |
+| Auslöser | Kabel | Kabel + **Hotkey** + `magsafeguard://panic` |
 | Abbruch | Auth möglich | **nein** |
+| Daten löschen | — | **nein** |
 
-### Maßnahmen (nach Geschwindigkeit)
+**Sofort:** Lock + Logout + Netzwerk-Aktionen + **harter Shutdown** (neuer Pfad, kein 1-Minuten-Dialog).
 
-**Sofort:** Lock + Logout · Agenten leeren · Keychain · Pfade löschen · Clipboard · Webhooks
+### Arming (Panic)
 
-**Sekunden:** Volumes unmount · FileVault-Recovery-Key · optional APFS erase (dediziertes Volume)
+- Eine starke Bestätigung
+- **Kurzer** Rechtshinweis (EN + DE): unsaved work, kein Abbruch, Vorsicht Dienstgerät — **kein** Codewort
+- Eigenes Menüleisten-Icon
 
-### Pflicht-Checkliste vor Panic-Modus
+### Pflicht-Checkliste vor Panic (v0.5.0)
 
-> **Muss erledigt sein, bevor Panic in einer Release landet** (auch Beta):
-
-- [ ] **Rechtshinweis in der App** (DE + EN): irreversibler Datenverlust; Nutzer haftet selbst; **Warnung bei Dienstgerät / Arbeitslaptop**; keine Gewähr
-- [ ] **Onboarding-Kapitel** nur für Panic mit expliziter Einwilligung
-- [ ] **Doppelte Bestätigung + Pflicht-Codewort** zum Arming
+- [ ] **Protection-first trigger path** — lock under 500 ms; parallel tier-2; bypass rate limit on theft trigger ([GAP-15](features/behavior-gaps.md))
+- [ ] `PanicModeExecutor` + sofortiger Shutdown (nicht `scheduleShutdown`)
+- [ ] Panic-Arming-UI + kurzer Rechtshinweis (EN + DE)
 - [ ] Eigenes Menüleisten-Icon (panic armed)
-- [ ] **Kein** Testlauf mit echter Löschung
-- [ ] `PanicActionExecutor` + `MockPanicExecutor` (CI)
-- [ ] README + [FORK_ROADMAP.md](FORK_ROADMAP.md) + Settings-Text aktualisieren
-- [ ] Vor öffentlicher Veröffentlichung: **Rechtliches prüfen** (DE/EU — kein Ersatz für Anwalt)
+- [ ] Hotkey + `magsafeguard://panic`
+- [ ] `MockPanicExecutor` (CI) — kein destruktiver Testlauf
+- [ ] [panic-modes.md](features/panic-modes.md) · `operating-modes.md` · README EN/DE
 
-### Teststrategie
+---
+
+## Phase 2b — Paranoid-Modus (~0.6.0)
+
+**Ziel:** **Paranoid** — schnellste mögliche Datenvernichtung + sofortiger Shutdown.  
+**Voraussetzung:** Nutzer hat vorgehärtet (FileVault an, Wipe-Pfade/Volumes konfiguriert). Setup-Modus, kein Plug-and-play.
+
+### Verhalten (Paranoid)
+
+Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann **sofort** Shutdown (nicht auf Wipe warten).
+
+| Maßnahme | Priorität |
+|----------|-----------|
+| Clipboard, SSH-Agent, Browser kill | sofort |
+| Konfigurierte Pfade / APFS-Volume | parallel |
+| Lokales Recovery-Key-Backup löschen | falls konfiguriert |
+| Shutdown | sofort (terminal) |
+
+### Arming (Paranoid)
+
+- Setup-Wizard (FileVault-Check, Wipe-Ziele)
+- **Doppelte** Bestätigung + **Pflicht-Codewort**
+- Eigenes Onboarding nur für Paranoid
+- **Voller** Rechtshinweis (EN + DE) inkl. irreversibler Datenverlust, Dienstgerät-Warnung
+
+### Pflicht-Checkliste vor Paranoid (v0.6.0)
+
+- [ ] `ParanoidModeExecutor` + `DestructionPipeline` + Mocks
+- [ ] Setup-Wizard + FileVault-Prüfung
+- [ ] Doppelte Bestätigung + Codewort + voller Rechtstext
+- [ ] `magsafeguard://paranoid` (eigenes Token empfohlen)
+- [ ] Ehrliche Limits in UI (APFS, Forensik)
+- [ ] Rechtliche Prüfung DE/EU vor öffentlicher Beta
+- [ ] README EN + DE
+
+### Teststrategie (beide Modi)
 
 | Was | Wie |
 |-----|-----|
-| Trigger-Logik | Unit-Tests + Mock |
+| Trigger-Logik, 0 Grace | Unit-Tests + Mock |
 | Echtes Löschen | **Nie** in CI |
 
-**Aufwand:** hoch · **Risiko:** hoch
+**Aufwand:** Panic mittel · Paranoid hoch · **Risiko:** Paranoid sehr hoch
 
 ---
 
@@ -166,8 +203,9 @@ Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 ## Zeitstrahl
 
 ```
-Jetzt ──► 0.4.0  Netzwerk (voll) + Fernauslösung
-       ──► 0.5.0  Panic-Modus + Hotkey (+ Pflicht-Checkliste)
+Jetzt ──► 0.4.x  Netzwerk + Fernauslösung (done)
+       ──► 0.5.0  Panic (Shutdown, 0 Grace, kein Datenverlust)
+       ──► 0.6.0  Paranoid (Vernichtung + Shutdown, Setup-Modus)
        ──► 1.0.0  Stabil + notarisierte DMG (optional Paid Dev)
 ```
 

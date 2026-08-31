@@ -197,13 +197,15 @@ flowchart LR
     SA --> SYS
 ```
 
-**`SecurityActionsService` behavior:**
+**`SecurityActionsService` behavior (today):**
 
-- Runs actions **sequentially** by default (parallel optional in service config, not exposed in Settings UI).
-- Runs actions in **Settings → Security** drag order (`actionOrder` synced on save)
-- **Rate limit:** minimum 5 s between runs; max 10 per 60 s window.
-- **Circuit breaker:** 3 consecutive failures → open for 60 s.
+- Runs actions **sequentially** by default (`executeInParallel` false; not in Settings UI).
+- Runs actions in **Settings → Security** drag order (`actionOrder` synced on save) — **no automatic lock-first**.
+- **Rate limit:** minimum 5 s between runs; max 10 per 60 s window — applies to trigger path too.
+- **Circuit breaker:** 3 consecutive failures → open for 60 s — can block all actions.
 - Second `executeActions` call while running is **ignored**.
+
+**Planned (v0.5):** protection-first trigger path — lock immediately, parallel tier-2 actions, bypass rate limit on theft trigger. See [panic-modes.md § Response speed](panic-modes.md#response-speed--normal-armed-mode-v05).
 
 **Allowed script paths** (README): `~/.magsafe/scripts/`, `/usr/local/magsafe-scripts/`.
 
@@ -374,19 +376,30 @@ Full gap list: [behavior-gaps.md](behavior-gaps.md).
 
 ---
 
-## 10. Planned: Panic mode (v0.5.0)
+## 10. Planned: Panic & Paranoid modes
 
-**Status:** not in codebase. Documented in [FORK_ROADMAP.md](../FORK_ROADMAP.md).
+**Status:** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md).
 
-| Aspect | Normal (armed) today | Planned panic |
-|--------|----------------------|---------------|
+### Panic (v0.5.0) — protect, no data loss
+
+| Aspect | Normal (armed) | Panic |
+|--------|----------------|-------|
 | Grace period | 5–30 s | **0 s** |
 | Execution | Sequential + rate limits | Parallel, breaker off |
 | Cancel | Auth / reconnect | **None** |
-| Triggers | Cable, remote `trigger` | + hotkey, `panic` URL |
-| Measures | 5 security + network | Extended destructive set |
+| Triggers | Cable, remote `trigger` | Cable + hotkey + `magsafeguard://panic` |
+| Data | — | **No deletion** — immediate lock, logout, hard shutdown |
 
-Do not confuse `magsafeguard://trigger` with panic mode.
+### Paranoid (v0.6.0) — destroy + shutdown
+
+| Aspect | Panic | Paranoid |
+|--------|-------|----------|
+| Data destruction | No | **Yes** (parallel, configured paths/volumes) |
+| Prerequisites | — | FileVault on, wipe targets configured (setup wizard) |
+| Arming | One confirmation + short notice | Double confirm + codeword + full legal UI |
+| Remote URL | `…/panic?token=` | `…/paranoid?token=` |
+
+Do not confuse `magsafeguard://trigger` with panic or paranoid.
 
 ---
 
