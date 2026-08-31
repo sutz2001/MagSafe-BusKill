@@ -46,6 +46,8 @@
 "settings.network.remote.hint" = "Shortcuts oder ein anderes Gerät können eine URL öffnen. Token geheim halten.";
 "settings.network.remote.token" = "Trigger-Token";
 "settings.network.remote.example" = "Beispiel: %@";
+"settings.network.remote.triggerExample" = "Aktionen auslösen: %@";
+"settings.network.remote.armExample" = "Fern scharfschalten: %@";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Bildschirm sperren";
@@ -316,6 +318,8 @@
 "event.authenticationSucceeded" = "Authentifizierung erfolgreich";
 "event.applicationTerminating" = "Anwendung wird beendet";
 "event.autoArmTriggered" = "Auto-Scharfschalten ausgelöst";
+"event.networkActionExecuted" = "Netzwerk-Aktion ausgeführt";
+"event.networkActionFailed" = "Netzwerk-Aktion fehlgeschlagen";
 
 /* Event log details */
 "logDetail.userCancelled" = "Vom Benutzer abgebrochen";
@@ -333,6 +337,9 @@
 "logDetail.systemArmed" = "System scharfgeschaltet";
 "logDetail.systemDisarmed" = "System entschärft";
 "logDetail.appTerminating" = "Anwendung wird beendet";
+"logDetail.remoteArm" = "Fern-Scharfschaltung per URL";
+"logDetail.networkActionSucceeded" = "%@ erfolgreich";
+"logDetail.networkActionFailed" = "%@ fehlgeschlagen: %@";
 
 /* Network actions */
 "networkAction.webhook.name" = "HTTP-Webhook";

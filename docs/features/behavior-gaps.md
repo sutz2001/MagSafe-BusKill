@@ -2,7 +2,7 @@
 
 Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches and their resolution status.
 
-**Last resolved batch:** 2026-08-31 (P0 + P1 fixes in 0.4.x)
+**Last resolved batch:** 2026-08-31 (P2 fixes in 0.4.2)
 
 ---
 
@@ -21,16 +21,16 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 
 ---
 
-## Open (P2+)
+## Resolved (P2)
 
-| ID | Priority | Issue |
-|----|----------|-------|
-| GAP-09 | P2 | `triggered` state docs said “manual reset” — fixed in operating-modes.md |
-| GAP-10 | P2 | Remote `arm` URL not shown in Settings UI |
-| GAP-11 | P2 | Network action failures not in event log |
-| GAP-12 | P2 | iCloud sync omits network + remote settings |
-| GAP-13 | P2 | Dual enums (`SecurityActionType` vs service enum) — bridged, not unified |
-| GAP-14 | P2 | Auto-arm still requires interactive auth after 2 s delay |
+| ID | Issue | Resolution |
+|----|-------|------------|
+| GAP-09 | `triggered` state docs said “manual reset” | Clarified in `operating-modes.md` — returns to **armed** automatically |
+| GAP-10 | Remote `arm` URL not shown in Settings UI | `magsafeguard://arm?token=…` example in Security → Remote Trigger |
+| GAP-11 | Network action failures not in event log | `networkActionExecuted` / `networkActionFailed` events with localized details |
+| GAP-12 | iCloud sync omits network + remote settings | `SyncServiceSettings` syncs `enabledNetworkActions`, `webhookURL`, `remoteTrigger` |
+| GAP-13 | Dual enums (`SecurityActionType` vs service enum) | `SecurityActionsService` uses domain `SecurityActionType`; legacy `screen_lock` decode |
+| GAP-14 | Auto-arm required interactive auth | `armAutomatically()` for auto-arm and remote `arm` URL (opt-in flows) |
 
 ---
 
@@ -43,6 +43,10 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 - [x] Toggle launch at login → `SMAppService` register/unregister
 - [x] Toggle show in dock → activation policy updates (when settings closed)
 - [x] Toggle debug logging → Release `Log.debug` gated
+- [x] Remote trigger settings show trigger + arm URL examples
+- [x] Network action success/failure appears in event log
+- [x] iCloud sync includes network actions and remote trigger settings
+- [x] Auto-arm arms without Touch ID prompt after notification delay
 
 ---
 

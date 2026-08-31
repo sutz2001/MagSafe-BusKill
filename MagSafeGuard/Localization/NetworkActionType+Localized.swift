@@ -15,4 +15,7 @@ extension NetworkActionType {
     case .disableWiFi: return L10n.tr("networkAction.disableWiFi.name")
     }
   }
+
+  /// Short name for event log entries.
+  var localizedLogName: String { localizedName }
 }

@@ -2,7 +2,7 @@
 
 **Audience:** Users, contributors, and maintainers who need to know what the app *actually does* at runtime (not what the UI implies).
 
-**Version:** documents behavior as of fork **0.4.0** (build 5).  
+**Version:** documents behavior as of fork **0.4.2** (build 7).  
 **Primary code:** `MagSafeGuard/Controllers/AppController.swift`, services under `MagSafeGuard/Services/`.
 
 **Related:** [Behavior gaps & fix backlog](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) (planned features) · [README](../../README.md)
@@ -250,7 +250,10 @@ Registered in `Info.plist`. Handler: `RemoteTriggerService` + `AppDelegate.appli
 | `arm` | `arm()` if disarmed | Enabled + token + user passes auth dialog |
 | *(other)* | Logged warning, ignored | — |
 
-**Example:** `magsafeguard://trigger?token=YOUR_SECRET`
+**Examples:**
+
+- Trigger actions: `magsafeguard://trigger?token=YOUR_SECRET`
+- Arm remotely: `magsafeguard://arm?token=YOUR_SECRET`
 
 ```mermaid
 sequenceDiagram
@@ -323,7 +326,9 @@ sequenceDiagram
 | **Enter trusted location** | Logged only — **does not auto-disarm** |
 | **Connect trusted network** | Logged only — **does not auto-disarm** |
 
-Monitoring starts at app launch **only if** `autoArmEnabled` was already true. Toggling auto-arm on later may not start monitoring until restart — see [behavior-gaps.md](behavior-gaps.md).
+Monitoring starts when `autoArmEnabled` is true — at launch and when toggled mid-session (`AutoArmManager.updateSettings()`).
+
+Auto-arm uses `armAutomatically()` after a 2 s notification delay — **no Touch ID/password prompt** (user opted in via settings). Remote `magsafeguard://arm?token=…` uses the same path when remote trigger is enabled.
 
 ---
 
@@ -338,12 +343,14 @@ Monitoring starts at app launch **only if** `autoArmEnabled` was already true. T
 | `powerConnected` | Cable in (any state) |
 | `gracePeriodStarted` | Grace begins |
 | `gracePeriodCancelled` | Reconnect, auth cancel, or internal cancel |
-| `securityActionExecuted` | After action batch (incl. remote trigger) |
+| `securityActionExecuted` | After security action batch (incl. remote trigger) |
+| `networkActionExecuted` | Each successful network action |
+| `networkActionFailed` | Each failed network action |
 | `authenticationSucceeded` / `authenticationFailed` | Arm, disarm, cancel grace |
 | `autoArmTriggered` | Auto-arm condition met |
 | `applicationTerminating` | App quit |
 
-**Not logged:** per-action success/failure detail, network action results, remote trigger rejected (wrong token).
+**Not logged:** remote trigger rejected (wrong/disabled token).
 
 ---
 

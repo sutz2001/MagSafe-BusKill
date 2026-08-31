@@ -72,6 +72,17 @@ final class AutoArmManagerTests: XCTestCase {
     XCTAssertTrue(sut.isMonitoring)
   }
 
+  func testAutoArmArmsWithoutInteractiveAuth() {
+    let exp = expectation(description: "auto arm without auth")
+    sut.locationManagerDidLeaveTrustedLocation()
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+      XCTAssertEqual(self.appController.currentState, .armed)
+      exp.fulfill()
+    }
+    waitForExpectations(timeout: 4)
+  }
+
   private func armAppController() {
     let exp = expectation(description: "arm")
     appController.arm { _ in exp.fulfill() }

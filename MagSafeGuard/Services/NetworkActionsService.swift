@@ -31,9 +31,12 @@ public final class NetworkActionsService {
     self.settingsManager = settingsManager
   }
 
-  public func executeActions(event: String = "security_trigger") {
+  @discardableResult
+  public func executeActions(event: String = "security_trigger") -> NetworkActionResult {
     let settings = settingsManager.settings
-    guard !settings.enabledNetworkActions.isEmpty else { return }
+    guard !settings.enabledNetworkActions.isEmpty else {
+      return NetworkActionResult(executed: [], failed: [])
+    }
 
     var executed: [NetworkActionType] = []
     var failed: [(NetworkActionType, Error)] = []
@@ -55,7 +58,7 @@ public final class NetworkActionsService {
       Log.warning("\(failed.count) network actions failed", category: .security)
     }
 
-    _ = NetworkActionResult(executed: executed, failed: failed)
+    return NetworkActionResult(executed: executed, failed: failed)
   }
 
   public func saveWebhookToken(_ token: String) {

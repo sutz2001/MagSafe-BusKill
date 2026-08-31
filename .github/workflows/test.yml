@@ -96,7 +96,7 @@ jobs:
           files: ./coverage.xml
           flags: unittests
           name: codecov-umbrella
-          slug: lekman/magsafe-buskill
+          slug: sutz2001/MagSafe-BusKill
           codecov_yml_path: .codecov.yml
           fail_ci_if_error: false
 
@@ -108,7 +108,7 @@ jobs:
           files: ./test-results.xml
           flags: test-execution
           name: test-results
-          slug: lekman/magsafe-buskill
+          slug: sutz2001/MagSafe-BusKill
           fail_ci_if_error: false
 
       - name: SonarCloud Scan

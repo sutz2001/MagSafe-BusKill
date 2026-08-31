@@ -9,7 +9,7 @@ Thin entry points (keep in sync when this file changes):
 | **Cursor** | [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) |
 | **GitHub Copilot** | [.github/copilot-instructions.md](.github/copilot-instructions.md) |
 
-Path-specific Copilot rules: [.github/instructions/](.github/instructions/) (README, Swift, commits)
+Path-specific Copilot rules: [.github/instructions/](.github/instructions/) (README, Swift, commits, docs)
 
 ---
 
@@ -47,7 +47,7 @@ open MagSafeGuard.xcodeproj
 | Item | Value |
 |------|--------|
 | Source | `version.json` (`marketingVersion`, `buildNumber`) |
-| **Current fork version** | **0.4.1** (build **6**) |
+| **Current fork version** | **0.4.2** (build **7**) |
 | Upstream (reference only) | `1.11.0` — fork semver is independent |
 | Sync | `task version:sync` → `AppVersion.swift` + Xcode `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` |
 | Show | `task version:show` |
@@ -74,6 +74,42 @@ Do not bump version for docs-only or CI-only changes unless the user asks.
 - **German:** `README.de.md` (must stay in sync)
 - Cross-link at the top of both files
 - When changing features, defaults, actions, build steps, or fork-specific settings → update **both** READMEs in the same commit
+
+---
+
+## Documentation (required)
+
+Keep **technical and behavioral docs** aligned with the code whenever you ship **substantive** changes (runtime behavior, settings, security/network actions, sync, tests scope, or gap fixes). Do not leave docs describing old behavior after a fix ships.
+
+### When to update
+
+Update docs in the **same commit** as the code when any of these change:
+
+- Application states, grace period, arm/disarm, or trigger flows
+- Settings that affect runtime (new toggles, sync fields, defaults)
+- Security or network actions, remote URL scheme, auto-arm
+- Resolved or new UI/runtime mismatches (behavior gaps)
+- User-visible version milestones (bump `version.json` → refresh version lines in feature docs)
+
+Skip doc-only churn for refactors, renames, or internal cleanup that does not change observable behavior.
+
+### What to update (by change type)
+
+| Change | Update at minimum |
+|--------|-------------------|
+| Behavior / state machine | [docs/features/operating-modes.md](docs/features/operating-modes.md) |
+| Gap fixed or new mismatch found | [docs/features/behavior-gaps.md](docs/features/behavior-gaps.md) — move items to **Resolved**, clear **Open** when done |
+| Planned vs shipped features | [docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md) |
+| Test priorities / coverage targets | [docs/maintainers/testing-guide.md](docs/maintainers/testing-guide.md) |
+| New or moved doc pages | [docs/README.md](docs/README.md) index |
+| User-facing features, build, version | [README.md](README.md) + [README.de.md](README.de.md) (see above) |
+
+### Agents should
+
+1. After implementing a fix or feature, ask whether **operating-modes** or **behavior-gaps** is stale; update before finishing.
+2. Set **version as of** lines in feature docs when the change is user-facing (e.g. `operating-modes.md` header).
+3. Mark gap IDs resolved with a one-line **Resolution** (same style as existing GAP rows).
+4. Prefer updating existing docs over adding new files unless the user requests otherwise.
 
 ---
 
@@ -156,13 +192,16 @@ No ad-hoc system actions outside `SecurityActionType` / repository layer.
 
 ---
 
-## Sync upstream
+## Sync upstream (optional reference)
+
+The fork is **independent** — see [docs/FORK_INDEPENDENCE.md](docs/FORK_INDEPENDENCE.md).  
+Only merge upstream manually if you explicitly want upstream changes:
 
 ```bash
 git fetch upstream && git merge upstream/main
 ```
 
-Preserve fork bundle ID, entitlements, `version.json`, README fork notes, and agent instruction files.
+Preserve fork bundle ID, entitlements, `version.json`, README fork notes, and agent instruction files. **Do not** restore `com.LekmanConsulting.*` or upstream-only CI/docs without review.
 
 ---
 

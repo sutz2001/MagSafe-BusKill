@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.4.1` (Build `6`) |
+| **Version** | `0.4.2` (Build `7`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -34,7 +34,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 | | |
 | --- | --- |
 | **Upstream** | [github.com/lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill) |
-| **Upstream-Autor** | Tobias Lekman |
+| **Entwicklung** | **Eigenständig** — siehe [docs/FORK_INDEPENDENCE.md](docs/FORK_INDEPENDENCE.md) |
 | **Dieser Fork** | [github.com/sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
 | **Fork-Maintainer** | Marc Seitz |
 | **Namensnennung** | [`LICENSE`](LICENSE) (Doppel-Copyright) · [`NOTICE`](NOTICE) (Herkunft) |
@@ -225,7 +225,7 @@ task version:bump:patch
 task version:bump:minor
 ```
 
-Upstream: `git fetch upstream && git merge upstream/main`
+Optionaler Upstream-Vergleich (nur manuell): `git fetch upstream && git merge upstream/main` — für die Fork-Entwicklung nicht erforderlich.
 
 ---
 

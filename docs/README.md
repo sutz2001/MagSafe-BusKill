@@ -18,6 +18,7 @@ This documentation is organized by audience and role to help you find the inform
 
 ### For Contributors
 
+- [Fork independence](FORK_INDEPENDENCE.md) - Fork vs upstream (read this first)
 - [Product Requirements Document (PRD)](PRD.md) - Project vision and scope
 - [Requirements](REQUIREMENTS.md) - Detailed technical specifications
 - [Architecture Overview](architecture/architecture-overview.md) - System design
@@ -101,11 +102,8 @@ This documentation is organized by audience and role to help you find the inform
 - [Semgrep Integration](security/semgrep.md) - Static security analysis
 - [Snyk Integration](security/snyk-integration.md) - Dependency scanning
 - [Snyk Policy Justification](security/snyk-evaluatepolicy-justification.md) - Security exceptions
-- [Actions Security Summary](security/ACTIONS_SECURITY_SUMMARY.md) - GitHub Actions security
 - [Security Workflows](security/SECURITY_WORKFLOWS.md) - Security automation
-- [Actions Whitelist](security/actions-whitelist.md) - Approved GitHub Actions
-- [Fork PR Policy](security/fork-pr-policy.md) - External contribution security
-- [Security Settings](security/security-settings.md) - Repository security configuration
+- [Security Settings](security/security-settings.md) - Repository security checklist (generic)
 
 ### Features & Configuration
 

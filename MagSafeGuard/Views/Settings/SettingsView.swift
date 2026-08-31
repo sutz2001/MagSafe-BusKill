@@ -350,7 +350,11 @@ struct SecuritySettingsView: View {
 
       if settingsManager.settings.remoteTrigger.isEnabled {
         SecureField(L10n.tr("settings.network.remote.token"), text: remoteTokenBinding)
-        Text(L10n.tr("settings.network.remote.example", exampleRemoteURL))
+        Text(L10n.tr("settings.network.remote.triggerExample", exampleRemoteURL))
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .textSelection(.enabled)
+        Text(L10n.tr("settings.network.remote.armExample", exampleRemoteArmURL))
           .font(.caption)
           .foregroundColor(.secondary)
           .textSelection(.enabled)
@@ -362,6 +366,12 @@ struct SecuritySettingsView: View {
     let token = settingsManager.settings.remoteTrigger.token.isEmpty
       ? "YOUR_TOKEN" : settingsManager.settings.remoteTrigger.token
     return "magsafeguard://trigger?token=\(token)"
+  }
+
+  private var exampleRemoteArmURL: String {
+    let token = settingsManager.settings.remoteTrigger.token.isEmpty
+      ? "YOUR_TOKEN" : settingsManager.settings.remoteTrigger.token
+    return "magsafeguard://arm?token=\(token)"
   }
 
   private func networkActionBinding(_ action: NetworkActionType) -> Binding<Bool> {

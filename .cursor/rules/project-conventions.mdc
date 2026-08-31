@@ -10,6 +10,7 @@ alwaysApply: true
 ## Non-negotiable (always apply)
 
 - **README:** update [README.md](../../README.md) + [README.de.md](../../README.de.md) together
+- **Docs:** keep behavior/feature docs in sync with substantive code changes — [AGENTS.md § Documentation](../../AGENTS.md#documentation-required) (`operating-modes.md`, `behavior-gaps.md`, roadmap/testing index as needed)
 - **Version:** edit [version.json](../../version.json) only → `task version:sync`; suggest bump before user-facing commits (see AGENTS.md)
 - **Bundle ID:** `com.sutz2001.MagSafeGuard` — never `com.LekmanConsulting.*`
 - **Commits:** English body with `## Summary` + `## Changes` — see [.github/instructions/commits.instructions.md](../../.github/instructions/commits.instructions.md)

@@ -61,7 +61,7 @@ public final class RemoteTriggerService {
 
   private func armIfDisarmed() {
     guard appController.currentState == .disarmed else { return }
-    appController.arm { result in
+    appController.armAutomatically(details: L10n.tr("logDetail.remoteArm")) { result in
       if case .failure(let error) = result {
         Log.error("Remote arm failed", error: error, category: .security)
       }

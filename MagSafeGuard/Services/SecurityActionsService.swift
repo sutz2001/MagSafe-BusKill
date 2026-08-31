@@ -56,64 +56,8 @@ public class SecurityActionsService {
 
   // MARK: - Types
 
-  /// Available security actions that can be executed on theft detection.
-  ///
-  /// Each action represents a specific protective measure with different
-  /// security implications and user impact. Actions can be combined and
-  /// configured for layered security approaches.
-  public enum SecurityAction: String, CaseIterable, Codable {
-    /// Lock the screen immediately requiring authentication
-    case screenLock = "screen_lock"
-    /// Play a loud alarm sound to deter theft
-    case soundAlarm = "sound_alarm"
-    /// Force logout all users and lock the system
-    case forceLogout = "force_logout"
-    /// Shutdown the system after a delay
-    case shutdown = "shutdown"
-    /// Execute a custom shell script
-    case customScript = "custom_script"
-
-    /// Human-readable name for the security action.
-    ///
-    /// Used in UI components to display action names to users.
-    var displayName: String {
-      switch self {
-      case .screenLock: return "Lock Screen"
-      case .soundAlarm: return "Sound Alarm"
-      case .forceLogout: return "Force Logout"
-      case .shutdown: return "System Shutdown"
-      case .customScript: return "Custom Script"
-      }
-    }
-
-    /// Detailed description of what the security action does.
-    ///
-    /// Provides users with clear information about the impact
-    /// and behavior of each security action.
-    var description: String {
-      switch self {
-      case .screenLock: return "Immediately lock the screen requiring authentication"
-      case .soundAlarm: return "Play a loud alarm sound to deter theft"
-      case .forceLogout: return "Force logout all users and lock screen"
-      case .shutdown: return "Shutdown the system after a countdown"
-      case .customScript: return "Execute a custom shell script"
-      }
-    }
-
-    /// Whether this action is enabled by default.
-    ///
-    /// Determines the initial state when setting up security actions.
-    /// Screen lock is the only action enabled by default for safety.
-    var defaultEnabled: Bool {
-      switch self {
-      case .screenLock: return true  // Screen lock is enabled by default
-      case .soundAlarm: return false
-      case .forceLogout: return false
-      case .shutdown: return false
-      case .customScript: return false
-      }
-    }
-  }
+  /// Domain security action type (single source of truth).
+  public typealias SecurityAction = SecurityActionType
 
   /// Configuration for security actions execution.
   ///
@@ -138,8 +82,8 @@ public class SecurityActionsService {
     var executeInParallel: Bool
 
     static let defaultConfiguration = Configuration(
-      enabledActions: [.screenLock],
-      actionOrder: [.screenLock],
+      enabledActions: [.lockScreen],
+      actionOrder: [.lockScreen],
       actionDelay: 0,
       alarmVolume: 1.0,
       shutdownDelay: 30,
@@ -181,8 +125,8 @@ public class SecurityActionsService {
 
     public init(from decoder: Decoder) throws {
       let container = try decoder.container(keyedBy: CodingKeys.self)
-      enabledActions = try container.decode(Set<SecurityAction>.self, forKey: .enabledActions)
-      actionOrder = try container.decodeIfPresent([SecurityAction].self, forKey: .actionOrder) ?? []
+      enabledActions = Self.decodeActionSet(from: container, key: .enabledActions)
+      actionOrder = Self.decodeActionList(from: container, key: .actionOrder)
       actionDelay = try container.decode(TimeInterval.self, forKey: .actionDelay)
       alarmVolume = try container.decode(Float.self, forKey: .alarmVolume)
       shutdownDelay = try container.decode(TimeInterval.self, forKey: .shutdownDelay)
@@ -190,6 +134,29 @@ public class SecurityActionsService {
       customScriptPaths =
         try container.decodeIfPresent([String].self, forKey: .customScriptPaths) ?? []
       executeInParallel = try container.decode(Bool.self, forKey: .executeInParallel)
+    }
+
+    private static func decodeActionSet(
+      from container: KeyedDecodingContainer<CodingKeys>,
+      key: CodingKeys
+    ) -> Set<SecurityActionType> {
+      if let rawValues = try? container.decode([String].self, forKey: key) {
+        return Set(rawValues.compactMap(SecurityActionType.init(persistedRawValue:)))
+      }
+      if let actions = try? container.decode(Set<SecurityActionType>.self, forKey: key) {
+        return actions
+      }
+      return []
+    }
+
+    private static func decodeActionList(
+      from container: KeyedDecodingContainer<CodingKeys>,
+      key: CodingKeys
+    ) -> [SecurityActionType] {
+      if let rawValues = try? container.decode([String].self, forKey: key) {
+        return rawValues.compactMap(SecurityActionType.init(persistedRawValue:))
+      }
+      return (try? container.decode([SecurityActionType].self, forKey: key)) ?? []
     }
   }
 
@@ -348,7 +315,7 @@ public class SecurityActionsService {
       DispatchQueue.main.async {
         completion(ExecutionResult(
           executedActions: [],
-          failedActions: [(SecurityAction.screenLock, circuitError)],
+          failedActions: [(SecurityActionType.lockScreen, circuitError)],
           timestamp: Date()
         ))
       }
@@ -361,7 +328,7 @@ public class SecurityActionsService {
       DispatchQueue.main.async {
         completion(ExecutionResult(
           executedActions: [],
-          failedActions: [(SecurityAction.screenLock, SecurityActionError.rateLimitExceeded)],
+          failedActions: [(SecurityActionType.lockScreen, SecurityActionError.rateLimitExceeded)],
           timestamp: Date()
         ))
       }
@@ -661,7 +628,7 @@ public class SecurityActionsService {
     Log.info("Executing action: \(action.displayName)", category: .security)
 
     switch action {
-    case .screenLock:
+    case .lockScreen:
       try executeScreenLock()
     case .soundAlarm:
       try executeSoundAlarm()
@@ -803,7 +770,7 @@ public class SecurityActionsService {
   /// Objective-C compatible property for checking if the most basic
   /// security action (screen lock) is configured.
   public var isScreenLockEnabled: Bool {
-    return configuration.enabledActions.contains(.screenLock)
+    return configuration.enabledActions.contains(.lockScreen)
   }
 
   /// Enable or disable the screen lock security action.
@@ -815,9 +782,9 @@ public class SecurityActionsService {
   public func setScreenLockEnabled(_ enabled: Bool) {
     var newConfig = configuration
     if enabled {
-      newConfig.enabledActions.insert(.screenLock)
+      newConfig.enabledActions.insert(.lockScreen)
     } else {
-      newConfig.enabledActions.remove(.screenLock)
+      newConfig.enabledActions.remove(.lockScreen)
     }
     updateConfiguration(newConfig)
   }

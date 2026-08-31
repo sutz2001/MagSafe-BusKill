@@ -7,6 +7,7 @@ When conventions change, update **AGENTS.md** first; keep this file as a thin st
 ## Non-negotiable (always apply)
 
 - **README:** update [README.md](../README.md) + [README.de.md](../README.de.md) together
+- **Docs:** sync behavior/feature docs with substantive changes — [AGENTS.md § Documentation](../AGENTS.md#documentation-required)
 - **Version:** [version.json](../version.json) → `task version:sync`; suggest bump before user-facing commits (see AGENTS.md)
 - **Bundle ID:** `com.sutz2001.MagSafeGuard`
 - **Commits:** `## Summary` + `## Changes` — [.github/instructions/commits.instructions.md](instructions/commits.instructions.md)

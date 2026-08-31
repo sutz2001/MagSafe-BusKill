@@ -272,9 +272,9 @@ public class AutoArmManager: NSObject {
       message: reason
     )
 
-    // Arm the system
+    // Arm without interactive auth — user opted in via auto-arm settings
     DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-      self?.appController.arm { result in
+      self?.appController.armAutomatically(details: reason) { result in
         switch result {
         case .success:
           Log.noticeSensitive("Successfully auto-armed", value: reason, category: .autoArm)

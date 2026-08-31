@@ -8,7 +8,7 @@ updates:
       day: "monday"
       time: "10:00"
     reviewers:
-      - "@lekman"
+      - "@sutz2001"
     labels:
       - "dependencies"
       - "github-actions"
@@ -31,7 +31,7 @@ updates:
       day: "monday"
       time: "10:00"
     reviewers:
-      - "@lekman"
+      - "@sutz2001"
     labels:
       - "dependencies"
       - "swift"

@@ -46,6 +46,8 @@
 "settings.network.remote.hint" = "Use Shortcuts or another device to open a URL. Keep the token secret.";
 "settings.network.remote.token" = "Trigger token";
 "settings.network.remote.example" = "Example: %@";
+"settings.network.remote.triggerExample" = "Trigger actions: %@";
+"settings.network.remote.armExample" = "Arm remotely: %@";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
@@ -316,6 +318,8 @@
 "event.authenticationSucceeded" = "Authentication Succeeded";
 "event.applicationTerminating" = "Application Terminating";
 "event.autoArmTriggered" = "Auto-Arm Triggered";
+"event.networkActionExecuted" = "Network Action Executed";
+"event.networkActionFailed" = "Network Action Failed";
 
 /* Event log details */
 "logDetail.userCancelled" = "User cancelled";
@@ -333,6 +337,9 @@
 "logDetail.systemArmed" = "System armed";
 "logDetail.systemDisarmed" = "System disarmed";
 "logDetail.appTerminating" = "App terminating";
+"logDetail.remoteArm" = "Remote arm via URL";
+"logDetail.networkActionSucceeded" = "%@ succeeded";
+"logDetail.networkActionFailed" = "%@ failed: %@";
 
 /* Network actions */
 "networkAction.webhook.name" = "HTTP Webhook";

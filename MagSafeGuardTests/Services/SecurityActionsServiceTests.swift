@@ -32,7 +32,7 @@ final class SecurityActionsServiceTests: XCTestCase {
     let expectation = expectation(description: "actions complete")
     sut.executeActions { result in
       XCTAssertTrue(result.allSucceeded)
-      XCTAssertTrue(result.executedActions.contains(.screenLock))
+      XCTAssertTrue(result.executedActions.contains(.lockScreen))
       expectation.fulfill()
     }
     waitForExpectations(timeout: 2)

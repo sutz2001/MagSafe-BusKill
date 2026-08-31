@@ -1,7 +1,41 @@
 # Fork changelog (sutz2001)
 
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
-Upstream releases remain in [CHANGELOG.md](CHANGELOG.md).
+Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
+
+## [0.4.2] — 2026-08-31
+
+### Added
+
+- Remote `arm` URL example in Settings; network action event log entries
+- `armAutomatically()` for auto-arm and remote arm (no interactive auth)
+- Documentation policy in `AGENTS.md`; fork independence guide
+
+### Changed
+
+- `SecurityActionsService` uses domain `SecurityActionType` (legacy `screen_lock` decode)
+- iCloud sync includes network actions and remote trigger settings
+- Removed upstream-only release-please and lekman CODEOWNERS/docs clutter
+
+## [0.4.1] — 2026-08-31
+
+### Fixed
+
+- P0/P1 behavior gaps: settings→runtime sync, critical alerts, login/dock, debug logging
+- Grace period race on reconnect; flaky circuit-breaker/resource-protector tests
+
+## [0.4.0] — 2026-08-31
+
+### Added
+
+- Network actions (webhook, VPN, SSH agent, Wi‑Fi off)
+- Remote trigger via `magsafeguard://` URL scheme
+
+## [0.3.1] — 2026-08-31
+
+### Fixed
+
+- Reconnect during grace period cancels actions and stays armed
 
 ## [0.3.0] — 2026-08-31
 

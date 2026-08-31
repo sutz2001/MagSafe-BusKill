@@ -61,6 +61,14 @@ final class SyncServiceSettings {
     }
     record["debugLoggingEnabled"] = settings.debugLoggingEnabled ? 1 : 0
 
+    // Network actions + remote trigger (v0.4.x)
+    let networkActionsString = settings.enabledNetworkActions.map(\.rawValue).joined(separator: ",")
+    record["enabledNetworkActions"] = networkActionsString
+    record["webhookURL"] = settings.webhookURL
+    if let remoteData = try? JSONEncoder().encode(settings.remoteTrigger) {
+      record["remoteTrigger"] = String(data: remoteData, encoding: .utf8)
+    }
+
     // Cloud sync settings
     record["iCloudSyncEnabled"] = settings.iCloudSyncEnabled ? 1 : 0
     record["iCloudDataLimitMB"] = settings.iCloudDataLimitMB
@@ -178,6 +186,25 @@ final class SyncServiceSettings {
       let data = customScriptsString.data(using: .utf8),
       let scripts = try? JSONDecoder().decode([String].self, from: data) {
       manager.updateSetting(\.customScripts, value: scripts)
+    }
+
+    if let networkActionsString = record["enabledNetworkActions"] as? String, !networkActionsString.isEmpty {
+      let actions = networkActionsString.split(separator: ",").compactMap {
+        NetworkActionType(rawValue: String($0))
+      }
+      if !actions.isEmpty {
+        manager.updateSetting(\.enabledNetworkActions, value: actions)
+      }
+    }
+
+    if let webhookURL = record["webhookURL"] as? String {
+      manager.updateSetting(\.webhookURL, value: webhookURL)
+    }
+
+    if let remoteString = record["remoteTrigger"] as? String,
+      let data = remoteString.data(using: .utf8),
+      let remote = try? JSONDecoder().decode(RemoteTriggerSettings.self, from: data) {
+      manager.updateSetting(\.remoteTrigger, value: remote)
     }
   }
 }

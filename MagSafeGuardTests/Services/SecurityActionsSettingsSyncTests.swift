@@ -28,10 +28,10 @@ final class SecurityActionsSettingsSyncTests: XCTestCase {
 
     XCTAssertEqual(
       service.configuration.actionOrder,
-      [.soundAlarm, .screenLock, .forceLogout])
+      [.soundAlarm, .lockScreen, .forceLogout])
     XCTAssertEqual(
       service.configuration.enabledActions,
-      Set([.soundAlarm, .screenLock, .forceLogout]))
+      Set([.soundAlarm, .lockScreen, .forceLogout]))
   }
 
   func testSyncMapsCustomScriptPaths() {

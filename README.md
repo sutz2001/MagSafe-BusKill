@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.4.1` (build `6`) |
+| **Version** | `0.4.2` (build `7`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -34,7 +34,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 | | |
 | --- | --- |
 | **Upstream** | [github.com/lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill) |
-| **Upstream author** | Tobias Lekman |
+| **Development** | **Independent** — see [docs/FORK_INDEPENDENCE.md](docs/FORK_INDEPENDENCE.md) |
 | **This fork** | [github.com/sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
 | **Fork maintainer** | Marc Seitz |
 | **Attribution** | [`LICENSE`](LICENSE) (dual copyright) · [`NOTICE`](NOTICE) (provenance) |
@@ -225,7 +225,7 @@ task version:bump:patch    # 0.3.0 → 0.3.1
 task version:bump:minor    # 0.3.0 → 0.4.0
 ```
 
-Sync with upstream: `git fetch upstream && git merge upstream/main`
+Optional upstream reference (manual only): `git fetch upstream && git merge upstream/main` — not required for fork development.
 
 ---
 

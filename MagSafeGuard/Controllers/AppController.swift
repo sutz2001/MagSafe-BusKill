@@ -55,6 +55,10 @@ public enum AppEvent: String {
   case applicationTerminating
   /// Auto-arm was triggered based on location or network
   case autoArmTriggered
+  /// A network action completed successfully
+  case networkActionExecuted
+  /// A network action failed
+  case networkActionFailed
 }
 
 /// Event log entry containing timestamped application events.
@@ -230,6 +234,22 @@ public class AppController: ObservableObject {
   }
 
   // MARK: - Public Methods
+
+  /// Arms the system without authentication (auto-arm and trusted remote flows only).
+  public func armAutomatically(details: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    guard currentState == .disarmed else {
+      completion(
+        .failure(AppControllerError.invalidState("Cannot arm from state: \(currentState)")))
+      return
+    }
+
+    logEventInternal(.authenticationSucceeded, details: details)
+    transitionToState(.armed)
+    onNotification?(
+      L10n.tr("notification.armed.title"), L10n.tr("notification.armed.message"))
+    AccessibilityAnnouncement.announceStateChange(component: "MagSafe Guard", newState: "armed")
+    completion(.success(()))
+  }
 
   /// Arms the system with authentication
   public func arm(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -493,7 +513,8 @@ public class AppController: ObservableObject {
     transitionToState(.triggered)
     cancelGracePeriod()
 
-    NetworkActionsService.shared.executeActions(event: "security_trigger")
+    logNetworkActionResults(
+      NetworkActionsService.shared.executeActions(event: "security_trigger"))
 
     securityActions.executeActions { [weak self] result in
       guard let self = self else { return }
@@ -534,6 +555,22 @@ public class AppController: ObservableObject {
 
     DispatchQueue.main.async { [weak self] in
       self?.onStateChange?(oldState, newState)
+    }
+  }
+
+  private func logNetworkActionResults(_ result: NetworkActionResult) {
+    for action in result.executed {
+      logEventInternal(
+        .networkActionExecuted,
+        details: L10n.tr("logDetail.networkActionSucceeded", action.localizedLogName))
+    }
+    for (action, error) in result.failed {
+      logEventInternal(
+        .networkActionFailed,
+        details: L10n.tr(
+          "logDetail.networkActionFailed",
+          action.localizedLogName,
+          error.localizedDescription))
     }
   }
 

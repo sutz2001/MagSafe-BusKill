@@ -14,7 +14,7 @@ enum SecurityActionsSettingsSync {
     from settings: Settings,
     to service: SecurityActionsService = .shared
   ) {
-    let ordered = settings.securityActions.compactMap(mapAction)
+    let ordered = settings.securityActions
     guard !ordered.isEmpty else { return }
 
     var config = service.configuration
@@ -31,15 +31,5 @@ enum SecurityActionsSettingsSync {
     }
 
     service.applyConfiguration(config)
-  }
-
-  static func mapAction(_ type: SecurityActionType) -> SecurityActionsService.SecurityAction? {
-    switch type {
-    case .lockScreen: return .screenLock
-    case .soundAlarm: return .soundAlarm
-    case .forceLogout: return .forceLogout
-    case .shutdown: return .shutdown
-    case .customScript: return .customScript
-    }
   }
 }
