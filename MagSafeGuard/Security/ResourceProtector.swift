@@ -42,6 +42,9 @@ public actor ResourceProtector {
 
     private let rateLimiter: RateLimiter
     private let circuitBreaker: CircuitBreaker
+    private let rateLimiterConfig: RateLimiterConfig
+    private let circuitBreakerConfig: CircuitBreakerConfig
+    private var isConfigured = false
     private let logger = Logger(subsystem: "com.magsafeguard", category: "ResourceProtector")
     private var metrics: [String: ActionMetrics] = [:]
     private var isEnabled: Bool = true
@@ -68,14 +71,10 @@ public actor ResourceProtector {
         rateLimiterConfig: RateLimiterConfig = .defaultConfig,
         circuitBreakerConfig: CircuitBreakerConfig = .defaultConfig
     ) {
+        self.rateLimiterConfig = rateLimiterConfig
+        self.circuitBreakerConfig = circuitBreakerConfig
         self.rateLimiter = RateLimiter()
         self.circuitBreaker = CircuitBreaker()
-
-        // Configure rate limiters
-        Task {
-            await configureRateLimiters(with: rateLimiterConfig)
-            await configureCircuitBreakers(with: circuitBreakerConfig)
-        }
     }
 
     // MARK: - Public Methods
@@ -85,6 +84,8 @@ public actor ResourceProtector {
     /// - Returns: True if action can proceed
     /// - Throws: ResourceProtectionError if action is blocked
     public func checkAction(_ action: String) async throws -> Bool {
+        await ensureConfigured()
+
         guard isEnabled else {
             throw ResourceProtectionError.protectionDisabled
         }
@@ -116,6 +117,7 @@ public actor ResourceProtector {
     /// Record successful action execution
     /// - Parameter action: The action identifier
     public func recordSuccess(_ action: String) async {
+        await ensureConfigured()
         await circuitBreaker.recordSuccess(action)
         metrics[action]?.successfulExecutions += 1
         metrics[action]?.lastSuccessTime = Date()
@@ -125,6 +127,7 @@ public actor ResourceProtector {
     /// Record failed action execution
     /// - Parameter action: The action identifier
     public func recordFailure(_ action: String) async {
+        await ensureConfigured()
         await circuitBreaker.recordFailure(action)
         metrics[action]?.lastFailureTime = Date()
         logger.warning("Recorded failure for action: \(action)")
@@ -153,6 +156,8 @@ public actor ResourceProtector {
     /// Reset protection for specific action
     /// - Parameter action: The action identifier
     public func reset(action: String) async {
+        await ensureConfigured()
+
         await rateLimiter.reset(action: action)
         await circuitBreaker.reset(action: action)
         metrics[action] = ActionMetrics()
@@ -176,6 +181,8 @@ public actor ResourceProtector {
         _ action: String,
         operation: () async throws -> T
     ) async throws -> T {
+        await ensureConfigured()
+
         // Check if action is allowed
         _ = try await checkAction(action)
 
@@ -195,6 +202,13 @@ public actor ResourceProtector {
     }
 
     // MARK: - Private Methods
+
+    private func ensureConfigured() async {
+        guard !isConfigured else { return }
+        await configureRateLimiters(with: rateLimiterConfig)
+        await configureCircuitBreakers(with: circuitBreakerConfig)
+        isConfigured = true
+    }
 
     private func configureRateLimiters(with config: RateLimiterConfig) async {
         await rateLimiter.configure(

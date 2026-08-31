@@ -40,6 +40,9 @@ public struct Log {
     return FileLogger()
   }()
 
+  /// When true, `Log.debug` is emitted in Release builds (Settings → Advanced).
+  nonisolated(unsafe) public static var isDebugLoggingEnabled = false
+
   // MARK: - Initialization
   
   /// Initialize logging system including Sentry integration
@@ -62,6 +65,9 @@ public struct Log {
   ///   - message: The message to log (treated as public by default)
   ///   - category: The log category
   public static func debug(_ message: String, category: LogCategory = .general) {
+    #if !DEBUG
+    guard isDebugLoggingEnabled else { return }
+    #endif
     category.logger.debug("\(message, privacy: .public)")
   }
 
@@ -73,6 +79,9 @@ public struct Log {
   public static func debugSensitive(
     _ message: String, value: String, category: LogCategory = .general
   ) {
+    #if !DEBUG
+    guard isDebugLoggingEnabled else { return }
+    #endif
     category.logger.debug("\(message, privacy: .public): \(value, privacy: .private)")
   }
 

@@ -239,6 +239,18 @@ final class AppControllerTests: XCTestCase {
     XCTAssertFalse(mockSecurityActions.lockScreenCalled)
   }
 
+  func testGraceExpiryAfterReconnectDoesNotExecuteActions() {
+    armSystem()
+    sut.simulatePowerDisconnectForTesting()
+    sut.simulatePowerConnectForTesting()
+
+    XCTAssertEqual(sut.currentState, .armed)
+    sut.attemptGraceExpiryAfterCancelForTesting()
+
+    XCTAssertEqual(sut.currentState, .armed)
+    XCTAssertFalse(mockSecurityActions.lockScreenCalled)
+  }
+
   func testCancelGracePeriodWithAuthSuccess() {
     armSystem()
     sut.simulatePowerDisconnectForTesting()

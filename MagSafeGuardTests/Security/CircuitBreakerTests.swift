@@ -62,7 +62,7 @@ final class CircuitBreakerTests: XCTestCase {
         await sut.recordFailure("test")
 
         // When - wait for timeout
-        try? await Task.sleep(nanoseconds: 250_000_000) // 0.25 seconds
+        try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds (timeout is 0.2)
         let state = await sut.getState("test")
         let canExecute = await sut.canExecute("test")
 
@@ -75,7 +75,7 @@ final class CircuitBreakerTests: XCTestCase {
         // Given - circuit in half-open state
         await sut.recordFailure("test")
         await sut.recordFailure("test")
-        try? await Task.sleep(nanoseconds: 250_000_000)
+        try? await Task.sleep(nanoseconds: 300_000_000)
 
         // When - record successes
         await sut.recordSuccess("test")
@@ -90,7 +90,7 @@ final class CircuitBreakerTests: XCTestCase {
         // Given - circuit in half-open state
         await sut.recordFailure("test")
         await sut.recordFailure("test")
-        try? await Task.sleep(nanoseconds: 250_000_000)
+        try? await Task.sleep(nanoseconds: 300_000_000)
 
         // When - record failure in half-open
         await sut.recordFailure("test")

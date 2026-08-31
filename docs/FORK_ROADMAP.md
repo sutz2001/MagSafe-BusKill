@@ -1,7 +1,7 @@
 # Fork-Roadmap (sutz2001)
 
 Planung für [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
-Stand: nach **0.3.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
+Stand: nach **0.4.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
 
 ---
 
@@ -12,7 +12,8 @@ Stand: nach **0.3.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | Power-Trigger, Grace Period, 5 Security Actions | ✅ produktiv |
 | Auto-Arm (Standort/Netzwerk), Event-Log, Onboarding | ✅ produktiv |
 | EN/DE, `task release`, CI grün | ✅ produktiv |
-| Netzwerk-**Aktionen** (bei Trigger ausführen) | ❌ geplant |
+| Netzwerk-**Aktionen** (bei Trigger ausführen) | ✅ v0.4.0 |
+| Fernauslösung (`magsafeguard://`) | ✅ v0.4.0 |
 | **Panic-Modus** | ❌ geplant |
 | Notarisierung (Developer ID) | ⏸️ wenn App reif + Paid Dev |
 | Mac App Store | ❌ **ausgeschlossen** (Sandbox) |
@@ -79,10 +80,11 @@ Stand: nach **0.3.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 
 ### Lieferumfang
 
-- [ ] Domain + Use Cases (outbound + inbound)
-- [ ] Settings → Security → Network + Remote Trigger
+- [x] Outbound network actions (webhook, VPN, SSH, Wi‑Fi)
+- [x] Settings → Security → Network + Remote Trigger
+- [ ] Domain Use Cases refactor (optional)
 - [ ] Shortcuts-Dokumentation
-- [ ] EN/DE · README · FORK_CHANGELOG
+- [x] EN/DE · README · FORK_CHANGELOG (0.4.0)
 
 **Aufwand:** mittel–hoch · **Risiko:** niedrig (outbound)
 

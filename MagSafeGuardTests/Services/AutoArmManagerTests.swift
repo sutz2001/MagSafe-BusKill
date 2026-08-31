@@ -61,6 +61,17 @@ final class AutoArmManagerTests: XCTestCase {
     XCTAssertEqual(appController.currentState, .disarmed)
   }
 
+  func testStartsMonitoringWhenAutoArmEnabledViaUpdateSettings() {
+    sut.stopMonitoring()
+    XCTAssertFalse(sut.isMonitoring)
+
+    UserDefaultsManager.shared.updateSetting(\.autoArmEnabled, value: true)
+    UserDefaultsManager.shared.updateSetting(\.autoArmByLocation, value: true)
+    sut.updateSettings()
+
+    XCTAssertTrue(sut.isMonitoring)
+  }
+
   private func armAppController() {
     let exp = expectation(description: "arm")
     appController.arm { _ in exp.fulfill() }

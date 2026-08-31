@@ -142,6 +142,8 @@ public class UserDefaultsManager: ObservableObject {
         syncService.enableSync()
       }
     }
+
+    SettingsRuntimeApplier.apply(settings)
   }
 
   // MARK: - Public Methods
@@ -237,6 +239,8 @@ public class UserDefaultsManager: ObservableObject {
       // Force synchronization to disk
       userDefaults.synchronize()
 
+      SettingsRuntimeApplier.apply(settings)
+
       // Trigger cloud sync
       if let syncService = syncService {
         Task {
@@ -260,7 +264,9 @@ public class UserDefaultsManager: ObservableObject {
   private func reloadSettingsFromDisk() {
     if let reloadedSettings = Self.loadSettings(from: userDefaults) {
       DispatchQueue.main.async { [weak self] in
-        self?.settings = reloadedSettings
+        guard let self else { return }
+        self.settings = reloadedSettings
+        SettingsRuntimeApplier.apply(reloadedSettings)
       }
     }
   }

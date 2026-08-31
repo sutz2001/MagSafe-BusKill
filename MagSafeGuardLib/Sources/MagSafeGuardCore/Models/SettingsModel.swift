@@ -75,10 +75,8 @@ public struct Settings: Codable {
 
   /// Enable automatic arming based on location changes.
   ///
-  /// When enabled, the system automatically arms when leaving trusted locations
-  /// and disarms when returning. Requires location services permission.
-  ///
-  /// - Important: Location-based arming is not yet implemented
+  /// When enabled, the system automatically arms when leaving trusted locations.
+  /// Requires location services permission (`AutoArmManager` + `LocationManager`).
   public var autoArmByLocation: Bool = false
 
   /// List of trusted Wi-Fi network SSIDs.
@@ -123,20 +121,10 @@ public struct Settings: Codable {
 
   // MARK: - General Settings
 
-  /// Automatically launch MagSafe Guard at user login.
-  ///
-  /// When enabled, the application starts automatically when the user logs in,
-  /// ensuring continuous protection without manual intervention.
-  ///
-  /// - Important: Implementation pending - currently shows UI only
+  /// Automatically launch MagSafe Guard at user login (via `SMAppService`).
   public var launchAtLogin: Bool = false
 
-  /// Display application icon in the dock.
-  ///
-  /// When enabled, shows the application icon in the dock in addition to
-  /// the menu bar. When disabled, the application runs as a menu bar only app.
-  ///
-  /// - Note: Changes require application restart to take effect
+  /// Display application icon in the dock when no settings window is open.
   public var showInDock: Bool = false
 
   /// Restore armed protection after relaunch (requires authentication on next arm attempt flow).

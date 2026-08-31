@@ -19,8 +19,9 @@ final class MacSystemActionsTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        // Create temp directory for test scripts
-        tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        // Create scripts under the allowed user directory (~/.magsafe/scripts/)
+        let scriptsRoot = URL(fileURLWithPath: NSHomeDirectory() + "/.magsafe/scripts", isDirectory: true)
+        tempDir = scriptsRoot.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
 
         // Use mock paths for testing
@@ -197,7 +198,7 @@ final class MacSystemActionsTests: XCTestCase {
     }
 
     func testExecuteScriptNonExistentFile() {
-        let nonExistentPath = "/tmp/non_existent_script_\(UUID().uuidString).sh"
+        let nonExistentPath = NSHomeDirectory() + "/.magsafe/scripts/non_existent_script_\(UUID().uuidString).sh"
 
         XCTAssertThrowsError(try sut.executeScript(at: nonExistentPath)) { error in
             guard let systemError = error as? SystemActionError else {

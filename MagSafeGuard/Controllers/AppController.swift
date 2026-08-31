@@ -184,7 +184,7 @@ public class AppController: ObservableObject {
 
   // MARK: - Constants
 
-  private static let userCancelledMessage = "User cancelled"
+  private static var userCancelledMessage: String { L10n.tr("logDetail.userCancelled") }
 
   // MARK: - Callbacks
 
@@ -245,7 +245,7 @@ public class AppController: ObservableObject {
 
       switch result {
       case .success:
-        self.logEventInternal(.authenticationSucceeded, details: "Arming system")
+        self.logEventInternal(.authenticationSucceeded, details: L10n.tr("logDetail.armingSystem"))
         self.transitionToState(.armed)
         self.onNotification?(
           L10n.tr("notification.armed.title"), L10n.tr("notification.armed.message"))
@@ -290,7 +290,7 @@ public class AppController: ObservableObject {
 
       switch result {
       case .success:
-        self.logEventInternal(.authenticationSucceeded, details: "Disarming system")
+        self.logEventInternal(.authenticationSucceeded, details: L10n.tr("logDetail.disarmingSystem"))
         self.transitionToState(.disarmed)
         self.onNotification?(
           L10n.tr("notification.disarmed.title"), L10n.tr("notification.disarmed.message"))
@@ -324,7 +324,8 @@ public class AppController: ObservableObject {
 
       switch result {
       case .success:
-        self.logEventInternal(.authenticationSucceeded, details: "Cancelling grace period")
+        self.logEventInternal(
+          .authenticationSucceeded, details: L10n.tr("logDetail.cancellingGracePeriod"))
         self.cancelGracePeriod()
         self.transitionToState(.armed)
         self.onNotification?(
@@ -365,8 +366,8 @@ public class AppController: ObservableObject {
   /// Runs security and network actions immediately (remote URL trigger).
   public func triggerRemoteSecurityResponse() {
     guard currentState == .armed || currentState == .gracePeriod else { return }
-    logEventInternal(.securityActionExecuted, details: "Remote trigger")
-    executeSecurityActions()
+    logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.remoteTrigger"))
+    executeSecurityActions(allowFromArmedState: currentState == .armed)
   }
 
   // MARK: - Auto-Arm Management
@@ -411,11 +412,12 @@ public class AppController: ObservableObject {
   }
 
   private func handlePowerConnected() {
-    logEventInternal(.powerConnected, details: "Power adapter connected")
-
-    if currentState == .gracePeriod {
+    if currentState == .gracePeriod || isInGracePeriod {
+      logEventInternal(.powerConnected, details: L10n.tr("logDetail.powerConnectedDuringGrace"))
       cancelGracePeriod()
       transitionToState(.armed)
+    } else {
+      logEventInternal(.powerConnected, details: L10n.tr("logDetail.powerConnected"))
     }
   }
 
@@ -429,13 +431,12 @@ public class AppController: ObservableObject {
   }
 
   private func handlePowerDisconnected() {
-    logEventInternal(.powerDisconnected, details: "Power adapter disconnected while armed")
+    logEventInternal(.powerDisconnected, details: L10n.tr("logDetail.powerDisconnected"))
 
     if effectiveGracePeriodDuration > 0 {
       startGracePeriod()
     } else {
-      // Immediate execution
-      executeSecurityActions()
+      executeSecurityActions(allowFromArmedState: true)
     }
   }
 
@@ -446,7 +447,8 @@ public class AppController: ObservableObject {
     gracePeriodRemaining = effectiveGracePeriodDuration
 
     logEventInternal(
-      .gracePeriodStarted, details: "Grace period started: \(Int(effectiveGracePeriodDuration))s")
+      .gracePeriodStarted,
+      details: L10n.tr("logDetail.gracePeriodStarted", Int(effectiveGracePeriodDuration)))
     notificationService.showCriticalAlert(
       title: L10n.tr("notification.graceAlert.title"),
       message: L10n.tr("notification.graceAlert.message", Int(effectiveGracePeriodDuration))
@@ -462,6 +464,7 @@ public class AppController: ObservableObject {
       if self.gracePeriodRemaining <= 0 {
         self.gracePeriodTimer?.invalidate()
         self.gracePeriodTimer = nil
+        guard self.isInGracePeriod, self.currentState == .gracePeriod else { return }
         self.executeSecurityActions()
       }
     }
@@ -474,10 +477,19 @@ public class AppController: ObservableObject {
     gracePeriodRemaining = 0
     gracePeriodStartTime = nil
 
-    logEventInternal(.gracePeriodCancelled, details: "Grace period cancelled")
+    logEventInternal(.gracePeriodCancelled, details: L10n.tr("logDetail.gracePeriodCancelled"))
   }
 
-  private func executeSecurityActions() {
+  private func executeSecurityActions(allowFromArmedState: Bool = false) {
+    switch currentState {
+    case .gracePeriod:
+      guard isInGracePeriod else { return }
+    case .armed:
+      guard allowFromArmedState else { return }
+    default:
+      return
+    }
+
     transitionToState(.triggered)
     cancelGracePeriod()
 
@@ -488,13 +500,14 @@ public class AppController: ObservableObject {
 
       if result.allSucceeded {
         self.logEventInternal(
-          .securityActionExecuted, details: "All security actions executed successfully")
+          .securityActionExecuted, details: L10n.tr("logDetail.actionsAllSucceeded"))
         self.onNotification?(
           L10n.tr("notification.actionsExecuted.title"),
           L10n.tr("notification.actionsExecuted.message"))
       } else {
         let failedCount = result.failedActions.count
-        self.logEventInternal(.securityActionExecuted, details: "\(failedCount) actions failed")
+        self.logEventInternal(
+          .securityActionExecuted, details: L10n.tr("logDetail.actionsFailed", failedCount))
         self.onNotification?(
           L10n.tr("notification.actionsPartial.title"),
           L10n.tr("notification.actionsPartial.message", failedCount))
@@ -512,9 +525,9 @@ public class AppController: ObservableObject {
     // Log state changes
     switch newState {
     case .armed:
-      logEventInternal(.armed, details: "System armed")
+      logEventInternal(.armed, details: L10n.tr("logDetail.systemArmed"))
     case .disarmed:
-      logEventInternal(.disarmed, details: "System disarmed")
+      logEventInternal(.disarmed, details: L10n.tr("logDetail.systemDisarmed"))
     default:
       break
     }
@@ -720,6 +733,13 @@ extension AppController {
     guard isInGracePeriod else { return }
     gracePeriodTimer?.invalidate()
     gracePeriodTimer = nil
+    executeSecurityActions()
+  }
+
+  /// Simulates grace timer expiry after reconnect cancelled grace (unit tests only).
+  func attemptGraceExpiryAfterCancelForTesting() {
+    guard Self.isTestEnvironment else { return }
+    gracePeriodRemaining = 0
     executeSecurityActions()
   }
 

@@ -8,9 +8,12 @@ This documentation is organized by audience and role to help you find the inform
 
 ### For Users
 
+- [Operating Modes & Flows](features/operating-modes.md) - What each state/mode does (with diagrams)
+- [Behavior Gaps](features/behavior-gaps.md) - Known UI vs runtime mismatches
 - [Building and Running](maintainers/building-and-running.md) - Get MagSafe Guard running on your Mac
 - [Troubleshooting](maintainers/troubleshooting.md) - Common issues and solutions
 - [Feature Flags](features/flags.md) - Configure advanced features
+- [Operating Modes](features/operating-modes.md) - States, grace period, auto-arm, remote trigger
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 
 ### For Contributors

@@ -328,7 +328,7 @@ struct SecuritySettingsView: View {
 
       ForEach(NetworkActionType.allCases, id: \.self) { action in
         Toggle(isOn: networkActionBinding(action)) {
-          Label(action.displayName, systemImage: action.symbolName)
+          Label(action.localizedName, systemImage: action.symbolName)
         }
       }
 

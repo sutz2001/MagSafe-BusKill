@@ -317,6 +317,29 @@
 "event.applicationTerminating" = "Anwendung wird beendet";
 "event.autoArmTriggered" = "Auto-Scharfschalten ausgelöst";
 
+/* Event log details */
+"logDetail.userCancelled" = "Vom Benutzer abgebrochen";
+"logDetail.armingSystem" = "System wird scharfgeschaltet";
+"logDetail.disarmingSystem" = "System wird entschärft";
+"logDetail.cancellingGracePeriod" = "Karenzzeit wird abgebrochen";
+"logDetail.remoteTrigger" = "Fernauslösung";
+"logDetail.powerConnected" = "Netzteil verbunden";
+"logDetail.powerConnectedDuringGrace" = "Netzteil wieder verbunden — Karenzzeit abgebrochen";
+"logDetail.powerDisconnected" = "Netzteil getrennt im scharfgeschalteten Zustand";
+"logDetail.gracePeriodStarted" = "Karenzzeit gestartet: %d s";
+"logDetail.gracePeriodCancelled" = "Karenzzeit abgebrochen";
+"logDetail.actionsAllSucceeded" = "Alle Sicherheitsaktionen erfolgreich ausgeführt";
+"logDetail.actionsFailed" = "%lld Aktionen fehlgeschlagen";
+"logDetail.systemArmed" = "System scharfgeschaltet";
+"logDetail.systemDisarmed" = "System entschärft";
+"logDetail.appTerminating" = "Anwendung wird beendet";
+
+/* Network actions */
+"networkAction.webhook.name" = "HTTP-Webhook";
+"networkAction.disconnectVPN.name" = "VPN trennen";
+"networkAction.clearSSHAgent.name" = "SSH-Agent leeren";
+"networkAction.disableWiFi.name" = "WLAN deaktivieren";
+
 /* App states */
 "appState.disarmed" = "Entschärft";
 "appState.armed" = "Scharf";

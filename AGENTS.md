@@ -47,7 +47,7 @@ open MagSafeGuard.xcodeproj
 | Item | Value |
 |------|--------|
 | Source | `version.json` (`marketingVersion`, `buildNumber`) |
-| **Current fork version** | **0.4.0** (build **5**) |
+| **Current fork version** | **0.4.1** (build **6**) |
 | Upstream (reference only) | `1.11.0` — fork semver is independent |
 | Sync | `task version:sync` → `AppVersion.swift` + Xcode `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` |
 | Show | `task version:show` |

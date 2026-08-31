@@ -317,6 +317,29 @@
 "event.applicationTerminating" = "Application Terminating";
 "event.autoArmTriggered" = "Auto-Arm Triggered";
 
+/* Event log details */
+"logDetail.userCancelled" = "User cancelled";
+"logDetail.armingSystem" = "Arming system";
+"logDetail.disarmingSystem" = "Disarming system";
+"logDetail.cancellingGracePeriod" = "Cancelling grace period";
+"logDetail.remoteTrigger" = "Remote trigger";
+"logDetail.powerConnected" = "Power adapter connected";
+"logDetail.powerConnectedDuringGrace" = "Power adapter reconnected — grace period cancelled";
+"logDetail.powerDisconnected" = "Power adapter disconnected while armed";
+"logDetail.gracePeriodStarted" = "Grace period started: %d s";
+"logDetail.gracePeriodCancelled" = "Grace period cancelled";
+"logDetail.actionsAllSucceeded" = "All security actions executed successfully";
+"logDetail.actionsFailed" = "%lld actions failed";
+"logDetail.systemArmed" = "System armed";
+"logDetail.systemDisarmed" = "System disarmed";
+"logDetail.appTerminating" = "App terminating";
+
+/* Network actions */
+"networkAction.webhook.name" = "HTTP Webhook";
+"networkAction.disconnectVPN.name" = "Disconnect VPN";
+"networkAction.clearSSHAgent.name" = "Clear SSH Agent";
+"networkAction.disableWiFi.name" = "Disable Wi-Fi";
+
 /* App states */
 "appState.disarmed" = "Disarmed";
 "appState.armed" = "Armed";

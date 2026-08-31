@@ -189,11 +189,53 @@ public class NotificationService {
   ///   - title: The alert title (typically "Security Alert")
   ///   - message: The alert message describing the security event
   public func showCriticalAlert(title: String, message: String) {
-    // For critical alerts, always try alert window as fallback
-    if !permissionsGranted && deliveryMethod is UserNotificationDelivery {
-      AlertWindowDelivery().deliver(title: title, message: message, identifier: "critical")
+    if NotificationService.disableForTesting
+      && !String(describing: type(of: deliveryMethod)).contains("Mock")
+    {
+      Log.debug("Skipping critical alert - disabled for testing")
+      return
+    }
+
+    if UserDefaultsManager.shared.settings.playCriticalAlertSound {
+      playCriticalAlertSound()
+    }
+
+    if !permissionsGranted {
+      requestPermissions()
+    }
+
+    let identifier = "MagSafeGuard-critical-\(UUID().uuidString)"
+
+    if permissionsGranted, deliveryMethod is UserNotificationDelivery {
+      deliverCriticalNotification(title: title, message: message, identifier: identifier)
     } else {
-      showNotification(title: title, message: message)
+      AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+    }
+  }
+
+  private func playCriticalAlertSound() {
+    DispatchQueue.main.async {
+      if let sound = NSSound(named: NSSound.Name("Basso")) {
+        sound.play()
+      } else {
+        NSSound.beep()
+      }
+    }
+  }
+
+  private func deliverCriticalNotification(title: String, message: String, identifier: String) {
+    let content = UNMutableNotificationContent()
+    content.title = title
+    content.body = message
+    content.sound = .default
+    content.interruptionLevel = .critical
+
+    let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+    UNUserNotificationCenter.current().add(request) { error in
+      if let error {
+        Log.error("Error showing critical notification", error: error)
+        AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+      }
     }
   }
 }

@@ -40,7 +40,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     checkForPreviousCrashes()
 
     // Hide dock icon as this is a menu bar app
-    NSApp.setActivationPolicy(.accessory)
+    SettingsRuntimeApplier.applyDockVisibility(
+      showInDock: UserDefaultsManager.shared.settings.showInDock)
 
     if NSApp.applicationIconImage == nil {
       NSApp.applicationIconImage = NSImage(named: "AppIcon")
@@ -336,7 +337,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Return to accessory mode if no windows are open
         if self?.settingsWindow == nil {
-          NSApp.setActivationPolicy(.accessory)
+          SettingsRuntimeApplier.applyDockVisibility(
+            showInDock: UserDefaultsManager.shared.settings.showInDock)
         }
       }
     }
@@ -414,7 +416,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationWillTerminate(_ notification: Notification) {
     // Log application termination
-    core.appController.logEvent(.applicationTerminating, details: "App terminating")
+    core.appController.logEvent(.applicationTerminating, details: L10n.tr("logDetail.appTerminating"))
 
     // Save any pending state
     saveApplicationState()

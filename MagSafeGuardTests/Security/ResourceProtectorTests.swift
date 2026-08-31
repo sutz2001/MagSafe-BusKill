@@ -215,12 +215,15 @@ final class ResourceProtectorTests: XCTestCase {
         // When
         await sut.reset(action: "forceLogout")
 
-        // Then
+        // Then — metrics cleared by reset
+        var metrics = await sut.getMetrics(for: "forceLogout")
+        XCTAssertEqual(metrics["totalAttempts"] as? Int, 0)
+
         let result = try await sut.checkAction("forceLogout")
         XCTAssertTrue(result, "Should allow action after reset")
 
-        let metrics = await sut.getMetrics(for: "forceLogout")
-        XCTAssertEqual(metrics["totalAttempts"] as? Int, 0)
+        metrics = await sut.getMetrics(for: "forceLogout")
+        XCTAssertEqual(metrics["totalAttempts"] as? Int, 1)
     }
 
     // MARK: - Enable/Disable Tests

@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.4.0` (build `5`) |
+| **Version** | `0.4.1` (build `6`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -60,6 +60,8 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | **Triggered** | Enabled actions run in order (lock, alarm, logout, …) |
 
 **Daily use:** menu bar icon → **Arm** → work with adapter connected → on theft risk, pull cable or wait for grace → actions execute.
+
+**Detailed behavior (states, grace, auto-arm, remote trigger):** [docs/features/operating-modes.md](docs/features/operating-modes.md)
 
 | Shortcut / tip | |
 | --- | --- |

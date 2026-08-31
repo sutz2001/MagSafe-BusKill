@@ -122,25 +122,75 @@ public class SecurityActionsService {
   public struct Configuration: Codable {
     /// Set of enabled security actions to execute
     var enabledActions: Set<SecurityAction>
+    /// User-defined execution order (Settings → Security drag order)
+    var actionOrder: [SecurityAction]
     /// Delay in seconds before executing any actions
     var actionDelay: TimeInterval
     /// Alarm volume level (0.0 to 1.0)
     var alarmVolume: Float
     /// Delay in seconds before system shutdown
     var shutdownDelay: TimeInterval
-    /// Path to custom script file
+    /// Path to custom script file (legacy single path)
     var customScriptPath: String?
+    /// All custom script paths from Advanced settings
+    var customScriptPaths: [String]
     /// Whether to execute actions in parallel or sequentially
     var executeInParallel: Bool
 
     static let defaultConfiguration = Configuration(
       enabledActions: [.screenLock],
-      actionDelay: 0,  // Immediate by default
+      actionOrder: [.screenLock],
+      actionDelay: 0,
       alarmVolume: 1.0,
-      shutdownDelay: 30,  // 30 seconds before shutdown
+      shutdownDelay: 30,
       customScriptPath: nil,
+      customScriptPaths: [],
       executeInParallel: false
     )
+
+    enum CodingKeys: String, CodingKey {
+      case enabledActions
+      case actionOrder
+      case actionDelay
+      case alarmVolume
+      case shutdownDelay
+      case customScriptPath
+      case customScriptPaths
+      case executeInParallel
+    }
+
+    public init(
+      enabledActions: Set<SecurityAction>,
+      actionOrder: [SecurityAction],
+      actionDelay: TimeInterval,
+      alarmVolume: Float,
+      shutdownDelay: TimeInterval,
+      customScriptPath: String?,
+      customScriptPaths: [String],
+      executeInParallel: Bool
+    ) {
+      self.enabledActions = enabledActions
+      self.actionOrder = actionOrder
+      self.actionDelay = actionDelay
+      self.alarmVolume = alarmVolume
+      self.shutdownDelay = shutdownDelay
+      self.customScriptPath = customScriptPath
+      self.customScriptPaths = customScriptPaths
+      self.executeInParallel = executeInParallel
+    }
+
+    public init(from decoder: Decoder) throws {
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+      enabledActions = try container.decode(Set<SecurityAction>.self, forKey: .enabledActions)
+      actionOrder = try container.decodeIfPresent([SecurityAction].self, forKey: .actionOrder) ?? []
+      actionDelay = try container.decode(TimeInterval.self, forKey: .actionDelay)
+      alarmVolume = try container.decode(Float.self, forKey: .alarmVolume)
+      shutdownDelay = try container.decode(TimeInterval.self, forKey: .shutdownDelay)
+      customScriptPath = try container.decodeIfPresent(String.self, forKey: .customScriptPath)
+      customScriptPaths =
+        try container.decodeIfPresent([String].self, forKey: .customScriptPaths) ?? []
+      executeInParallel = try container.decode(Bool.self, forKey: .executeInParallel)
+    }
   }
 
   /// Result of executing security actions.
@@ -502,18 +552,12 @@ public class SecurityActionsService {
     }
   }
 
-  /// Get enabled actions sorted by priority
+  /// Get enabled actions in configured order
   private func getSortedActions() -> [SecurityAction] {
-    return configuration.enabledActions.sorted { action1, action2 in
-      // Screen lock has highest priority
-      if action1 == .screenLock {
-        return true
-      }
-      if action2 == .screenLock {
-        return false
-      }
-      return action1.rawValue < action2.rawValue
+    if !configuration.actionOrder.isEmpty {
+      return configuration.actionOrder.filter { configuration.enabledActions.contains($0) }
     }
+    return configuration.enabledActions.sorted { $0.rawValue < $1.rawValue }
   }
 
   /// Execute actions in parallel
@@ -588,9 +632,15 @@ public class SecurityActionsService {
   ///
   /// - Parameter newConfig: New configuration to apply
   public func updateConfiguration(_ newConfig: Configuration) {
-    queue.async { [weak self] in
-      self?.configuration = newConfig
-      self?.saveConfiguration()
+    applyConfiguration(newConfig)
+  }
+
+  /// Applies configuration synchronously (settings sync path).
+  func applyConfiguration(_ newConfig: Configuration) {
+    queue.sync { [weak self] in
+      guard let self else { return }
+      self.configuration = newConfig
+      self.saveConfiguration()
     }
   }
 
@@ -641,10 +691,18 @@ public class SecurityActionsService {
   }
 
   private func executeCustomScript() throws {
-    guard let scriptPath = configuration.customScriptPath else {
+    let paths =
+      configuration.customScriptPaths.isEmpty
+      ? (configuration.customScriptPath.map { [$0] } ?? [])
+      : configuration.customScriptPaths
+
+    guard !paths.isEmpty else {
       throw SystemActionError.scriptNotFound
     }
-    try systemActions.executeScript(at: scriptPath)
+
+    for path in paths {
+      try systemActions.executeScript(at: path)
+    }
   }
 
   // MARK: - Configuration Persistence

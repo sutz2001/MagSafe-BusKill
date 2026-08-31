@@ -83,7 +83,7 @@ final class MacSystemActionsRepositoryTests: XCTestCase {
             XCTFail("Should be rate limited")
         } catch let error as SecurityActionError {
             if case .actionFailed(let type, let reason) = error {
-                XCTAssertEqual(type, .customScript)
+                XCTAssertEqual(type, .lockScreen)
                 XCTAssertTrue(reason.contains("Rate limited"))
             } else {
                 XCTFail("Wrong error type: \(error)")
@@ -226,10 +226,12 @@ final class MacSystemActionsRepositoryTests: XCTestCase {
     }
 
     func testExecuteScriptWithValidPath() async throws {
-        // Given - create a temporary test script
-        let tempDir = FileManager.default.temporaryDirectory
-        let scriptPath = tempDir.appendingPathComponent("test_script.sh").path
+        // Given - create a temporary test script in allowed directory
+        let scriptsRoot = URL(fileURLWithPath: NSHomeDirectory() + "/.magsafe/scripts", isDirectory: true)
+        try FileManager.default.createDirectory(at: scriptsRoot, withIntermediateDirectories: true)
+        let scriptPath = scriptsRoot.appendingPathComponent("repo_test_\(UUID().uuidString).sh").path
         try "#!/bin/bash\necho 'test'".write(toFile: scriptPath, atomically: true, encoding: .utf8)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: scriptPath)
         defer { try? FileManager.default.removeItem(atPath: scriptPath) }
 
         mockSystemActions.executeScriptShouldSucceed = true

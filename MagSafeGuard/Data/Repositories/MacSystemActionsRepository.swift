@@ -279,13 +279,30 @@ public final class MacSystemActionsRepository: SecurityActionRepository, @unchec
     private func mapResourceProtectionError(_ error: ResourceProtectionError) -> SecurityActionError {
         switch error {
         case .rateLimited(let action, let retryAfter):
-            return .actionFailed(type: .customScript, reason: "Rate limited: \(action). Retry after \(Int(retryAfter))s")
+            return .actionFailed(
+                type: actionType(for: action),
+                reason: "Rate limited: \(action). Retry after \(Int(retryAfter))s")
         case .circuitOpen(let action, let state):
-            return .actionFailed(type: .customScript, reason: "Circuit \(state) for \(action). Service temporarily unavailable")
+            return .actionFailed(
+                type: actionType(for: action),
+                reason: "Circuit \(state) for \(action). Service temporarily unavailable")
         case .resourceExhausted(let action):
-            return .actionFailed(type: .customScript, reason: "Resources exhausted for \(action)")
+            return .actionFailed(
+                type: actionType(for: action),
+                reason: "Resources exhausted for \(action)")
         case .protectionDisabled:
             return .systemError(description: "Resource protection is disabled")
+        }
+    }
+
+    private func actionType(for actionKey: String) -> SecurityActionType {
+        switch actionKey {
+        case "lockScreen": return .lockScreen
+        case "playAlarm": return .soundAlarm
+        case "forceLogout": return .forceLogout
+        case "shutdown": return .shutdown
+        case "executeScript": return .customScript
+        default: return .customScript
         }
     }
 

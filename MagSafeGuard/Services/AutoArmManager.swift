@@ -201,10 +201,15 @@ public class AutoArmManager: NSObject {
 
     loadSettings()
 
-    // Restart monitoring to apply new settings
-    if isMonitoring {
+    if settingsManager.settings.autoArmEnabled {
+      if !isMonitoring {
+        startMonitoring()
+      } else {
+        stopMonitoring()
+        startMonitoring()
+      }
+    } else if isMonitoring {
       stopMonitoring()
-      startMonitoring()
     }
   }
 

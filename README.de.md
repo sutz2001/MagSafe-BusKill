@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.4.0` (Build `5`) |
+| **Version** | `0.4.1` (Build `6`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -60,6 +60,8 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 | **Triggered** | Konfigurierte Aktionen der Reihe nach |
 
 **Alltag:** Menüleiste → **Scharf schalten** → mit Adapter arbeiten → bei Risiko Kabel ziehen oder Grace abwarten → Aktionen laufen.
+
+**Ausführliche Beschreibung (Zustände, Grace, Auto-Arm, Fernauslösung):** [docs/features/operating-modes.md](docs/features/operating-modes.md) (EN)
 
 | Tipp | |
 | --- | --- |

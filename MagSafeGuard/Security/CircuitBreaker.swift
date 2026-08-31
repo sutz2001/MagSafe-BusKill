@@ -126,18 +126,19 @@ public actor CircuitBreaker: CircuitBreakerProtocol {
 
     /// Record successful action execution
     public func recordSuccess(_ action: String) {
-        if circuits[action] == nil {
-            circuits[action] = Circuit(
-                failureThreshold: defaultFailureThreshold,
-                successThreshold: defaultSuccessThreshold,
-                timeout: defaultTimeout
-            )
-        }
+        ensureCircuit(for: action)
+        circuits[action]?.checkTimeout()
         circuits[action]?.recordSuccess()
     }
 
     /// Record failed action execution
     public func recordFailure(_ action: String) {
+        ensureCircuit(for: action)
+        circuits[action]?.checkTimeout()
+        circuits[action]?.recordFailure()
+    }
+
+    private func ensureCircuit(for action: String) {
         if circuits[action] == nil {
             circuits[action] = Circuit(
                 failureThreshold: defaultFailureThreshold,
@@ -145,7 +146,6 @@ public actor CircuitBreaker: CircuitBreakerProtocol {
                 timeout: defaultTimeout
             )
         }
-        circuits[action]?.recordFailure()
     }
 
     /// Get current state of a circuit
