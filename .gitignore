@@ -9,12 +9,7 @@
 
 # AI files, local settings and scratch pads
 /*.md
-!CLAUDE.md
-.claude
-!.claude/agents/
-!.claude/commands/
-!.claude/schedule.yml
-!.claude/collaboration.yml
+.claude/
 .env
 
 # Feature flags (use docs/examples/feature-flags.example.json as template)
@@ -131,6 +126,7 @@ tasks.json
 
 # Local SBOM files
 sbom-deps.json
+sbom.spdx
 .task/checksum/sbom
 
 # SonarCloud local scan results
@@ -149,8 +145,6 @@ logs/
 # Local profiles, do not sync
 profiles/
 
-# AI agent justifications and false positives
-!.justifications.md
 .mcp.json
 
 # Demo GIF rebuild cache (extracted from git by scripts/build-demo-gif.py)

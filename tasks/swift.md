@@ -57,8 +57,8 @@ Runs tests with code coverage analysis:
 **Output formats:**
 
 - Console report with percentages
-- `coverage.xml` for SonarCloud
-- `coverage.lcov` for Codecov
+- `coverage.lcov` for IDEs and local inspection
+- `coverage-report.txt` / `coverage-report.md` for summaries
 
 ### HTML Coverage Report (`task swift:test:html`)
 
@@ -230,7 +230,7 @@ Common solutions:
 Swift tasks in GitHub Actions:
 
 - Pull requests run: `swift:test`, `swift:lint`
-- Coverage uploaded to Codecov
+- Coverage reports generated locally (`task test`)
 - SBOM generated for releases
 
 ## Performance Tips

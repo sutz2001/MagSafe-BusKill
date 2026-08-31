@@ -15,12 +15,12 @@
 ### What is *not* a live connection
 
 - Old commits in the history graph
-- Folders with old “last modified” dates (`.codecov.yml`, `.env.example`, etc.)
+- Folders with old “last modified” dates on GitHub (e.g. `.env.example`) — unchanged since fork, not active sync
 - MIT license / NOTICE attribution to upstream (required, not operational)
 
 ### Optional reference only
 
-A local `upstream` remote (`lekman/magsafe-buskill`) may exist for **manual** cherry-picks. The fork does **not** auto-merge upstream. See [AGENTS.md](../AGENTS.md) if you ever want to compare.
+Optional: add `upstream` remote (`lekman/magsafe-buskill`) only if you want to compare manually — the fork does **not** auto-merge upstream.
 
 ### Fork-specific identifiers
 

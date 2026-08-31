@@ -115,28 +115,14 @@ xcrun llvm-cov report \
 
 ### GitHub Actions
 
-Coverage is automatically generated in CI:
+Coverage is generated in CI when tests run with coverage enabled:
 
 ```yaml
 - name: Run Tests with Coverage
   run: task test:coverage
 ```
 
-### SonarCloud
-
-Coverage reports are converted to SonarQube format:
-
-```bash
-task test:convert  # Converts LCOV to SonarQube XML
-```
-
-### Codecov
-
-Coverage is uploaded to Codecov for tracking:
-
-```bash
-bash <(curl -s https://codecov.io/bash)
-```
+Local HTML report: `task test:coverage:html`
 
 ## Coverage Goals
 

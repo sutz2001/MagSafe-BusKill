@@ -1,11 +1,5 @@
 version: "3"
 includes:
-  sonar:
-    taskfile: ./tasks/sonar.yml
-    optional: false
-    vars:
-      PROJECT_NAME: "MagSafeGuard"
-      SCHEME_NAME: "MagSafeGuard"
   swift:
     taskfile: ./tasks/swift.yml
     optional: false
@@ -36,9 +30,6 @@ includes:
   git:
     taskfile: ./tasks/git.yml
     optional: false
-  ai:
-    taskfile: ./tasks/ai.yml
-    optional: false
   version:
     taskfile: ./tasks/version.yml
     optional: false
@@ -68,26 +59,16 @@ tasks:
         echo "  task qa            - Run standard QA checks"
         echo "  task qa:quick      - Quick checks (for git hooks)"
         echo "  task qa:fix        - Auto-fix all fixable issues"
-        echo "  task qa:full       - Full QA with SonarCloud"
+        echo "  task qa:full       - Full local QA suite"
         echo ""
         echo "📦 Module Commands:"
         echo "  task swift:        - Swift development tasks"
         echo "  task xcode:        - Xcode build and test tasks"
         echo "  task security:     - Security scanning tasks"
-        echo "  task sonar:        - SonarCloud analysis"
         echo "  task markdown:     - Markdown linting"
         echo "  task yaml:         - YAML validation and linting"
         echo "  task git:          - Git and GitHub tasks"
-        echo "  task ai:           - AI agent analysis tasks"
         echo "  task release:      - Release build, DMG, and checksum"
-        echo ""
-        echo "🤖 AI Analysis:"
-        echo "  task ai:qa         - Run all QA agents (security, coverage, performance)"
-        echo "  task ai:architect  - Architecture review and SOLID validation"
-        echo "  task ai:author     - Documentation analysis"
-        echo "  task ai:devops     - Build and deployment optimization"
-        echo "  task ai-review     - Consolidate findings for discussion"
-        echo "  task ai:status     - Show agent reports status"
         echo ""
         echo "💡 Tips:"
         echo "  • Use 'task <module>:' to see module-specific tasks"
@@ -111,7 +92,6 @@ tasks:
       - task: swift:setup
       - task: xcode:setup
       - task: security:setup
-      - task: sonar:setup
       - task: markdown:setup
     silent: true
   check-tools:
@@ -706,10 +686,8 @@ tasks:
       - task: xcode:test
       - task: swift:lint
       - task: yaml:lint
-      - task: yaml:codecov:validate
       - task: markdown:lint
       - task: security:scan
-      - task: swift:sbom
       - echo "✅ Standard QA suite passed!"
       - |
         if [ -f "coverage-report.txt" ]; then
@@ -738,15 +716,10 @@ tasks:
       - task: markdown:lint:fix
       - echo "✅ Auto-fix complete!"
   qa:full:
-    desc: Full QA suite including SonarCloud analysis
+    desc: Full local QA suite (same as qa)
     silent: true
-    env:
-      CI: "true"
     cmds:
-      - echo "🚀 Running full QA suite with SonarCloud..."
       - task: qa
-      - task: sonar:scan
-      - echo "✅ Full QA suite with SonarCloud completed!"
   qa:local:
     desc: Local QA suite with Xcode tests (no CI-specific checks)
     silent: true
@@ -763,70 +736,3 @@ tasks:
       - task: markdown:lint
       - echo "✅ Local QA suite passed!"
 
-  # Project management tasks
-  todo:
-    desc: Manage TODO workflow - collect findings, update .todo.md, and execute tasks
-    silent: true
-    cmds:
-      - bash -c './scripts/todo-workflow.sh'
-
-  todo:complete:
-    desc: Mark a todo item as complete and continue workflow
-    silent: true
-    cmds:
-      - bash -c './scripts/todo-workflow.sh complete "{{.CLI_ARGS}}"'
-
-  commit:
-    desc: Interactive commit with conventional format
-    silent: true
-    cmds:
-      - |
-        echo "📝 Creating conventional commit..."
-        echo ""
-        echo "Select commit type:"
-        echo "  1) feat     - New feature"
-        echo "  2) fix      - Bug fix"
-        echo "  3) docs     - Documentation"
-        echo "  4) style    - Code style"
-        echo "  5) refactor - Code refactoring"
-        echo "  6) test     - Tests"
-        echo "  7) chore    - Maintenance"
-        echo ""
-        read -p "Enter number (1-7): " type_num
-
-        case $type_num in
-          1) type="feat";;
-          2) type="fix";;
-          3) type="docs";;
-          4) type="style";;
-          5) type="refactor";;
-          6) type="test";;
-          7) type="chore";;
-          *) echo "Invalid selection"; exit 1;;
-        esac
-
-        read -p "Enter scope (optional, press enter to skip): " scope
-        read -p "Enter commit message: " message
-
-        if [ -n "$scope" ]; then
-          commit_msg="${type}(${scope}): ${message}"
-        else
-          commit_msg="${type}: ${message}"
-        fi
-
-        echo ""
-        echo "Commit message: $commit_msg"
-        read -p "Proceed? (y/n): " confirm
-
-        if [ "$confirm" = "y" ]; then
-          git commit -m "$commit_msg"
-        else
-          echo "Commit cancelled"
-        fi
-    interactive: true
-  tasks:update:
-    desc: Update TaskMaster progress
-    silent: true
-    cmds:
-      - |
-        task-master sync-readme >/dev/null 2>&1

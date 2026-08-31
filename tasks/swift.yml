@@ -101,30 +101,11 @@ tasks:
         echo "==================="
         tail -1 ../coverage-report.txt
 
-        # Convert LCOV to Cobertura XML for SonarCloud
-        echo ""
-        echo "📄 Converting to Cobertura XML format..."
         cd ..
-
-        # Ensure we have the LCOV file in the right place
-        if [ ! -f "coverage.lcov" ] && [ -f "MagSafeGuardLib/coverage.lcov" ]; then
-          cp MagSafeGuardLib/coverage.lcov coverage.lcov
-        fi
-
-        if [ -f "coverage.lcov" ]; then
-          task sonar:convert || {
-            echo "⚠️ Coverage conversion failed"
-            exit 1
-          }
-        else
-          echo "❌ No coverage.lcov file found"
-          exit 1
-        fi
 
         echo ""
         echo "✅ SPM tests completed with coverage"
         echo "   - LCOV: coverage.lcov"
-        echo "   - XML: coverage.xml"
         echo "   - Text: coverage-report.txt"
 
         # Generate JUnit XML for test execution reporting (if requested)

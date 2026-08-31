@@ -43,7 +43,7 @@ task --list-all
 | `task qa`       | Run standard QA checks       |
 | `task qa:quick` | Quick checks (for git hooks) |
 | `task qa:fix`   | Auto-fix all fixable issues  |
-| `task qa:full`  | Full QA with SonarCloud      |
+| `task qa:full`  | Full local QA suite          |
 
 ## Task Modules
 
@@ -68,16 +68,6 @@ Security scanning and vulnerability detection tasks.
 task security:         # Show available security tasks
 task security:scan     # Run full security scan
 task security:secrets  # Check for hardcoded secrets
-```
-
-### 📊 [SonarCloud Tasks](sonar.md)
-
-Code quality analysis and SonarCloud integration.
-
-```bash
-task sonar:         # Show available SonarCloud tasks
-task sonar:scan     # Run SonarCloud analysis
-task sonar:simulate # Simulate analysis locally
 ```
 
 ### 📝 [Markdown Tasks](markdown.md)
@@ -119,13 +109,11 @@ tasks/
 ├── git.yml         # Git and GitHub tasks
 ├── markdown.yml    # Markdown linting tasks
 ├── security.yml    # Security scanning tasks
-├── sonar.yml       # SonarCloud analysis tasks
 ├── swift.yml       # Swift development tasks
 ├── yaml.yml        # YAML validation tasks
 ├── git.md          # Git module documentation
 ├── markdown.md     # Markdown module documentation
 ├── security.md     # Security module documentation
-├── sonar.md        # SonarCloud module documentation
 ├── swift.md        # Swift module documentation
 └── yaml.md         # YAML module documentation
 ```

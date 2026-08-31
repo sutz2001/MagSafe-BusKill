@@ -4,7 +4,7 @@
 
 This document describes how MagSafe Guard implements Clean Architecture principles, using the resource protection feature as a comprehensive example. The implementation demonstrates proper separation of concerns, dependency inversion, and protocol-oriented design.
 
-> **Note**: For broader Swift best practices and SPM modularization strategy, see [Best Practices](best-practices.md). This document focuses specifically on Clean Architecture implementation details.
+> **Note**: For broader Swift architecture practices, see [Swift Project Architecture Practices](swift-project-architecture-practices.md). This document focuses specifically on Clean Architecture implementation details.
 
 ## Clean Architecture Layers
 
@@ -369,7 +369,7 @@ class RepositoryIntegrationTests: XCTestCase {
 
 ### SPM/Xcode Separation Structure
 
-As detailed in [Best Practices - SPM Separation](best-practices.md#swift-package-manager-drives-modularization-and-testability), the project separates business logic (SPM) from platform code (Xcode):
+As detailed in [Swift Project Architecture Practices](swift-project-architecture-practices.md), the project separates business logic (SPM) from platform code (Xcode):
 
 ```ini
 MagSafeGuardLib/                 # Swift Package (100% Testable)

@@ -65,7 +65,7 @@ Jobs:
 2. codeql-analysis  # Deep semantic analysis
 3. semgrep-scan     # OWASP/security patterns
 4. dependency-scan  # Known vulnerabilities
-5. snyk-scan        # Advanced SCA (when enabled)
+5. dependency-review  # Known vulnerabilities in PRs
 ```
 
 #### Test Workflow (`.github/workflows/test.yml`)
@@ -74,8 +74,7 @@ Jobs:
 Includes:
 - Swift compilation
 - Unit test execution
-- Code coverage generation
-- Coverage reporting to Codecov
+- Local code coverage reports (`coverage-report.md`, `coverage.lcov`)
 ```
 
 ### 4. Development Automation (Taskfile)
@@ -177,11 +176,11 @@ Monitor all security tools from one place:
 
 | Tool | Purpose | Access |
 |------|---------|--------|
-| **GitHub Security** | Overview of all security features | [→ Security tab](https://github.com/lekman/magsafe-buskill/security) |
-| **CodeQL** | Code analysis results | [→ Security > Code scanning](https://github.com/lekman/magsafe-buskill/security/code-scanning) |
-| **Semgrep** | SAST findings | [→ Semgrep Dashboard](https://semgrep.dev) |
-| **Dependabot** | Dependency updates | [→ Security > Dependabot](https://github.com/lekman/magsafe-buskill/security/dependabot) |
-| **Codecov** | Test coverage | [→ Codecov Dashboard](https://codecov.io/gh/lekman/magsafe-buskill) |
+| **GitHub Security** | Overview of all security features | [→ Security tab](https://github.com/sutz2001/MagSafe-BusKill/security) |
+| **CodeQL** | Code analysis results | [→ Security > Code scanning](https://github.com/sutz2001/MagSafe-BusKill/security/code-scanning) |
+| **Semgrep** | SAST findings | Local: `task security:semgrep` |
+| **Dependabot** | Dependency updates | [→ Security > Dependabot](https://github.com/sutz2001/MagSafe-BusKill/security/dependabot) |
+| **Coverage** | Local test coverage | `task test` → `coverage-report.md` |
 
 ## Best Practices
 
@@ -213,7 +212,7 @@ By following this implementation:
 
 ## Getting Help
 
-- **Security Issues**: security@lekman.com
+- **Security Issues**: [GitHub Security Advisories](https://github.com/sutz2001/MagSafe-BusKill/security/advisories/new)
 - **Tool Problems**: Check tool-specific docs in `/docs`
 - **Questions**: Open a GitHub discussion
 - **Urgent**: Use GitHub Security Advisory feature

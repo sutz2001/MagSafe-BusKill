@@ -6,12 +6,31 @@ This guide explains how to set up your development environment and follow coding
 
 ```bash
 # Complete development setup
-task dev:setup
+task init
 
 # Check that everything works
 task test
-task lint
+task swift:lint
 ```
+
+## Project layout & config files
+
+Dot-files and dot-folders (`.swiftlint.yml`, `.cursor/`, `.githooks/`) are normal for tooling. In **Finder**: `Cmd+Shift+.` toggles hidden files. In **Cursor**: after the `.vscode/settings.json` cleanup, config files should appear in the explorer.
+
+| Path | Purpose |
+|------|---------|
+| `AGENTS.md` | Canonical AI rules (Cursor + Copilot) |
+| `.cursor/rules/` | Cursor always-on project rules |
+| `.github/` | CI workflows, Copilot instructions |
+| `.githooks/` | Pre-commit security + commit-msg checks (`task init` enables) |
+| `.swiftlint.yml` | Swift style (`task swift:lint`) |
+| `.markdownlint.json` | Markdown style (`task markdown:lint`) |
+| `.yamllint.yml` | YAML style (`task yaml:lint`) |
+| `.gitleaks.toml` | Secret scanning (`task security:gitleaks`) |
+| `.env.example` | Template for local `.env` (copy, never commit `.env`) |
+| `version.json` | App version source → `task version:sync` |
+
+Build artifacts (safe to delete locally): `.build/`, `dist/`, `DerivedData/`.
 
 ## Development Standards
 
@@ -323,7 +342,7 @@ PRs must pass:
 
 ```bash
 # Clone repository
-git clone https://github.com/lekman/magsafe-buskill.git
+git clone https://github.com/sutz2001/MagSafe-BusKill.git
 cd magsafe-buskill
 
 # Set up development environment
@@ -337,12 +356,11 @@ task dev:setup
 git checkout -b feature/new-feature
 
 # Make changes, then before committing:
-task lint:fix           # Fix auto-fixable issues
+task qa:quick          # Fast checks
 task test              # Run all tests
-task pre-commit        # Final checks
 
-# Interactive commit with conventional format
-task commit
+# Commit (see AGENTS.md — conventional format, commit-tree for agents)
+git commit
 
 # Before pushing
 task pre-push          # Complete pre-push checks

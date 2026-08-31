@@ -18,6 +18,7 @@ This documentation is organized by audience and role to help you find the inform
 
 ### For Contributors
 
+- [AGENTS.md](../AGENTS.md) - AI agent rules (Cursor, GitHub Copilot)
 - [Fork independence](FORK_INDEPENDENCE.md) - Fork vs upstream (read this first)
 - [Product Requirements Document (PRD)](PRD.md) - Project vision and scope
 - [Requirements](REQUIREMENTS.md) - Detailed technical specifications
@@ -38,8 +39,7 @@ This documentation is organized by audience and role to help you find the inform
 - [Security Policy](SECURITY.md) - Vulnerability reporting
 - [Security Implementation Guide](security/security-implementation-guide.md) - Security architecture
 - [Authentication Hardening](security/authentication-hardening.md) - Biometric security
-- [SSDLC Case Study](security/ssdlc-case-study.md) - Secure development lifecycle
-- [Software Bill of Materials](security/sbom-guide.md) - Dependencies and compliance
+- [Semgrep Integration](security/semgrep.md) - Static security analysis
 
 ## 📚 Documentation by Category
 
@@ -85,8 +85,6 @@ This documentation is organized by audience and role to help you find the inform
 - [Testing in CI](devops/testing-in-ci.md) - Continuous integration setup
 - [Git Hooks](devops/git-hooks.md) - Pre-commit automation
 - [Commit Message Enforcement](devops/commit-message-enforcement.md) - Conventional commits
-- [Codecov Swift Integration](devops/codecov-swift.md) - Coverage reporting
-- [SonarCloud Fixes](devops/sonarcloud-fixes.md) - Code quality improvements
 
 ### Security & Compliance
 
@@ -94,16 +92,10 @@ This documentation is organized by audience and role to help you find the inform
 - [Security Implementation Guide](security/security-implementation-guide.md) - Security architecture
 - [Authentication Hardening](security/authentication-hardening.md) - Biometric security measures
 - [Logging Privacy](security/logging-privacy.md) - Privacy-preserving logging
-- [SSDLC Case Study](security/ssdlc-case-study.md) - Secure development lifecycle
-- [SBOM Guide](security/sbom-guide.md) - Supply chain transparency
-
-#### Security Tools & Policies
-
 - [Semgrep Integration](security/semgrep.md) - Static security analysis
-- [Snyk Integration](security/snyk-integration.md) - Dependency scanning
-- [Snyk Policy Justification](security/snyk-evaluatepolicy-justification.md) - Security exceptions
-- [Security Workflows](security/SECURITY_WORKFLOWS.md) - Security automation
 - [Security Settings](security/security-settings.md) - Repository security checklist (generic)
+
+Archived upstream-only: [SSDLC case study](archive/ssdlc-case-study.md) · [Security workflows](archive/SECURITY_WORKFLOWS.md)
 
 ### Features & Configuration
 

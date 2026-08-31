@@ -33,4 +33,4 @@ If applicable, add screenshots to help explain your problem.
 Add any other context about the problem here.
 
 **Security Note**
-If this bug has security implications, please report it via [GitHub Security Advisories](https://github.com/lekman/magsafe-buskill/security/advisories/new) instead.
+If this bug has security implications, please report it via [GitHub Security Advisories](https://github.com/sutz2001/MagSafe-BusKill/security/advisories/new) instead.

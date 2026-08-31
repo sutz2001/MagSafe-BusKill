@@ -165,11 +165,9 @@ We implement defense-in-depth using multiple security scanning tools:
 - **Change management**: All changes reviewed and tested
 - **Access control**: Repository permissions management
 - **Incident response**: Defined security incident process
-- **Software Bill of Materials (SBOM)**:
-  - Generated for every release in SPDX 2.3 format
-  - Provides complete dependency transparency
-  - Enables vulnerability tracking and license compliance
-  - Located at `/sbom.spdx` in repository root
+- **Software Bill of Materials (SBOM)** (optional):
+  - Generate locally: `task swift:sbom` → `sbom.spdx` (gitignored)
+  - SPDX 2.3 format for dependency transparency
 
 ## Security Features
 

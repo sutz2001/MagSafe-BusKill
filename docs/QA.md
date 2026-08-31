@@ -20,28 +20,21 @@
 
 [![Semgrep](https://img.shields.io/badge/Semgrep-Enabled-green)](https://semgrep.dev)
 
-[View Dashboard →](https://semgrep.dev/orgs/-/projects) | [Setup Guide →](./semgrep.md)
-
-### Third-Party Security Tools
-
-| Tool     | Status                                                                                                                                       | Dashboard                                          |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| **Snyk** | [![Known Vulnerabilities](https://snyk.io/test/github/sutz2001/MagSafe-BusKill/badge.svg)](https://snyk.io/test/github/sutz2001/MagSafe-BusKill) | [Snyk Dashboard →](https://app.snyk.io/org/lekman) |
+Local: `task security:semgrep` · [Setup Guide →](./security/semgrep.md)
 
 ## 🎨 Code Quality
 
 ### Analysis Tools
 
-| Tool           | Status                                                                                                                                                                                                                                                                                                                                                                          | Dashboard                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| **Codecov**    | [![codecov](https://codecov.io/gh/sutz2001/MagSafe-BusKill/graph/badge.svg?token=AshUsxKtAI)](https://codecov.io/gh/sutz2001/MagSafe-BusKill)                                                                                                                                                                                                                                       | [Dashboard →](https://codecov.io/gh/sutz2001/MagSafe-BusKill)                                |
-| **SonarCloud** | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lekman_magsafe-buskill&metric=alert_status)](https://sonarcloud.io/summary/overall?id=lekman_magsafe-buskill) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=lekman_magsafe-buskill&metric=coverage)](https://sonarcloud.io/summary/new_code?id=lekman_magsafe-buskill) | [Dashboard →](https://sonarcloud.io/summary/overall?id=lekman_magsafe-buskill&branch=main) |
+| Tool         | Status                                                                 | How to run              |
+| ------------ | ---------------------------------------------------------------------- | ----------------------- |
+| **SwiftLint** | [![SwiftLint](https://img.shields.io/badge/SwiftLint-Enabled-green)](https://github.com/realm/SwiftLint) | `task swift:lint`       |
+| **Coverage**  | Local reports (`coverage-report.md`, `coverage.xml`) after `task test` | `task test`             |
 
 ### Language & Platform
 
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)
-[![Platform](https://img.shields.io/badge/Platform-macOS%2011.0%2B-blue.svg)](https://developer.apple.com/macos/)
-[![SwiftLint](https://img.shields.io/badge/SwiftLint-Enabled-green)](https://github.com/realm/SwiftLint)
+[![Platform](https://img.shields.io/badge/Platform-macOS%2013%2B-blue.svg)](https://developer.apple.com/macos/)
 
 ## 🔨 Build & Test Status
 

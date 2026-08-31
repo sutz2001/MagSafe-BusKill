@@ -49,11 +49,11 @@ tasks:
             exit 1
           fi
         else
-          # Auto mode - prefer prettier if available
-          if command -v prettier &> /dev/null && [ -f ".prettierrc.yml" ]; then
-            USE_PRETTIER=true
-          elif command -v yamllint &> /dev/null; then
+          # Auto mode — yamllint (project standard)
+          if command -v yamllint &> /dev/null; then
             USE_YAMLLINT=true
+          elif command -v prettier &> /dev/null; then
+            USE_PRETTIER=true
           fi
         fi
 
@@ -319,40 +319,6 @@ tasks:
             exit 1
           fi
         fi
-  codecov:validate:
-    desc: Validate codecov.yml configuration using Codecov API
-    aliases: ["codecov:check"]
-    silent: true
-    cmds:
-      - |
-        echo "🔍 Validating codecov.yml configuration..."
-
-        if [ ! -f ".codecov.yml" ]; then
-          echo "❌ No .codecov.yml file found"
-          exit 1
-        fi
-
-        # Use Codecov validation API
-        echo "📤 Sending to Codecov validation API..."
-        RESPONSE=$(curl -s -X POST \
-          --data-binary @.codecov.yml \
-          --header "Accept: application/json" \
-          https://api.codecov.io/validate)
-
-        # Check response - the API returns "Valid!" with the parsed config
-        if echo "$RESPONSE" | grep -q "Valid!"; then
-          echo "✅ Codecov configuration is valid!"
-        elif echo "$RESPONSE" | grep -qi "error"; then
-          echo "❌ Codecov configuration is invalid:"
-          echo ""
-          echo "$RESPONSE" | jq -r '.error' 2>/dev/null || echo "$RESPONSE"
-          exit 1
-        else
-          echo "⚠️  Unexpected response from Codecov API:"
-          echo "$RESPONSE"
-          echo ""
-          echo "Continuing anyway..."
-        fi
   validate:
     desc: Validate YAML syntax (basic check without linting rules)
     silent: true
@@ -593,33 +559,9 @@ tasks:
           echo "ℹ️  Config already exists: {{.YAMLLINT_CONFIG}}"
         fi
 
-        # Create prettier config for YAML if it doesn't exist
-        if [ ! -f ".prettierrc.yml" ] && [ ! -f ".prettierrc" ] && [ ! -f ".prettierrc.json" ]; then
-          echo ""
-          echo "📝 Creating .prettierrc.yml for consistent YAML formatting..."
-          cat > .prettierrc.yml << 'EOF'
-        # Prettier configuration for YAML files
-        printWidth: 120
-        tabWidth: 2
-        useTabs: false
-
-        # Preserve existing quotes
-        singleQuote: false
-
-        # YAML-specific settings
-        overrides:
-          - files: "*.{yml,yaml}"
-            options:
-              # Preserve multiline strings
-              proseWrap: preserve
-        EOF
-          echo "✅ Created .prettierrc.yml"
-        fi
-
         echo ""
         echo "✅ YAML tools setup complete!"
         echo "  - yamllint: for checking YAML syntax and style"
-        echo "  - prettier: for auto-formatting YAML files"
   ci:
     desc: Run YAML linting in CI mode (with GitHub annotations)
     silent: true

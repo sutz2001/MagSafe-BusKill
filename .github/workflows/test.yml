@@ -63,8 +63,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4
-        with:
-          fetch-depth: 0 # Full history for SonarCloud blame data
 
       - name: Setup Swift Build Environment
         uses: ./.github/actions/swift
@@ -87,36 +85,6 @@ jobs:
           fi
         env:
           CI: true
-
-      - name: Upload coverage to CodeCov
-        if: always()
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v3
-        with:
-          use_oidc: true
-          files: ./coverage.xml
-          flags: unittests
-          name: codecov-umbrella
-          slug: sutz2001/MagSafe-BusKill
-          codecov_yml_path: .codecov.yml
-          fail_ci_if_error: false
-
-      - name: Upload Test Results to CodeCov
-        if: always()
-        uses: codecov/test-results-action@0fa95f0e1eeaafde2c782583b36b28ad0d8c77d3 # v1
-        with:
-          use_oidc: true
-          files: ./test-results.xml
-          flags: test-execution
-          name: test-results
-          slug: sutz2001/MagSafe-BusKill
-          fail_ci_if_error: false
-
-      - name: SonarCloud Scan
-        if: always()
-        uses: ./.github/actions/sonar
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          sonar-token: ${{ secrets.SONAR_TOKEN }}
 
       - name: Test Summary
         if: always()

@@ -40,6 +40,24 @@ task version:sync        # after editing version.json
 open MagSafeGuard.xcodeproj
 ```
 
+### Testing & QA
+
+```bash
+task test                # SPM tests + coverage
+task test:coverage       # explicit coverage report
+task qa                  # full quality checks
+task qa:quick            # fast pre-commit checks
+task qa:full             # full suite incl. SonarCloud
+```
+
+CI / local test env (recognized by the test suite):
+
+- `CI=true` — non-interactive mode (no auth dialogs, no real lock/shutdown in tests)
+- `SKIP_UI_TESTS=true` — skip UI-dependent tests
+- `COVERAGE_THRESHOLD=80` — minimum coverage (default 80)
+
+Protocol-based testing and coverage targets: [docs/maintainers/testing-guide.md](docs/maintainers/testing-guide.md).
+
 ---
 
 ## Versioning
@@ -202,6 +220,23 @@ git fetch upstream && git merge upstream/main
 ```
 
 Preserve fork bundle ID, entitlements, `version.json`, README fork notes, and agent instruction files. **Do not** restore `com.LekmanConsulting.*` or upstream-only CI/docs without review.
+
+---
+
+## AI tooling (Cursor & GitHub Copilot)
+
+This repo uses **one canonical rule file** (this document). Tool-specific entry points are thin stubs only:
+
+| Tool | How rules load | Entry file |
+|------|----------------|------------|
+| **Cursor** | Project rules (`alwaysApply`) | [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) |
+| **GitHub Copilot** | Repository + path instructions | [.github/copilot-instructions.md](.github/copilot-instructions.md) |
+
+Path-specific Copilot rules: [.github/instructions/](.github/instructions/) (Swift, README, commits, docs).
+
+The `.cursor/` folder is a **dot-directory** — hidden in Finder by default; use `ls -la .cursor/rules/` in Terminal.
+
+**Removed upstream stack (do not restore):** `CLAUDE.md`, `.claude/`, `docs/ai/`, `tasks/ai.yml` — Claude Code CLI / Task Master agents; conflicted with `commit-tree` policy and fork conventions.
 
 ---
 
