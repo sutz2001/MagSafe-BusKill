@@ -1,7 +1,7 @@
 # MagSafe Guard
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sutz2001/MagSafe-BusKill/main/docs/assets/logo-256.png" width="128" alt="MagSafe Guard app icon" />
+  <img src="docs/assets/logo-256.png" width="128" alt="MagSafe Guard app icon" />
 </p>
 
 <p align="center">

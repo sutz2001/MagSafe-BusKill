@@ -39,13 +39,13 @@ def render_outro_frame() -> Path:
     out = WORK / "outro-frame.png"
 
     canvas = Image.new("RGB", (WIDTH, HEIGHT), "white")
-    logo = Image.open(LOGO).convert("RGBA")
+    logo = Image.open(LOGO).convert("RGB")
     logo_size = 160
     logo = logo.resize((logo_size, logo_size), Image.Resampling.LANCZOS)
 
     x = (WIDTH - logo_size) // 2
     y = 110
-    canvas.paste(logo, (x, y), logo)
+    canvas.paste(logo, (x, y))
 
     draw = ImageDraw.Draw(canvas)
     title_font = _font(46, bold=True)
@@ -119,6 +119,9 @@ def main() -> int:
             str(OUTRO_SECONDS),
             "-i",
             str(outro_png),
+            "-vf",
+            "split[s0][s1];[s0]palettegen=stats_mode=full:max_colors=256[p];"
+            "[s1][p]paletteuse=dither=none",
             str(outro_gif),
         ]
     )
@@ -132,7 +135,9 @@ def main() -> int:
             "-i",
             str(outro_gif),
             "-filter_complex",
-            "[0:v][1:v]concat=n=2:v=1:a=0",
+            "[0:v][1:v]concat=n=2:v=1:a=0,split[s0][s1];"
+            "[s0]palettegen=stats_mode=full:max_colors=256[p];"
+            "[s1][p]paletteuse=dither=none",
             "-loop",
             "0",
             str(OUTPUT_GIF),
