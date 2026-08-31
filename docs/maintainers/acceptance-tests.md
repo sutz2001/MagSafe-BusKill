@@ -223,13 +223,16 @@ This guide outlines manual tests that should be performed before releases to ver
 **Purpose**: Verify all menu items function correctly
 
 1. Click menu bar icon
-2. Verify menu contains:
-   - Arm/Disarm Protection
+2. Verify menu contains (when disarmed):
+   - Arm Protection
+   - Arm Panic Mode… (when disarmed)
    - Settings...
-   - Run Demo...
-   - Quit
-3. Test each menu item
-4. **Expected**: Each item responds appropriately
+   - View Event Log...
+   - About MagSafe Guard...
+   - Quit MagSafe Guard
+3. When panic-armed, verify **Panic Mode Active** status line (no separate disarm panic item — use Disarm Protection)
+4. Test each menu item
+5. **Expected**: Each item responds appropriately
 
 ### Test 20: Keyboard Navigation
 
@@ -251,20 +254,7 @@ This guide outlines manual tests that should be performed before releases to ver
 4. Navigate menu items with arrow keys
 5. **Expected**: All items properly announced with meaningful descriptions
 
-### Test 22: Demo Window
-
-**Purpose**: Verify demo window functionality
-
-1. Click menu bar icon
-2. Select "Run Demo..."
-3. Verify demo window shows:
-   - Current power status
-   - Battery level
-   - Real-time updates
-4. Unplug/replug power adapter
-5. **Expected**: Status updates in real-time
-
-### Test 23: Menu Bar Persistence
+### Test 22: Menu Bar Persistence
 
 **Purpose**: Verify app persists correctly
 
@@ -274,6 +264,30 @@ This guide outlines manual tests that should be performed before releases to ver
 4. Run app again
 5. Switch to another Space/Desktop
 6. **Expected**: Menu bar icon visible on all Spaces
+
+### Test 23: Discreet operation (v0.4.3)
+
+**Purpose**: Verify icon-only mode without notifications or sounds
+
+1. Open **Settings → Notifications**
+2. Disable all three: status notifications, security alerts, critical alert sound
+3. Arm the system and unplug adapter
+4. **Expected**: Grace runs; menu bar icon changes; **no** macOS banner, **no** countdown text, **no** beep
+5. Re-enable **Show security alerts** only → grace banner/countdown returns
+
+### Test 24: Panic mode (controlled — real shutdown)
+
+⚠️ **Only on a test machine.** Save all work. Expect immediate lock + shutdown.
+
+1. Menu → **Arm Panic Mode…** → accept legal notice (first time) → authenticate
+2. **Expected**: Menu icon shows panic-armed (triggered style)
+3. Press **⌃⌘P** (Control+Command+P)
+4. **Expected**: Lock + shutdown pipeline starts; no grace period
+5. After reboot: disarm if still armed; verify normal mode works again
+
+Optional: repeat trigger via cable unplug or `magsafeguard://panic?token=…` while panic-armed.
+
+**Expected when not panic-armed:** ⌃⌘P and panic URL do nothing harmful.
 
 ## Test Report Template
 
@@ -316,8 +330,9 @@ Menu Bar UI and Accessibility:
 [ ] Test 19: Menu Interactions - Pass/Fail
 [ ] Test 20: Keyboard Navigation - Pass/Fail
 [ ] Test 21: VoiceOver Support - Pass/Fail
-[ ] Test 22: Demo Window - Pass/Fail
-[ ] Test 23: Menu Bar Persistence - Pass/Fail
+[ ] Test 22: Menu Bar Persistence - Pass/Fail
+[ ] Test 23: Discreet Operation - Pass/Fail
+[ ] Test 24: Panic Mode (controlled) - Pass/Fail
 
 Notes:
 _________________________________

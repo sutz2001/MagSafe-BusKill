@@ -117,13 +117,18 @@ struct SecurityActionUseCaseTests {
         #expect(result.allSucceeded)
     }
 
-    @Test("Should prevent concurrent execution", .disabled("Flaky test - race condition"))
+    @Test("Should prevent concurrent execution")
     func testConcurrentExecutionPrevention() async {
         // Given
         let mockRepository = MockSecurityActionRepository()
         let useCase = SecurityActionExecutionUseCaseImpl(repository: mockRepository)
 
-        let configuration = SecurityActionConfiguration(enabledActions: [.lockScreen])
+        // Hold the execution lock across the actor suspension window so the second call
+        // cannot complete before the first one starts (mock lockScreen is otherwise instant).
+        let configuration = SecurityActionConfiguration(
+            enabledActions: [.lockScreen],
+            actionDelay: 0.05
+        )
         let request = SecurityActionRequest(configuration: configuration, trigger: .testTrigger)
 
         // When - Start two executions concurrently

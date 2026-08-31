@@ -43,12 +43,12 @@ Optional stretch: first **GitHub Release** with `.dmg` + `LICENSE` + `NOTICE`.
 ### P1 — should fix
 
 - [ ] **`task qa:quick` clean** (lint, security scan) before tagging releases.
-- [ ] Re-enable or replace **disabled flaky test** in `SecurityActionUseCaseTests.swift` (see [testing-guide.md](testing-guide.md)).
+- [x] Re-enable or replace **disabled flaky test** in `SecurityActionUseCaseTests.swift` — fixed via `actionDelay` hold window.
 - [ ] Confirm **GitHub Actions** on `main` green after test fixes (commit-message check + any macOS workflow you run manually).
 
 ### P2 — nice to have
 
-- [ ] `ResourceProtectionPolicyAdapter` tests (testing-guide P2).
+- [x] `ResourceProtectionPolicyAdapter` tests (testing-guide P2).
 - [ ] `AuthenticationService` app-layer tests (testing-guide P3).
 - [ ] Coverage stays ≥ 80% (`COVERAGE_THRESHOLD`).
 
@@ -111,7 +111,7 @@ Use a **test session** or spare user if testing logout/shutdown. Save work first
 - [ ] App survives sleep/wake while armed.
 - [ ] Quit during grace → warning if still in progress.
 
-Full legacy checklist: [acceptance-tests.md](acceptance-tests.md) — **update needed** for panic, discreet, and removed demo items.
+Full manual checklist: [acceptance-tests.md](acceptance-tests.md) (includes discreet + panic sections as of v0.5.0).
 
 ---
 
@@ -135,7 +135,7 @@ Full legacy checklist: [acceptance-tests.md](acceptance-tests.md) — **update n
 ## 4. Documentation hygiene
 
 - [ ] [user-guide.md](../features/user-guide.md) / [user-guide.de.md](../features/user-guide.de.md) match what you ship.
-- [ ] [acceptance-tests.md](acceptance-tests.md) — add panic + discreet sections; remove stale menu items (e.g. “Run Demo” if gone).
+- [x] [acceptance-tests.md](acceptance-tests.md) — panic + discreet sections; removed stale “Run Demo” menu item.
 - [ ] [behavior-gaps.md](../features/behavior-gaps.md) — log any new mismatch as GAP-16+ or Issues.
 - [ ] README roadmap reflects **stabilization focus** (not “panic planned”).
 

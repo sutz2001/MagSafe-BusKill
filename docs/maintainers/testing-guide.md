@@ -245,13 +245,13 @@ Domain/core logic is well covered. Highest value is in the **app layer**, especi
 | ~~**P0**~~ | Reconnect during grace | Done | `testPowerReconnectDuringGracePeriodCancelsTrigger` |
 | ~~**P1**~~ | `PowerMonitorCore` | Done | `PowerMonitorCoreTests.swift` |
 | ~~**P1**~~ | `SecurityActionsService` | Done | `SecurityActionsServiceTests.swift` |
-| **P2** | `ResourceProtectionPolicyAdapter` | Open | Map protector errors to domain errors |
+| ~~**P2**~~ | `ResourceProtectionPolicyAdapter` | Done | `ResourceProtectionPolicyAdapterTests.swift` |
 | ~~**P2**~~ | `AutoArmManager` | Done | `AutoArmManagerTests.swift` |
 | **P3** | `AuthenticationService` | Open | App-layer LA wrapper success/failure paths |
 
 **Not worth automating (by design):** raw IOKit, CoreLocation hardware, CloudKit sync, real screen lock/shutdown — see [acceptance-tests.md](acceptance-tests.md).
 
-**Known gap:** One flaky concurrent test is disabled in `SecurityActionUseCaseTests.swift` — re-enable when stabilized. **Sendable stream collection:** use `AsyncStreamCollector` from TestInfrastructure for async stream tests.
+**Sendable stream collection:** use `AsyncStreamCollector` from TestInfrastructure for async stream tests. Concurrent execution test in `SecurityActionUseCaseTests.swift` uses `actionDelay` to hold the actor lock during overlap.
 
 ## Test Organization
 
