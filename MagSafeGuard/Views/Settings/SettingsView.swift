@@ -313,8 +313,106 @@ struct SecuritySettingsView: View {
       Section {
         securityActionsFooter
       }
+
+      networkActionsSection
+      remoteTriggerSection
     }
     .formStyle(.grouped)
+  }
+
+  private var networkActionsSection: some View {
+    Section(header: Text(l10n: "settings.network.title")) {
+      Text(l10n: "settings.network.caption")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      ForEach(NetworkActionType.allCases, id: \.self) { action in
+        Toggle(isOn: networkActionBinding(action)) {
+          Label(action.displayName, systemImage: action.symbolName)
+        }
+      }
+
+      if settingsManager.settings.enabledNetworkActions.contains(.webhook) {
+        TextField(L10n.tr("settings.network.webhookURL"), text: webhookURLBinding)
+        SecureField(L10n.tr("settings.network.webhookToken"), text: webhookTokenBinding)
+      }
+    }
+  }
+
+  private var remoteTriggerSection: some View {
+    Section(header: Text(l10n: "settings.network.remote.title")) {
+      Toggle(isOn: remoteTriggerEnabledBinding) {
+        Text(l10n: "settings.network.remote.enabled")
+      }
+      Text(l10n: "settings.network.remote.hint")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      if settingsManager.settings.remoteTrigger.isEnabled {
+        SecureField(L10n.tr("settings.network.remote.token"), text: remoteTokenBinding)
+        Text(L10n.tr("settings.network.remote.example", exampleRemoteURL))
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .textSelection(.enabled)
+      }
+    }
+  }
+
+  private var exampleRemoteURL: String {
+    let token = settingsManager.settings.remoteTrigger.token.isEmpty
+      ? "YOUR_TOKEN" : settingsManager.settings.remoteTrigger.token
+    return "magsafeguard://trigger?token=\(token)"
+  }
+
+  private func networkActionBinding(_ action: NetworkActionType) -> Binding<Bool> {
+    Binding(
+      get: { settingsManager.settings.enabledNetworkActions.contains(action) },
+      set: { enabled in
+        var actions = settingsManager.settings.enabledNetworkActions
+        if enabled {
+          if !actions.contains(action) { actions.append(action) }
+        } else {
+          actions.removeAll { $0 == action }
+        }
+        settingsManager.updateSetting(\.enabledNetworkActions, value: actions)
+      }
+    )
+  }
+
+  private var webhookURLBinding: Binding<String> {
+    Binding(
+      get: { settingsManager.settings.webhookURL },
+      set: { settingsManager.updateSetting(\.webhookURL, value: $0) }
+    )
+  }
+
+  private var webhookTokenBinding: Binding<String> {
+    Binding(
+      get: { NetworkActionsService.shared.loadWebhookToken() },
+      set: { NetworkActionsService.shared.saveWebhookToken($0) }
+    )
+  }
+
+  private var remoteTriggerEnabledBinding: Binding<Bool> {
+    Binding(
+      get: { settingsManager.settings.remoteTrigger.isEnabled },
+      set: { enabled in
+        var remote = settingsManager.settings.remoteTrigger
+        remote.isEnabled = enabled
+        settingsManager.updateSetting(\.remoteTrigger, value: remote)
+      }
+    )
+  }
+
+  private var remoteTokenBinding: Binding<String> {
+    Binding(
+      get: { settingsManager.settings.remoteTrigger.token },
+      set: { token in
+        var remote = settingsManager.settings.remoteTrigger
+        remote.token = token
+        settingsManager.updateSetting(\.remoteTrigger, value: remote)
+      }
+    )
   }
 
   private var securityActionsHeaderText: some View {

@@ -71,6 +71,20 @@ public class AutoArmManager: NSObject {
   /// Minimum time between auto-arm triggers (30 seconds)
   private let autoArmCooldown: TimeInterval = 30.0
 
+  #if DEBUG
+  var autoArmCooldownOverride: TimeInterval?
+  func setLastAutoArmTimeForTesting(_ date: Date?) {
+    lastAutoArmTime = date
+  }
+  #endif
+
+  private var effectiveAutoArmCooldown: TimeInterval {
+    #if DEBUG
+    if let autoArmCooldownOverride { return autoArmCooldownOverride }
+    #endif
+    return autoArmCooldown
+  }
+
   // MARK: - Initialization
 
   /// Initializes the auto-arm manager
@@ -229,7 +243,7 @@ public class AutoArmManager: NSObject {
 
     // Check cooldown period
     if let lastTime = lastAutoArmTime,
-      Date().timeIntervalSince(lastTime) < autoArmCooldown {
+      Date().timeIntervalSince(lastTime) < effectiveAutoArmCooldown {
       Log.debug("Auto-arm skipped - cooldown period", category: .autoArm)
       return false
     }

@@ -37,6 +37,15 @@
 "settings.security.actionsSelected" = "%lld Aktionen ausgewählt";
 "settings.security.resetDefaults" = "Auf Standard zurücksetzen";
 "settings.security.removeAction" = "Aktion entfernen";
+"settings.network.title" = "Netzwerk-Aktionen";
+"settings.network.caption" = "Bei Sicherheits-Trigger ausführen (zusätzlich zu Sperre, Alarm, …)";
+"settings.network.webhookURL" = "Webhook-URL";
+"settings.network.webhookToken" = "Webhook-Token (Keychain)";
+"settings.network.remote.title" = "Fernauslösung";
+"settings.network.remote.enabled" = "URL-Schema-Auslösung aktivieren";
+"settings.network.remote.hint" = "Shortcuts oder ein anderes Gerät können eine URL öffnen. Token geheim halten.";
+"settings.network.remote.token" = "Trigger-Token";
+"settings.network.remote.example" = "Beispiel: %@";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Bildschirm sperren";

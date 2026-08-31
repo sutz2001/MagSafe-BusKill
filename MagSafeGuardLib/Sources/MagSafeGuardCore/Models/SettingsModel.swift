@@ -147,6 +147,17 @@ public struct Settings: Codable {
   /// Whether the first-run onboarding wizard has been completed.
   public var hasCompletedOnboarding: Bool = false
 
+  // MARK: - Network Actions (v0.4.0)
+
+  /// Network actions executed when security triggers fire.
+  public var enabledNetworkActions: [NetworkActionType] = []
+
+  /// Outbound webhook URL (POST on trigger). Token stored separately in Keychain when set.
+  public var webhookURL: String = ""
+
+  /// Remote trigger via custom URL scheme (`magsafeguard://trigger?token=…`).
+  public var remoteTrigger: RemoteTriggerSettings = RemoteTriggerSettings()
+
   // MARK: - Advanced Settings
 
   /// List of custom script paths for execution during security actions.

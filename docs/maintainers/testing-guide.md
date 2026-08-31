@@ -243,10 +243,10 @@ Domain/core logic is well covered. Highest value is in the **app layer**, especi
 | ~~**P0**~~ | Power disconnect while armed | Done | `testPowerDisconnectStartsGracePeriod`, `testGracePeriodExpiryExecutesSecurityActions` |
 | ~~**P0**~~ | Grace period = 0 | Done | `testZeroGracePeriodExecutesSecurityActionsImmediately` |
 | ~~**P0**~~ | Reconnect during grace | Done | `testPowerReconnectDuringGracePeriodCancelsTrigger` |
-| **P1** | `PowerMonitorCore` | Open | Parse IOKit-style power dicts; `hasPowerStateChanged` edges → new `PowerMonitorCoreTests.swift` |
-| **P1** | `SecurityActionsService` | Open | Rate limit + circuit breaker orchestration → new `SecurityActionsServiceTests.swift` |
+| ~~**P1**~~ | `PowerMonitorCore` | Done | `PowerMonitorCoreTests.swift` |
+| ~~**P1**~~ | `SecurityActionsService` | Done | `SecurityActionsServiceTests.swift` |
 | **P2** | `ResourceProtectionPolicyAdapter` | Open | Map protector errors to domain errors |
-| **P2** | `AutoArmManager` | Open | Cooldown deduplication; single arm per window |
+| ~~**P2**~~ | `AutoArmManager` | Done | `AutoArmManagerTests.swift` |
 | **P3** | `AuthenticationService` | Open | App-layer LA wrapper success/failure paths |
 
 **Not worth automating (by design):** raw IOKit, CoreLocation hardware, CloudKit sync, real screen lock/shutdown — see [acceptance-tests.md](acceptance-tests.md).

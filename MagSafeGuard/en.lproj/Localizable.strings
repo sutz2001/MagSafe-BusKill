@@ -37,6 +37,15 @@
 "settings.security.actionsSelected" = "%lld actions selected";
 "settings.security.resetDefaults" = "Reset to Defaults";
 "settings.security.removeAction" = "Remove action";
+"settings.network.title" = "Network Actions";
+"settings.network.caption" = "Run when security triggers fire (alongside lock, alarm, etc.)";
+"settings.network.webhookURL" = "Webhook URL";
+"settings.network.webhookToken" = "Webhook token (Keychain)";
+"settings.network.remote.title" = "Remote Trigger";
+"settings.network.remote.enabled" = "Enable URL scheme trigger";
+"settings.network.remote.hint" = "Use Shortcuts or another device to open a URL. Keep the token secret.";
+"settings.network.remote.token" = "Trigger token";
+"settings.network.remote.example" = "Example: %@";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";

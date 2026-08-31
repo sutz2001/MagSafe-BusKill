@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.3.1` (Build `4`) |
+| **Version** | `0.4.0` (Build `5`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -79,7 +79,7 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 | Sicherheitsaktionen (5 Typen) | **Ausgeliefert** | Sortierbar in Settings |
 | Auto-Arm (Standort / Netzwerk) | **Ausgeliefert** | Optionale Berechtigungen |
 | Event-Log, Onboarding, EN/DE | **Ausgeliefert** | v0.3.0 |
-| Netzwerk-Aktionen + Fernauslösung | **Geplant** | [Roadmap](docs/FORK_ROADMAP.md) · v0.4.0 |
+| Netzwerk-Aktionen + Fernauslösung | **Ausgeliefert** | v0.4.0 — Webhook, VPN, SSH, WLAN; `magsafeguard://` |
 | Panic-Modus | **Geplant** | v0.5.0 · [rechtliche Voraussetzungen](#vor-dem-panic-modus) |
 | Notarisierte DMG für Dritte | **Später** | v1.0 · Paid Dev optional |
 | Mac App Store | **Ausgeschlossen** | Sandbox inkompatibel |

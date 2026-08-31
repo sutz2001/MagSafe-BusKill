@@ -242,6 +242,14 @@ public class SecurityActionsService {
   /// Lock for circuit breaker state
   private let circuitBreakerLock = NSLock()
 
+  #if DEBUG
+  private var testMinimumExecutionInterval: TimeInterval?
+  private var testMaxExecutionsPerWindow: Int?
+  private var testRateLimitWindow: TimeInterval?
+  private var testMaxConsecutiveFailures: Int?
+  private var testCircuitOpenDuration: TimeInterval?
+  #endif
+
   // MARK: - Initialization
 
   private init() {
@@ -333,20 +341,20 @@ public class SecurityActionsService {
     // Check minimum interval between executions
     if let lastExecution = lastExecutionTime {
       let timeSinceLastExecution = now.timeIntervalSince(lastExecution)
-      if timeSinceLastExecution < minimumExecutionInterval {
-        Log.warning("Execution denied: minimum interval not met (\(timeSinceLastExecution)s < \(minimumExecutionInterval)s)", category: .security)
+      if timeSinceLastExecution < effectiveMinimumExecutionInterval {
+        Log.warning("Execution denied: minimum interval not met (\(timeSinceLastExecution)s < \(effectiveMinimumExecutionInterval)s)", category: .security)
         return false
       }
     }
 
     // Clean up old execution history
     executionHistory = executionHistory.filter { execution in
-      now.timeIntervalSince(execution) <= rateLimitWindow
+      now.timeIntervalSince(execution) <= effectiveRateLimitWindow
     }
 
     // Check if we've exceeded the rate limit
-    if executionHistory.count >= maxExecutionsPerWindow {
-      Log.warning("Execution denied: rate limit exceeded (\(executionHistory.count) executions in \(rateLimitWindow)s)", category: .security)
+    if executionHistory.count >= effectiveMaxExecutionsPerWindow {
+      Log.warning("Execution denied: rate limit exceeded (\(executionHistory.count) executions in \(effectiveRateLimitWindow)s)", category: .security)
       return false
     }
 
@@ -406,15 +414,15 @@ public class SecurityActionsService {
     consecutiveFailures += 1
 
     // Check if we should open the circuit
-    if consecutiveFailures >= maxConsecutiveFailures {
-      let reopenTime = Date().addingTimeInterval(circuitOpenDuration)
+    if consecutiveFailures >= effectiveMaxConsecutiveFailures {
+      let reopenTime = Date().addingTimeInterval(effectiveCircuitOpenDuration)
       circuitBreakerState = .open(until: reopenTime)
       Log.error("Circuit breaker opened due to \(consecutiveFailures) consecutive failures", category: .security)
     }
 
     // If in half-open state, reopen the circuit
     if case .halfOpen = circuitBreakerState {
-      let reopenTime = Date().addingTimeInterval(circuitOpenDuration)
+      let reopenTime = Date().addingTimeInterval(effectiveCircuitOpenDuration)
       circuitBreakerState = .open(until: reopenTime)
       Log.error("Circuit breaker reopened after failure in half-open state", category: .security)
     }
@@ -654,6 +662,66 @@ public class SecurityActionsService {
     guard let data = try? JSONEncoder().encode(configuration) else { return }
     UserDefaults.standard.set(data, forKey: "SecurityActionsConfiguration")
   }
+
+  #if DEBUG
+  private var effectiveMinimumExecutionInterval: TimeInterval {
+    testMinimumExecutionInterval ?? minimumExecutionInterval
+  }
+
+  private var effectiveMaxExecutionsPerWindow: Int {
+    testMaxExecutionsPerWindow ?? maxExecutionsPerWindow
+  }
+
+  private var effectiveRateLimitWindow: TimeInterval {
+    testRateLimitWindow ?? rateLimitWindow
+  }
+
+  private var effectiveMaxConsecutiveFailures: Int {
+    testMaxConsecutiveFailures ?? maxConsecutiveFailures
+  }
+
+  private var effectiveCircuitOpenDuration: TimeInterval {
+    testCircuitOpenDuration ?? circuitOpenDuration
+  }
+
+  func resetProtectionStateForTesting() {
+    rateLimitLock.lock()
+    lastExecutionTime = nil
+    executionHistory = []
+    rateLimitLock.unlock()
+
+    circuitBreakerLock.lock()
+    circuitBreakerState = .closed
+    consecutiveFailures = 0
+    circuitBreakerLock.unlock()
+
+    clearExecuting()
+  }
+
+  func configureRateLimitForTesting(
+    minimumInterval: TimeInterval = 0,
+    maxExecutions: Int = 10,
+    window: TimeInterval = 60
+  ) {
+    testMinimumExecutionInterval = minimumInterval
+    testMaxExecutionsPerWindow = maxExecutions
+    testRateLimitWindow = window
+  }
+
+  func configureCircuitBreakerForTesting(
+    maxFailures: Int = 3,
+    openDuration: TimeInterval = 60
+  ) {
+    testMaxConsecutiveFailures = maxFailures
+    testCircuitOpenDuration = openDuration
+  }
+  #else
+  private var effectiveMinimumExecutionInterval: TimeInterval { minimumExecutionInterval }
+  private var effectiveMaxExecutionsPerWindow: Int { maxExecutionsPerWindow }
+  private var effectiveRateLimitWindow: TimeInterval { rateLimitWindow }
+  private var effectiveMaxConsecutiveFailures: Int { maxConsecutiveFailures }
+  private var effectiveCircuitOpenDuration: TimeInterval { circuitOpenDuration }
+  #endif
 }
 
 // MARK: - Objective-C Compatibility

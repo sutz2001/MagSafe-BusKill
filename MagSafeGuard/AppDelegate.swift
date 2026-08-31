@@ -112,6 +112,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // AppController now handles power monitoring internally
+    registerRemoteTriggerHandler()
+  }
+
+  private func registerRemoteTriggerHandler() {
+    let remoteTrigger = RemoteTriggerService(appController: core.appController)
+    NSAppleEventManager.shared().setEventHandler(
+      self,
+      andSelector: #selector(handleGetURLEvent(_:withReplyEvent:)),
+      forEventClass: AEEventClass(kInternetEventClass),
+      andEventID: AEEventID(kAEGetURL)
+    )
+    openURLHandler = { url in
+      _ = remoteTrigger.handle(url: url)
+    }
+  }
+
+  private var openURLHandler: ((URL) -> Void)?
+
+  func application(_ application: NSApplication, open urls: [URL]) {
+    urls.forEach { openURLHandler?($0) }
+  }
+
+  @objc private func handleGetURLEvent(_ event: NSAppleEventDescriptor, withReplyEvent _: NSAppleEventDescriptor) {
+    guard let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue,
+      let url = URL(string: urlString)
+    else { return }
+    openURLHandler?(url)
   }
 
   private func setupGracePeriodObservation() {

@@ -362,6 +362,13 @@ public class AppController: ObservableObject {
     logEventInternal(event, details: details)
   }
 
+  /// Runs security and network actions immediately (remote URL trigger).
+  public func triggerRemoteSecurityResponse() {
+    guard currentState == .armed || currentState == .gracePeriod else { return }
+    logEventInternal(.securityActionExecuted, details: "Remote trigger")
+    executeSecurityActions()
+  }
+
   // MARK: - Auto-Arm Management
 
   /// Gets the auto-arm manager instance
@@ -473,6 +480,8 @@ public class AppController: ObservableObject {
   private func executeSecurityActions() {
     transitionToState(.triggered)
     cancelGracePeriod()
+
+    NetworkActionsService.shared.executeActions(event: "security_trigger")
 
     securityActions.executeActions { [weak self] result in
       guard let self = self else { return }

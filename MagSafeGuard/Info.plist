@@ -43,5 +43,16 @@
     <string>MagSafe Guard uses your location to identify trusted locations and automatically arm protection when you leave them.</string>
     <key>NSUserNotificationsUsageDescription</key>
     <string>MagSafe Guard sends notifications about security events and status changes.</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.sutz2001.MagSafeGuard.remote</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>magsafeguard</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
