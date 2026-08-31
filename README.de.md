@@ -2,87 +2,99 @@
 
 **Sprache:** Deutsch · [English (README.md)](README.md)
 
-macOS-Menüleisten-App, die das Netzkabel als Dead-Man's-Switch nutzt: Im Zustand **armed** startet beim Abziehen des Adapters eine **Grace Period**, danach laufen konfigurierbare Sicherheitsaktionen (Bildschirmsperre, Alarm, Abmelden, Herunterfahren oder eigenes Skript).
+> **macOS-Sicherheitswerkzeug** — das Netzkabel als Dead-Man's-Switch. In der Menüleiste scharf schalten; beim Abziehen startet eine Grace Period, danach konfigurierbare Schutzaktionen.
 
-Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Upstream: [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill). Dieser Fork: [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).
+Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger Fork von [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill).
+
+[![Tests](https://github.com/sutz2001/MagSafe-BusKill/actions/workflows/test.yml/badge.svg)](https://github.com/sutz2001/MagSafe-BusKill/actions/workflows/test.yml)
+
+| | |
+| --- | --- |
+| **Version** | `0.3.0` (Build `3`) |
+| **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
+| **Bundle ID** | `com.sutz2001.MagSafeGuard` |
+| **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
+| **Repository** | Privat, bis [rechtliche Fork-Checkliste](#repository-sichtbarkeit) erfüllt ist |
 
 ![Demo](docs/assets/magsafe-guard.gif)
 
 ---
 
-## Was die App heute kann
+## Upstream & dieser Fork
 
-| Bereich | Status | Hinweis |
-|---------|--------|---------|
-| Netzteil-Abzug erkennen | ✅ | MagSafe, USB-C, Drittanbieter |
-| Scharf-/Unscharfschalten (Touch ID / Passwort) | ✅ | Nur im Zustand **armed** wird überwacht |
-| Grace Period (Standard **30 s**, Bereich 5–30 s) | ✅ | Abbrechen per Auth möglich (wenn aktiviert) |
-| Menüleiste & Einstellungen | ✅ | Kein normales App-Fenster |
-| Sicherheitsaktionen (siehe unten) | ✅ | Reihenfolge in den Settings |
-| Mitteilungen | ✅ | macOS fragt beim ersten Start |
-| Auto-Arm (Standort / Netzwerk) | ✅ | Optional; Standort-Berechtigung nötig |
-| Rate Limiting & Circuit Breaker | ✅ | Verhindert Aktions-Stürme |
-| iCloud / CloudKit-Sync | ⚠️ Teilweise | **Kostenpflichtiger Apple-Developer-Account** nötig; in diesem Fork für Personal Team aus Entitlements entfernt |
-| Push Notifications | ⚠️ Teilweise | Wie iCloud — mit kostenlosem Personal Team nicht nutzbar |
-| Mac App Store | ❌ Noch nicht | Upstream: „coming soon“ |
-| Volume auswerfen / Festplatte löschen | ❌ Nicht eingebaut | Nur per Custom Script möglich |
-| Netzwerk-Aktionen | ❌ Nicht implementiert | Upstream geplant |
-| Evidence / Log-Viewer-UI | 🔄 Upstream in Arbeit | Code teilweise vorhanden |
+| | |
+| --- | --- |
+| **Upstream** | [github.com/lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill) |
+| **Upstream-Autor** | Tobias Lekman |
+| **Dieser Fork** | [github.com/sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
+| **Fork-Maintainer** | Marc Seitz |
+| **Namensnennung** | [`LICENSE`](LICENSE) (Doppel-Copyright) · [`NOTICE`](NOTICE) (Herkunft) |
 
-**Wichtig:** Im Zustand **disarmed** passiert beim Netzteil-Ziehen **nichts**.
+Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser Fork** setzt auf Personal Team, zweisprachige UI (EN/DE), eigene Versionierung, Release-Automatisierung (`task release`) und eine Roadmap zu Netzwerk-Aktionen und Panic-Modus — Verteilung über **GitHub + notarisierte DMG**, nicht über den App Store.
 
 ---
 
-## Sicherheitsaktionen
-
-Definiert in `SecurityActionType` (`MagSafeGuardLib/.../SecurityActionProtocols.swift`).
-
-| Aktion | Implementiert | Wirkung |
-|--------|---------------|---------|
-| **Bildschirm sperren** | ✅ | Display sperren (`pmset displaysleepnow`) |
-| **Alarm** | ✅ | `alarm.wav` oder System-Beep in Schleife |
-| **Abmelden erzwingen** | ✅ | Alle Benutzer abmelden (AppleScript) |
-| **Herunterfahren** | ✅ | Shutdown planen (Standard-Verzögerung **30 s**) |
-| **Eigenes Skript** | ✅ | Nur `.sh` / `.zsh` / `.bash` aus erlaubten Ordnern |
-
-**Standard:** Bildschirm sperren + Alarm. Unter **Settings → Security** mit **+** hinzufügen, mit **−** entfernen (mindestens eine Aktion aktiv), per Drag & Drop sortieren.
-
-**Erlaubte Skript-Pfade:**
-
-- `~/.magsafe/scripts/`
-- `/usr/local/magsafe-scripts/`
-
-Skripte werden validiert (kein `..`, keine gefährlichen Befehle, ausführbar).
-
-**Nicht als feste Aktionen:** Volume auswerfen, Remote-Wipe, Find My — nur per Custom Script.
-
----
-
-## Ablauf
+## Funktionsweise
 
 ```text
-disarmed → armed → Grace Period (30 s Standard) → Sicherheitsaktionen
-              ↑              ↓
-              └── Auth (entschärfen / Grace abbrechen)
+  disarmed ──scharf──► armed ──Kabel raus──► Grace Period ──► Sicherheitsaktionen
+                         ▲                          │
+                         └──── Auth (entschärfen / abbrechen) ┘
 ```
 
-1. In der Menüleiste **scharf schalten** (Auth nötig).
-2. Normal arbeiten, Netzteil bleibt drin.
-3. Kabel raus → Grace Period läuft.
-4. Optional mit Touch ID / Passwort abbrechen.
-5. Nach Ablauf: konfigurierte Aktionen der Reihe nach.
+| Zustand | Verhalten |
+| --- | --- |
+| **Disarmed** | Netzteil ziehen bewirkt **nichts** |
+| **Armed** | Kabel-Abzug startet Grace Period (Standard **30 s**) |
+| **Grace Period** | Countdown in der Menüleiste; Abbrechen per Touch ID / Passwort |
+| **Triggered** | Konfigurierte Aktionen der Reihe nach |
+
+**Alltag:** Menüleiste → **Scharf schalten** → mit Adapter arbeiten → bei Risiko Kabel ziehen oder Grace abwarten → Aktionen laufen.
+
+| Tipp | |
+| --- | --- |
+| Ereignisprotokoll | **⌘L** oder Menü → Event Log |
+| Sprache | Einstellungen → Allgemein → System / EN / DE |
+| Grace Period | Einstellungen → Allgemein (5–30 s) |
 
 ---
 
-## Bauen & starten (dieser Fork)
+## Funktionsumfang
 
-### Voraussetzungen
+| Bereich | Status | Hinweis |
+| --- | --- | --- |
+| Netzteil-Abzug (MagSafe, USB-C) | **Ausgeliefert** | IOKit, kein Kernel-Treiber |
+| Scharf/Unscharf (Touch ID, Passwort) | **Ausgeliefert** | Überwachung nur wenn armed |
+| Grace Period + Menüleisten-Countdown | **Ausgeliefert** | Standard 30 s |
+| Sicherheitsaktionen (5 Typen) | **Ausgeliefert** | Sortierbar in Settings |
+| Auto-Arm (Standort / Netzwerk) | **Ausgeliefert** | Optionale Berechtigungen |
+| Event-Log, Onboarding, EN/DE | **Ausgeliefert** | v0.3.0 |
+| Netzwerk-Aktionen + Fernauslösung | **Geplant** | [Roadmap](docs/FORK_ROADMAP.md) · v0.4.0 |
+| Panic-Modus | **Geplant** | v0.5.0 · [rechtliche Voraussetzungen](#vor-dem-panic-modus) |
+| Notarisierte DMG für Dritte | **Später** | v1.0 · Paid Dev optional |
+| Mac App Store | **Ausgeschlossen** | Sandbox inkompatibel |
 
-- macOS **13+**
-- **Xcode 15+**
-- [Task](https://taskfile.dev): `brew install go-task/tap/go-task`
+### Sicherheitsaktionen
 
-### Ersteinrichtung
+| Aktion | Wirkung |
+| --- | --- |
+| Bildschirm sperren | Display sofort sperren |
+| Alarm | Alarmton in Schleife |
+| Abmelden erzwingen | Alle Benutzer abmelden |
+| Herunterfahren | Shutdown planen (Verzögerung konfigurierbar) |
+| Eigenes Skript | `.sh` / `.zsh` / `.bash` nur aus erlaubten Pfaden |
+
+**Pfade:** `~/.magsafe/scripts/` · `/usr/local/magsafe-scripts/`  
+**Einstellungen → Security** — mit **+** / **−** / Drag & Drop.
+
+---
+
+## Bauen & starten
+
+Benötigt **macOS 13+**, **Xcode 15+** und [Task](https://taskfile.dev) (`brew install go-task/tap/go-task`).  
+Eine **kostenlose Apple-ID** (Personal Team) reicht für den eigenen Mac.
+
+### Schnellstart
 
 ```bash
 git clone https://github.com/sutz2001/MagSafe-BusKill.git
@@ -91,141 +103,138 @@ task setup
 open MagSafeGuard.xcodeproj
 ```
 
-In Xcode:
-
-1. Target **MagSafeGuard** → **Signing & Capabilities**
-2. **Team:** deine Apple-ID (**Personal Team** reicht für lokale Entwicklung)
-3. **Bundle ID:** `com.sutz2001.MagSafeGuard`
-4. **Kein** iCloud / Push bei kostenlosem Account — in diesem Fork bereits aus Entitlements entfernt
-5. **⌘R** — App erscheint in der **Menüleiste**
-
-### Kommandozeile
+In Xcode: **MagSafeGuard** → **Signing & Capabilities** → **Team** wählen → **⌘R**.  
+Die App sitzt in der **Menüleiste**, nicht im Dock.
 
 ```bash
-task build
-task test
-task run            # Menüleisten-App starten
+task run          # Alternative: Debug-Build per Terminal starten
 ```
 
-App beenden: Menüleiste → Beenden, oder **⌘.** in Xcode.
-
-### Lokale Release-Installation
+### Entwicklung
 
 ```bash
-task release              # Tests + signiertes Release-.app + DMG + SHA256
-task release:install      # nach /Applications kopieren
+task build        # SPM-Build
+task test         # Tests + Coverage
+task qa:quick     # Lint & Security
+task qa           # volle lokale QA
 ```
 
-Artefakte in `dist/`:
-
-- `MagSafeGuard-<version>.app`
-- `MagSafeGuard-<version>.dmg` (in Applications ziehen)
-- `SHA256SUMS`
-
-Optionen:
+### Release (Alltagsnutzung auf dem eigenen Mac)
 
 ```bash
-SKIP_TESTS=true task release         # ohne Tests (schneller)
-SIGN_MODE=adhoc task release:build   # Ad-hoc-Signatur falls Xcode-Signing scheitert
-task release:open                    # DMG im Finder öffnen
+task release              # Version → Tests → Release-.app → DMG → SHA256
+task release:install      # nach /Applications
+task release:open         # DMG im Finder
 ```
 
-Benötigt Xcode-Automatic-Signing (Personal Team reicht). Notarisierte Developer-ID-Verteilung erfordert einen kostenpflichtigen Apple-Developer-Account.
+Ausgabe: `dist/` (`.app`, `.dmg`, `SHA256SUMS`).
 
-Fork-Changelog: [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)
+<details>
+<summary>Release-Optionen (erweitert)</summary>
+
+```bash
+SKIP_TESTS=true task release
+SIGN_MODE=adhoc task release:build
+SIGN_MODE=unsigned task release:build
+task release:clean
+```
+
+</details>
+
+**Hinweis Signing:** Personal-Team-Builds laufen nach ~7 Tagen ab — neu bauen mit `task release` oder ⌘R. Normales Apple Code Signing.
 
 ---
 
-## Apple-Signing: kostenlos vs. bezahlt
+## Verteilung
 
-| Thema | Personal Team (kostenlose Apple-ID) | Developer Program (99 €/Jahr) |
-|-------|-------------------------------------|----------------------------------|
-| Auf **eigenem** Mac bauen & starten | ✅ | ✅ |
-| iCloud / CloudKit in der App | ❌ | ✅ |
-| Push Notifications | ❌ | ✅ |
-| Verteilung an andere / Notarisierung | ❌ | ✅ |
-| TestFlight / App Store | ❌ | ✅ |
+| Ziel | Kostenpflichtiger Apple Developer (99 €/Jahr)? |
+| --- | --- |
+| Quellcode klonen & selbst bauen | Nein — kostenlose Apple-ID |
+| Quellcode auf GitHub veröffentlichen | Nein |
+| Eigene `.dmg` als GitHub-Release (nur für dich) | Nein |
+| Fremde installieren `.dmg` ohne Gatekeeper-Warnung | Ja — Developer ID + Notarisierung |
+| Mac App Store | Nicht geplant |
 
-### Läuft der Build ab?
-
-- **Der Quellcode läuft nicht ab** — jederzeit neu bauen.
-- **Entwickler-Builds** nutzen ein **Provisioning Profile**, das abläuft (Personal Team typisch **~7 Tage**).
-- Danach startet die App ggf. **nicht mehr**, bis du in Xcode neu baust (**⌘R**). Xcode erneuert das Profil.
-- Bezahlter Account: längere Zertifikate (~1 Jahr), gleiches Prinzip.
-- Das ist **kein Trial** von MagSafe Guard, sondern normales Apple Code Signing.
+**Modell:** Open Source auf GitHub; Nutzer **kompilieren selbst** oder nutzen eine **notarisierte DMG**, sobald verfügbar.
 
 ---
 
-## Fork-spezifische Anpassungen
+## Roadmap
 
-| Punkt | Dieser Fork |
-|-------|-------------|
+| Phase | Version | Schwerpunkt |
+| --- | --- | --- |
+| Jetzt | **0.3.0** | Kern-Dead-Man's-Switch, Event-Log, i18n, `task release` |
+| Als Nächstes | **0.4.0** | Netzwerk-Aktionen + Fernauslösung |
+| Danach | **0.5.0** | Panic-Modus — nach rechtlicher Checkliste |
+| Stabil | **1.0.0** | Notarisierte Developer-ID-Verteilung |
+
+Details: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)**
+
+### Vor dem Panic-Modus
+
+> **Pflicht vor jeder Panic-Veröffentlichung** (auch Beta):
+
+- [ ] Rechtshinweis in der App (DE + EN): irreversibler Datenverlust, eigene Verantwortung, Warnung Dienstgerät/Arbeitslaptop
+- [ ] Doppelte Bestätigung + Pflicht-Codewort
+- [ ] Kein destruktiver „Testlauf“ in Produktions-Builds
+- [ ] Rechtliche Prüfung DE/EU (keine Rechtsberatung — ggf. Anwalt)
+
+---
+
+## Repository-Sichtbarkeit
+
+Das Repository ist derzeit **privat**. Wechsel auf **öffentlich**, sobald die rechtliche Fork-Dokumentation steht:
+
+| Anforderung | Status |
+| --- | --- |
+| [`LICENSE`](LICENSE) — MIT, Upstream- + Fork-Copyright | Erledigt |
+| [`NOTICE`](NOTICE) — Attribution, Upstream-Link, BusKill | Erledigt |
+| README — Fork vs. Upstream, Maintainer, Lizenz | Erledigt |
+| Binaries enthalten `LICENSE` + `NOTICE` | Offen (bei GitHub Releases) |
+| Panic-Rechtstexte in der App | Erst ab v0.5.0 relevant |
+
+Nach Prüfung der ersten drei Punkte auf `main` kann das Repo für den **aktuellen** Funktionsumfang öffentlich werden.
+
+---
+
+## Fork-spezifisch
+
+| Punkt | Wert |
+| --- | --- |
 | Bundle ID | `com.sutz2001.MagSafeGuard` |
-| Team | Dein Personal Team |
-| Entitlements | Ohne iCloud/Push (Personal Team) |
-| Grace Period Standard | **30 Sekunden** |
-| CI Scorecard | Übersprungen bei privaten Repos |
-| Config-Namen | `.defaultConfig` (Upstream-Umbenennung) |
-
-Upstream holen:
-
-```bash
-git fetch upstream
-git merge upstream/main
-```
-
----
-
-## Versionierung
-
-**Zentrale Datei:** [`version.json`](version.json)
-
-| Feld | Aktuell (Fork) | Bedeutung |
-|------|----------------|-----------|
-| `marketingVersion` | **0.3.0** | Semver für Nutzer |
-| `buildNumber` | **1** | Build-Nummer (Xcode) |
+| Grace Period Standard | 30 s |
+| iCloud / Push | Aus Entitlements entfernt |
+| Version | [`version.json`](version.json) → `task version:sync` |
 
 ```bash
 task version:show
-task version:sync
-task version:bump:patch    # 0.2.0 → 0.2.1
-task version:bump:minor    # 0.2.0 → 0.3.0
+task version:bump:patch
+task version:bump:minor
 ```
 
-Fork-Version unabhängig vom Upstream (`1.11.0`). In Swift: `AppVersion.marketing`.
-
----
-
-## Tests & Qualität
-
-```bash
-task test
-task qa:quick
-task qa
-```
-
-CI auf GitHub Actions. Details: [docs/devops/ci-cd-workflows.md](docs/devops/ci-cd-workflows.md).
+Upstream: `git fetch upstream && git merge upstream/main`
 
 ---
 
 ## Dokumentation
 
-| Dokument | Zielgruppe |
-|----------|------------|
+| Dokument | Inhalt |
+| --- | --- |
 | [README.md](README.md) | Englische Version |
-| [AGENTS.md](AGENTS.md) | **Kanonisch** KI-Agenten-Regeln (Cursor + Copilot) |
-| [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub-Copilot-Stub → AGENTS.md |
-| [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) | Cursor-Stub → AGENTS.md |
-| [docs/README.md](docs/README.md) | Vollständiger Doku-Index (Upstream) |
+| [docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md) | Roadmap & Rechtliches |
+| [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md) | Fork-Release-Historie |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Ausführliche Build-Anleitung |
 | [docs/maintainers/code-signing.md](docs/maintainers/code-signing.md) | Signing & Verteilung |
+| [AGENTS.md](AGENTS.md) | Mitwirkenden- & KI-Regeln |
 
 ---
 
-## Lizenz & Danksagung
+## Lizenz & Haftung
 
-MIT — siehe [LICENSE](LICENSE) und [NOTICE](NOTICE).
+**MIT-Lizenz** — siehe [`LICENSE`](LICENSE) und [`NOTICE`](NOTICE). Weitergabe nur mit Copyright- und Permission-Hinweis.
 
 - Konzept: [BusKill](https://github.com/BusKill/buskill-app)
-- Upstream: [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)
-- Dieser Fork: [Marc Seitz / sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) (Fork-Anpassungen © 2025–2026 Marc Seitz)
+- Upstream: Tobias Lekman · [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)
+- Fork-Anpassungen: Marc Seitz © 2025–2026
+
+MagSafe Guard wird **ohne Gewähr** bereitgestellt. Du trägst die Verantwortung für den Einsatz — auch auf Dienstgeräten und mit eigenen Skripten.
