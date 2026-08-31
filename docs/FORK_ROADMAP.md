@@ -18,6 +18,7 @@ Stand: nach **0.5.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | Diskreter Betrieb (nur Menüleisten-Icon) | ✅ v0.4.3 |
 | **Panic-Modus** (0 Grace, Hotkey ⌃⌘P, sofort Shutdown) | ✅ v0.5.0 |
 | **Paranoid-Modus** | ❌ geplant v0.6.0 |
+| **Stabilisierung (0.5.x)** | 🔄 **aktueller Fokus** — [Checkliste](maintainers/stabilization-checklist.md) |
 | Notarisierung (Developer ID) | ⏸️ wenn App reif + Paid Dev |
 | Mac App Store | ❌ **ausgeschlossen** (Sandbox) |
 | Repository | ✅ öffentlich — [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
@@ -110,7 +111,22 @@ Design: [docs/features/panic-modes.md](features/panic-modes.md) · Anleitung: [u
 
 ---
 
-## Phase 2b — Paranoid-Modus (~0.6.0)
+## Phase 2c — Stabilisierung (0.5.x, aktueller Fokus)
+
+**Ziel:** App als **Daily Driver** auf dem eigenen Mac — Bugs fixen, Tests grün, Release-DMG, manuelle Smoke-Tests. **Keine neuen Features.**
+
+Checkliste: **[maintainers/stabilization-checklist.md](maintainers/stabilization-checklist.md)**
+
+| Priorität | Thema |
+|-----------|--------|
+| P0 | `task test` / `task xcode:test` grün (u. a. `PowerMonitorUseCaseImplTests` Sendable) |
+| P0 | Manueller Smoke: Normal, diskret, Panic (kontrolliert) |
+| P1 | `task release` → `/Applications`, mehrere Tage Alltagsnutzung |
+| P2 | Acceptance-Tests-Doc aktualisieren; optional erstes GitHub Release |
+
+**Exit:** Checkliste § Exit criteria erfüllt → dann 0.5.x nur noch Patches oder Sprung Richtung 1.0.0 (notarisierte DMG).
+
+---
 
 **Ziel:** **Paranoid** — schnellste mögliche Datenvernichtung + sofortiger Shutdown.  
 **Voraussetzung:** Nutzer hat vorgehärtet (FileVault an, Wipe-Pfade/Volumes konfiguriert). Setup-Modus, kein Plug-and-play.
