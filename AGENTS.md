@@ -98,11 +98,45 @@ Why this change exists.
 - **Never** add `Co-authored-by:` lines — not for Cursor, Copilot, or any tool.
 - CI blocks these substrings anywhere in the message (case-insensitive): `claude`, `anthropic`, `co-authored`.
 - That includes the commit **subject** and **body** — do not write “co-authored” even when documenting the rule in a commit message.
-- Cursor may auto-append `Co-authored-by: Cursor <cursoragent@cursor.com>` — strip before commit or use `git commit-tree` to avoid trailer injection.
-- Already pushed? Replay commits without the trailer, then `git push --force-with-lease`.
+- **Cursor injects** `Co-authored-by: Cursor <cursoragent@cursor.com>` when using plain `git commit` — CI will fail and you will get failure emails.
+
+#### How agents must commit (required)
+
+**Do not use `git commit`.** Use `git commit-tree` so no trailer is injected:
+
+```bash
+# 1. Stage
+git add <files>
+
+# 2. Write tree
+TREE=$(git write-tree)
+
+# 3. Commit without trailers (HEREDOC = exact message, no injection)
+PARENT=$(git rev-parse HEAD)
+COMMIT=$(
+  cat <<'EOF' | git commit-tree "$TREE" -p "$PARENT"
+<type>(scope): subject
+
+## Summary
+Why this change exists.
+
+## Changes
+- Bullet list by area
+EOF
+)
+git update-ref refs/heads/main "$COMMIT"
+```
+
+Optional verify before push:
+
+```bash
+git log -1 --format=%B | grep -qiE 'co-authored|claude|anthropic' && echo "BLOCKED WORDS IN MESSAGE" && exit 1
+```
+
+- Already pushed with trailers? Replay commits without the trailer (`git filter-branch` / rebase), then `git push --force-with-lease`.
 - Workflow: `.github/workflows/commit-message-check.yml`
 
-When the user asks for a commit: draft the full body first, verify no blocked words, then commit.
+When the user asks for a commit: draft the full body first, verify no blocked words, then commit with **commit-tree only**.
 
 ---
 

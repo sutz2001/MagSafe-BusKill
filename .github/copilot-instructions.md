@@ -10,7 +10,7 @@ When conventions change, update **AGENTS.md** first; keep this file as a thin st
 - **Version:** [version.json](../version.json) → `task version:sync`; suggest bump before user-facing commits (see AGENTS.md)
 - **Bundle ID:** `com.sutz2001.MagSafeGuard`
 - **Commits:** `## Summary` + `## Changes` — [.github/instructions/commits.instructions.md](instructions/commits.instructions.md)
-- **No `Co-authored-by` trailers** — CI fails on `co-authored`, `claude`, `anthropic` anywhere in the message. Strip Cursor auto-trailers before push.
+- **Agents: never `git commit`** — use **`git commit-tree`** only ([AGENTS.md](../AGENTS.md#co-authored-by-trailers--do-not-use-ci-will-fail)). No `Co-authored-by`; CI fails on `co-authored`, `claude`, `anthropic`.
 
 ## Taskfile
 

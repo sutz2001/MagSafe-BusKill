@@ -65,7 +65,11 @@ jobs:
               echo "3. Force push the updated branch"
               echo ""
               echo "Affected commits:"
-              git log --format="%h %s" origin/"$BASE_REF"..HEAD | grep -i "$word" || true
+              if [ "$EVENT_NAME" = "pull_request" ]; then
+                git log --format="%h %s" "origin/${BASE_REF}"..HEAD | grep -i "$word" || true
+              else
+                git log --format="%h %s" "${BEFORE_SHA}".."${CURRENT_SHA}" 2>/dev/null | grep -i "$word" || true
+              fi
               FOUND_BLOCKED=true
               break
             fi

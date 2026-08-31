@@ -13,7 +13,7 @@ alwaysApply: true
 - **Version:** edit [version.json](../../version.json) only → `task version:sync`; suggest bump before user-facing commits (see AGENTS.md)
 - **Bundle ID:** `com.sutz2001.MagSafeGuard` — never `com.LekmanConsulting.*`
 - **Commits:** English body with `## Summary` + `## Changes` — see [.github/instructions/commits.instructions.md](../../.github/instructions/commits.instructions.md)
-- **No `Co-authored-by` trailers** — CI fails on `co-authored`, `claude`, `anthropic` anywhere in the message (including subject). Strip Cursor auto-trailers before push.
+- **Agents: never `git commit`** — Cursor injects `Co-authored-by` and CI fails. Use **`git commit-tree`** only (full recipe in [AGENTS.md](../../AGENTS.md#co-authored-by-trailers--do-not-use-ci-will-fail)). Blocked words anywhere in message: `co-authored`, `claude`, `anthropic`.
 
 ## Build
 
