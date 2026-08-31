@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.3.0` (build `3`) |
+| **Version** | `0.3.1` (build `4`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -47,15 +47,16 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 
 ```text
   disarmed ──arm──► armed ──cable out──► grace period ──► security actions
-                      ▲                         │
-                      └──── auth (disarm / cancel) ┘
+                      ▲            │              │
+                      │            └── cable back ─┘ (cancel grace, stay armed)
+                      └──── auth (disarm / cancel) ────┘
 ```
 
 | State | Behaviour |
 | --- | --- |
 | **Disarmed** | Unplugging power does **nothing** |
 | **Armed** | Cable disconnect starts grace period (default **30 s**) |
-| **Grace period** | Countdown in menu bar; cancel with Touch ID / password if enabled |
+| **Grace period** | Countdown in menu bar; cancel with Touch ID / password if enabled; **reconnecting power cancels grace and keeps the system armed** |
 | **Triggered** | Enabled actions run in order (lock, alarm, logout, …) |
 
 **Daily use:** menu bar icon → **Arm** → work with adapter connected → on theft risk, pull cable or wait for grace → actions execute.

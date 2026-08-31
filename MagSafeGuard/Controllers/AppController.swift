@@ -175,6 +175,9 @@ public class AppController: ObservableObject {
   private var cancellables = Set<AnyCancellable>()
   private var eventLog: [EventLogEntry] = []
   private let eventLogQueue = DispatchQueue(label: "com.magsafeguard.eventlog")
+  #if DEBUG
+  private var testGracePeriodDuration: TimeInterval?
+  #endif
 
   /// Flag to disable auto-arm in test environments
   static var isTestEnvironment = false
@@ -395,15 +398,33 @@ public class AppController: ObservableObject {
       if powerInfo.state == .disconnected && self.currentState == .armed {
         self.handlePowerDisconnected()
       } else if powerInfo.state == .connected {
-        self.logEventInternal(.powerConnected, details: "Power adapter connected")
+        self.handlePowerConnected()
       }
     }
+  }
+
+  private func handlePowerConnected() {
+    logEventInternal(.powerConnected, details: "Power adapter connected")
+
+    if currentState == .gracePeriod {
+      cancelGracePeriod()
+      transitionToState(.armed)
+    }
+  }
+
+  private var effectiveGracePeriodDuration: TimeInterval {
+    #if DEBUG
+    if Self.isTestEnvironment, let testGracePeriodDuration {
+      return testGracePeriodDuration
+    }
+    #endif
+    return gracePeriodDuration
   }
 
   private func handlePowerDisconnected() {
     logEventInternal(.powerDisconnected, details: "Power adapter disconnected while armed")
 
-    if gracePeriodDuration > 0 {
+    if effectiveGracePeriodDuration > 0 {
       startGracePeriod()
     } else {
       // Immediate execution
@@ -415,13 +436,13 @@ public class AppController: ObservableObject {
     transitionToState(.gracePeriod)
     isInGracePeriod = true
     gracePeriodStartTime = Date()
-    gracePeriodRemaining = gracePeriodDuration
+    gracePeriodRemaining = effectiveGracePeriodDuration
 
     logEventInternal(
-      .gracePeriodStarted, details: "Grace period started: \(Int(gracePeriodDuration))s")
+      .gracePeriodStarted, details: "Grace period started: \(Int(effectiveGracePeriodDuration))s")
     notificationService.showCriticalAlert(
       title: L10n.tr("notification.graceAlert.title"),
-      message: L10n.tr("notification.graceAlert.message", Int(gracePeriodDuration))
+      message: L10n.tr("notification.graceAlert.message", Int(effectiveGracePeriodDuration))
     )
 
     // Start countdown timer
@@ -429,7 +450,7 @@ public class AppController: ObservableObject {
       guard let self = self else { return }
 
       let elapsed = Date().timeIntervalSince(self.gracePeriodStartTime ?? Date())
-      self.gracePeriodRemaining = max(0, self.gracePeriodDuration - elapsed)
+      self.gracePeriodRemaining = max(0, self.effectiveGracePeriodDuration - elapsed)
 
       if self.gracePeriodRemaining <= 0 {
         self.gracePeriodTimer?.invalidate()
@@ -667,6 +688,36 @@ extension AppController {
     guard Self.isTestEnvironment else { return }
     guard currentState == .armed else { return }
     startGracePeriod()
+  }
+
+  /// Simulates power adapter disconnect while armed (unit tests only).
+  func simulatePowerDisconnectForTesting() {
+    guard Self.isTestEnvironment else { return }
+    guard currentState == .armed else { return }
+    lastPowerState = .disconnected
+    handlePowerDisconnected()
+  }
+
+  /// Simulates power adapter reconnect (unit tests only).
+  func simulatePowerConnectForTesting() {
+    guard Self.isTestEnvironment else { return }
+    lastPowerState = .connected
+    handlePowerConnected()
+  }
+
+  /// Ends the grace period immediately and runs security actions (unit tests only).
+  func expireGracePeriodForTesting() {
+    guard Self.isTestEnvironment else { return }
+    guard isInGracePeriod else { return }
+    gracePeriodTimer?.invalidate()
+    gracePeriodTimer = nil
+    executeSecurityActions()
+  }
+
+  /// Overrides grace period duration without settings validation (unit tests only).
+  func setGracePeriodDurationForTesting(_ duration: TimeInterval) {
+    guard Self.isTestEnvironment else { return }
+    testGracePeriodDuration = duration
   }
 }
 #endif

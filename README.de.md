@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.3.0` (Build `3`) |
+| **Version** | `0.3.1` (Build `4`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -47,15 +47,16 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 
 ```text
   disarmed ──scharf──► armed ──Kabel raus──► Grace Period ──► Sicherheitsaktionen
-                         ▲                          │
-                         └──── Auth (entschärfen / abbrechen) ┘
+                         ▲            │                    │
+                         │            └── Kabel rein ──────┘ (Karenz endet, bleibt armed)
+                         └──── Auth (entschärfen / abbrechen) ────┘
 ```
 
 | Zustand | Verhalten |
 | --- | --- |
 | **Disarmed** | Netzteil ziehen bewirkt **nichts** |
 | **Armed** | Kabel-Abzug startet Grace Period (Standard **30 s**) |
-| **Grace Period** | Countdown in der Menüleiste; Abbrechen per Touch ID / Passwort |
+| **Grace Period** | Countdown in der Menüleiste; Abbrechen per Touch ID / Passwort; **Kabel wieder einstecken beendet die Karenz — System bleibt armed** |
 | **Triggered** | Konfigurierte Aktionen der Reihe nach |
 
 **Alltag:** Menüleiste → **Scharf schalten** → mit Adapter arbeiten → bei Risiko Kabel ziehen oder Grace abwarten → Aktionen laufen.

@@ -219,7 +219,7 @@ MagSafe Guard uses **two test layers**. Both are required for confidence; only t
 
 | File | Covers |
 |------|--------|
-| `Controllers/AppControllerTests.swift` | Arm/disarm, grace period entry/cancel, menu titles |
+| `Controllers/AppControllerTests.swift` | Arm/disarm, power disconnect → grace → trigger, zero-grace immediate trigger, reconnect cancels grace, auth cancel, menu titles |
 | `Repositories/MacSystemActionsRepositoryTests.swift` | Repository + rate limiter + circuit breaker |
 | `Services/MacSystemActionsTests.swift` | Script validation, path sanitization |
 | `Services/ApplicationStatePersistenceTests.swift` | Armed-state save/load/clear |
@@ -238,16 +238,16 @@ MagSafe Guard uses **two test layers**. Both are required for confidence; only t
 
 Domain/core logic is well covered. Highest value is in the **app layer**, especially the power-disconnect → grace → trigger path.
 
-| Priority | Area | Suggested tests | Target file |
-|----------|------|-----------------|-------------|
-| **P0** | Power disconnect while armed | Grace period starts; timer fires → security actions; state `.triggered` | `AppControllerTests.swift` |
-| **P0** | Grace period = 0 | Immediate trigger, no grace UI | `AppControllerTests.swift` |
-| **P0** | Reconnect during grace | Timer cancelled, stay `.armed`, no actions | `AppControllerTests.swift` |
-| **P1** | `PowerMonitorCore` | Parse IOKit-style power dicts; `hasPowerStateChanged` edges | New `PowerMonitorCoreTests.swift` |
-| **P1** | `SecurityActionsService` | Rate limit + circuit breaker orchestration | New `SecurityActionsServiceTests.swift` |
-| **P2** | `ResourceProtectionPolicyAdapter` | Map protector errors to domain errors | New `ResourceProtectionPolicyAdapterTests.swift` |
-| **P2** | `AutoArmManager` | Cooldown deduplication; single arm per window | New `AutoArmManagerTests.swift` |
-| **P3** | `AuthenticationService` | App-layer LA wrapper success/failure paths | New `AuthenticationServiceTests.swift` |
+| Priority | Area | Status | Tests |
+|----------|------|--------|-------|
+| ~~**P0**~~ | Power disconnect while armed | Done | `testPowerDisconnectStartsGracePeriod`, `testGracePeriodExpiryExecutesSecurityActions` |
+| ~~**P0**~~ | Grace period = 0 | Done | `testZeroGracePeriodExecutesSecurityActionsImmediately` |
+| ~~**P0**~~ | Reconnect during grace | Done | `testPowerReconnectDuringGracePeriodCancelsTrigger` |
+| **P1** | `PowerMonitorCore` | Open | Parse IOKit-style power dicts; `hasPowerStateChanged` edges → new `PowerMonitorCoreTests.swift` |
+| **P1** | `SecurityActionsService` | Open | Rate limit + circuit breaker orchestration → new `SecurityActionsServiceTests.swift` |
+| **P2** | `ResourceProtectionPolicyAdapter` | Open | Map protector errors to domain errors |
+| **P2** | `AutoArmManager` | Open | Cooldown deduplication; single arm per window |
+| **P3** | `AuthenticationService` | Open | App-layer LA wrapper success/failure paths |
 
 **Not worth automating (by design):** raw IOKit, CoreLocation hardware, CloudKit sync, real screen lock/shutdown — see [acceptance-tests.md](acceptance-tests.md).
 
@@ -568,9 +568,8 @@ override func tearDown() {
 
 ## Future Improvements
 
-1. **AppController power-disconnect path** — P0 tests (see [Recommended Additional Tests](#recommended-additional-tests))
-2. **`PowerMonitorCore` unit tests** — pure parsing logic, no IOKit
-3. **Re-enable flaky concurrent test** in `SecurityActionUseCaseTests.swift`
-4. **Test data builders** — expand `TestInfrastructure` for complex app scenarios
-5. **Property-based testing** — optional SwiftCheck for state machines
-6. **Manual acceptance checklist** — keep in sync with each release
+1. **`PowerMonitorCore` unit tests** — pure parsing logic, no IOKit
+2. **Re-enable flaky concurrent test** in `SecurityActionUseCaseTests.swift`
+3. **Test data builders** — expand `TestInfrastructure` for complex app scenarios
+4. **Property-based testing** — optional SwiftCheck for state machines
+5. **Manual acceptance checklist** — keep in sync with each release
