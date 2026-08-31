@@ -251,7 +251,7 @@ Domain/core logic is well covered. Highest value is in the **app layer**, especi
 
 **Not worth automating (by design):** raw IOKit, CoreLocation hardware, CloudKit sync, real screen lock/shutdown — see [acceptance-tests.md](acceptance-tests.md).
 
-**Known gap:** One flaky concurrent test is disabled in `SecurityActionUseCaseTests.swift` — re-enable when stabilized.
+**Known gap:** One flaky concurrent test is disabled in `SecurityActionUseCaseTests.swift` — re-enable when stabilized. **Sendable stream collection:** use `AsyncStreamCollector` from TestInfrastructure for async stream tests.
 
 ## Test Organization
 

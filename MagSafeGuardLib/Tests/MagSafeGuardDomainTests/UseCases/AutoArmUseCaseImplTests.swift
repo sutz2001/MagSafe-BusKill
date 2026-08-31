@@ -8,6 +8,7 @@
 
 import Foundation
 @testable import MagSafeGuardDomain
+import TestInfrastructure
 import Testing
 
 @Suite("AutoArmUseCaseImpl Tests")
@@ -879,14 +880,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -897,8 +892,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         #expect(events.count == 1)
         if let event = events.first {
             if case .leftTrustedLocation = event.trigger {
@@ -928,14 +924,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -946,8 +936,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         #expect(events.count == 1)
         if let event = events.first {
             if case .enteredUntrustedNetwork(let ssid) = event.trigger {
@@ -977,14 +968,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -995,8 +980,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         #expect(events.count == 1)
         if let event = events.first {
             if case .disconnectedFromTrustedNetwork(let ssid) = event.trigger {
@@ -1026,14 +1012,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -1044,8 +1024,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         #expect(events.count == 1)
         if let event = events.first {
             if case .lostNetworkConnectivity = event.trigger {
@@ -1075,14 +1056,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -1093,8 +1068,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         #expect(events.count == 0) // No events for trusted network
     }
 
@@ -1117,14 +1093,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -1135,8 +1105,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         #expect(events.count == 0) // No events for entering trusted location
     }
 
@@ -1269,14 +1240,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -1287,8 +1252,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         // Should not generate event without SSID
         #expect(events.count == 0)
     }
@@ -1312,14 +1278,8 @@ struct AutoArmUseCaseImplTests {
         )
 
         // Set up event collection
-        var events: [AutoArmEvent] = []
-        let eventStream = useCase.observeAutoArmEvents()
-
-        let collectTask = Task {
-            for await event in eventStream {
-                events.append(event)
-            }
-        }
+        let eventCollector = AsyncStreamCollector<AutoArmEvent>()
+        await eventCollector.start(collecting: useCase.observeAutoArmEvents())
 
         try await useCase.startMonitoring()
 
@@ -1330,8 +1290,9 @@ struct AutoArmUseCaseImplTests {
         try await Task.sleep(nanoseconds: 50_000_000)
 
         await useCase.stopMonitoring()
-        collectTask.cancel()
+        await eventCollector.cancel()
 
+        let events = await eventCollector.snapshot()
         #expect(events.count == 0) // No events for connectivity restored
     }
 }

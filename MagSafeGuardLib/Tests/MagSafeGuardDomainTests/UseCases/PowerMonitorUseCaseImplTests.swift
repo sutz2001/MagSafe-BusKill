@@ -8,6 +8,7 @@
 
 import Foundation
 @testable import MagSafeGuardDomain
+import TestInfrastructure
 import Testing
 
 extension PowerMonitorUseCaseImplTests {
@@ -618,14 +619,8 @@ struct PowerMonitorUseCaseImplTests {
         let useCase = PowerMonitorUseCaseImpl(repository: repository, analyzer: analyzer)
         
         // Create a way to track if changes were emitted
-        var receivedChanges: [PowerStateChange] = []
-        
-        // Monitor the stream
-        let streamTask = Task {
-            for await change in useCase.powerStateChanges {
-                receivedChanges.append(change)
-            }
-        }
+        let changeCollector = AsyncStreamCollector<PowerStateChange>()
+        await changeCollector.start(collecting: useCase.powerStateChanges)
         
         // When - Start monitoring
         // The initial getCurrentPowerState call will set previousState to 80% battery
@@ -648,6 +643,7 @@ struct PowerMonitorUseCaseImplTests {
         try? await Task.sleep(nanoseconds: 50_000_000) // 50ms
         
         // Then - We should have received ONE change (80% -> 90%)
+        let receivedChanges = await changeCollector.snapshot()
         #expect(receivedChanges.count == 1)
         if let change = receivedChanges.first {
             #expect(change.previousState.batteryLevel == 80)
@@ -661,12 +657,8 @@ struct PowerMonitorUseCaseImplTests {
         
         // The handleStateUpdate method is private, but we can test its behavior
         // by observing that no changes are emitted when previousState is nil
-        var receivedChanges2: [PowerStateChange] = []
-        let streamTask2 = Task {
-            for await change in useCase2.powerStateChanges {
-                receivedChanges2.append(change)
-            }
-        }
+        let changeCollector2 = AsyncStreamCollector<PowerStateChange>()
+        await changeCollector2.start(collecting: useCase2.powerStateChanges)
         
         // Don't start monitoring, so previousState remains nil
         // Simulate a state change - this should be handled by the guard clause
@@ -674,12 +666,13 @@ struct PowerMonitorUseCaseImplTests {
         
         // Wait and verify no changes were emitted
         try? await Task.sleep(nanoseconds: 50_000_000) // 50ms
+        let receivedChanges2 = await changeCollector2.snapshot()
         #expect(receivedChanges2.isEmpty)
         
         // Clean up
         await useCase.stopMonitoring()
-        streamTask.cancel()
-        streamTask2.cancel()
+        await changeCollector.cancel()
+        await changeCollector2.cancel()
     }
     
     // Helper expectation function for async testing
