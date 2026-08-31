@@ -1,7 +1,7 @@
 # MagSafe Guard
 
 <p align="center">
-  <img src="docs/assets/logo-256.png" width="128" alt="MagSafe Guard App-Icon" />
+  <img src="https://raw.githubusercontent.com/sutz2001/MagSafe-BusKill/main/docs/assets/logo-256.png" width="128" alt="MagSafe Guard App-Icon" />
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
-| **Repository** | Privat, bis [rechtliche Fork-Checkliste](#repository-sichtbarkeit) erfüllt ist |
+| **Repository** | **Öffentlich** — [github.com/sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
 
 ![Demo — Netzteil-Abzug löst Schutz aus (kein Mac App Store)](docs/assets/magsafe-guard.gif)
 
@@ -192,7 +192,7 @@ Details: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/F
 
 ## Repository-Sichtbarkeit
 
-Das Repository ist derzeit **privat**. Wechsel auf **öffentlich**, sobald die rechtliche Fork-Dokumentation steht:
+Das Repository ist **öffentlich** unter [github.com/sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).
 
 | Anforderung | Status |
 | --- | --- |
@@ -202,7 +202,7 @@ Das Repository ist derzeit **privat**. Wechsel auf **öffentlich**, sobald die r
 | Binaries enthalten `LICENSE` + `NOTICE` | Offen (bei GitHub Releases) |
 | Panic-Rechtstexte in der App | Erst ab v0.5.0 relevant |
 
-Nach Prüfung der ersten drei Punkte auf `main` kann das Repo für den **aktuellen** Funktionsumfang öffentlich werden.
+Die ersten drei Punkte wurden auf `main` geprüft, bevor das Repository öffentlich gestellt wurde (August 2026).
 
 ---
 

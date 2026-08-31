@@ -152,3 +152,6 @@ profiles/
 !.justifications.md
 .mcp.json
 
+# Demo GIF rebuild cache (extracted from git by scripts/build-demo-gif.py)
+docs/assets/magsafe-guard-source.gif
+

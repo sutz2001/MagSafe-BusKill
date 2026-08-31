@@ -16,9 +16,9 @@ Stand: nach **0.3.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | **Panic-Modus** | ❌ geplant |
 | Notarisierung (Developer ID) | ⏸️ wenn App reif + Paid Dev |
 | Mac App Store | ❌ **ausgeschlossen** (Sandbox) |
-| Repository | 🔒 privat → öffentlich nach [Checkliste](../README.md#repository-visibility) |
+| Repository | ✅ öffentlich — [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
 
-### Repository öffentlich stellen
+### Repository öffentlich
 
 | Anforderung | Status |
 |-------------|--------|
@@ -28,7 +28,7 @@ Stand: nach **0.3.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | `LICENSE` + `NOTICE` in Release-Binaries | 📋 bei erstem GitHub Release |
 | Panic-Rechtstexte in der App | erst v0.5.0 |
 
-Nach Prüfung der ersten drei Punkte auf `main` ist **Öffentlichstellung für 0.3.x** möglich.
+Öffentlich seit August 2026 (nach Prüfung der ersten drei Punkte auf `main`).
 
 ---
 
@@ -41,7 +41,7 @@ Nach Prüfung der ersten drei Punkte auf `main` ist **Öffentlichstellung für 0
 | 3 | **Panic-Auslöser** | **Hotkey** + Kabel + **Fernauslösung** (URL-Scheme / Shortcuts, später Polling/Push) |
 | 4 | **Verteilung** | **GitHub** (Quellcode + optionale Releases) + **notarisierte DMG** — **kein App Store** |
 | 5 | **Paid Apple Dev** | Wenn App veröffentlichungsreif: für **notarisierte Binaries**; nicht nötig zum Hosten von Quellcode auf GitHub |
-| 6 | **Repository** | **Privat** bis Fork-Rechtsdocs geprüft; dann **öffentlich** (siehe oben) |
+| 6 | **Repository** | **Öffentlich** seit August 2026 (siehe [README](../README.md#repository-visibility)) |
 
 ---
 
