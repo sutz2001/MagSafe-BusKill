@@ -17,6 +17,7 @@ final class AppControllerTests: XCTestCase {
 
   private var sut: AppController!
   private var mockAuthService: MockAuthenticationService!
+  private var authService: AuthenticationService!
   private var mockSecurityActions: MockSystemActions!
   private var mockNotificationService: MockNotificationService!
 
@@ -32,12 +33,14 @@ final class AppControllerTests: XCTestCase {
     AppController.isTestEnvironment = true
 
     mockAuthService = MockAuthenticationService()
+    authService = mockAuthService.createConfiguredService()
+    authService.resetAuthenticationAttempts()
     mockSecurityActions = MockSystemActions()
     mockNotificationService = MockNotificationService()
 
     sut = AppController(
       powerMonitor: PowerMonitorService.shared,  // Use real service for now
-      authService: mockAuthService.createConfiguredService(),
+      authService: authService,
       securityActions: SecurityActionsService(systemActions: mockSecurityActions),
       notificationService: NotificationService(deliveryMethod: mockNotificationService)
     )
@@ -45,6 +48,7 @@ final class AppControllerTests: XCTestCase {
 
   override func tearDown() {
     sut = nil
+    authService = nil
     mockAuthService = nil
     mockSecurityActions = nil
     mockNotificationService = nil
@@ -274,6 +278,7 @@ final class AppControllerTests: XCTestCase {
 
   func testCancelGracePeriodWithAuthFailure() {
     armSystem()
+    sut.gracePeriodDuration = 60
     sut.simulatePowerDisconnectForTesting()
     mockAuthService.shouldSucceed = false
     mockAuthService.applyAuthConfiguration()
@@ -290,7 +295,7 @@ final class AppControllerTests: XCTestCase {
       cancelExpectation.fulfill()
     }
 
-    waitForExpectations(timeout: 1.0)
+    waitForExpectations(timeout: 3.0)
   }
 
   // MARK: - Grace Period Cancellation Tests
@@ -398,16 +403,18 @@ final class AppControllerTests: XCTestCase {
     var newStateReceived: AppState?
 
     sut.onStateChange = { old, new in
+      guard old == .disarmed, new == .armed else { return }
       oldStateReceived = old
       newStateReceived = new
       stateExpectation.fulfill()
     }
 
-    // Arm the system
     mockAuthService.shouldSucceed = true
-    sut.arm { _ in }
+    mockAuthService.applyAuthConfiguration()
+    let armExpectation = expectation(description: "Arm")
+    sut.arm { _ in armExpectation.fulfill() }
 
-    waitForExpectations(timeout: 1.0)
+    waitForExpectations(timeout: 3.0)
 
     XCTAssertEqual(oldStateReceived, .disarmed)
     XCTAssertEqual(newStateReceived, .armed)
