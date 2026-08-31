@@ -1,6 +1,6 @@
 name: Security Scanning
 
-# CI disabled for free-tier Actions minutes — run locally: task security:scan
+# Manual only — run locally: task security:scan
 on:
   workflow_dispatch:
 

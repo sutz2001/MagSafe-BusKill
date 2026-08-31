@@ -15,7 +15,7 @@
 
 Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger Fork von [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill).
 
-**CI:** GitHub Actions deaktiviert (Free-Tier-Minuten). Vor dem Push lokal `task test` ausführen.
+**CI:** Leichte Ubuntu-Checks bei Push/PR auf `main` (Commit-Messages). macOS-Tests und Security-Scans: lokal `task test` oder manuell unter [Actions](https://github.com/sutz2001/MagSafe-BusKill/actions).
 
 | | |
 | --- | --- |

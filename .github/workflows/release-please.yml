@@ -1,6 +1,6 @@
 name: Release Please
 
-# CI disabled for free-tier Actions minutes — releases via task release locally
+# Manual only — releases via task release locally
 on:
   workflow_dispatch:
 

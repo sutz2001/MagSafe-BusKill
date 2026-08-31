@@ -1,8 +1,9 @@
 name: Enforce Clean History
 
-# CI disabled for free-tier Actions minutes
+# Lightweight CI (Ubuntu) — PR history check for blocked commit words
 on:
-  workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read

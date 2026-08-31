@@ -1,6 +1,6 @@
 name: "CodeQL Analysis"
 
-# CI disabled for free-tier Actions minutes
+# Manual only
 on:
   workflow_dispatch:
 

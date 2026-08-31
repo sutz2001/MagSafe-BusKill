@@ -1,6 +1,6 @@
 name: Tests (Cached Coverage)
 
-# CI disabled for free-tier Actions minutes
+# Manual only
 on:
   workflow_dispatch:
 

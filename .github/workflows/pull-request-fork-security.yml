@@ -1,6 +1,6 @@
 name: Fork PR Security Check
 
-# CI disabled for free-tier Actions minutes
+# Manual only
 on:
   workflow_dispatch:
 

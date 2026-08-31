@@ -1,6 +1,6 @@
 name: Tests
 
-# CI disabled for free-tier Actions minutes — run locally: task test
+# Manual only — macOS runners cost 10× minutes; run locally: task test
 on:
   workflow_dispatch:
 
