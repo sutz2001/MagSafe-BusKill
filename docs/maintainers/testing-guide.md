@@ -176,87 +176,209 @@ class PowerMonitorService {
 }
 ```
 
+## Test Architecture
+
+MagSafe Guard uses **two test layers**. Both are required for confidence; only the SPM layer counts toward Codecov/Sonar metrics.
+
+| Layer | Location | Runner | What it covers |
+|-------|----------|--------|----------------|
+| **SPM (domain/core)** | `MagSafeGuardLib/Tests/` | `task test` | UseCases, domain models, `SettingsModel`, logging, feature flags |
+| **Xcode (app)** | `MagSafeGuardTests/` | `task xcode:test` | `AppController`, security infra, repositories, app services |
+| **UI (placeholder)** | `MagSafeGuardUITests/` | `task xcode:test:full` | Launch smoke only — real UI flows are manual |
+| **Manual acceptance** | `docs/maintainers/acceptance-tests.md` | Human | Screen lock, real cable, biometrics |
+
+**Support code (not a test target):** `MagSafeGuardLib/Tests/TestInfrastructure/` — mocks, builders, shared assertions.
+
+**Metrics:** SonarCloud and Codecov analyze `MagSafeGuardLib/Sources` only. App-layer tests (`MagSafeGuard/`) improve quality but do not change the 80% coverage gate.
+
+## Test Inventory
+
+### SPM — `MagSafeGuardDomainTests`
+
+| File | Covers |
+|------|--------|
+| `UseCases/AuthenticationUseCaseImplTests.swift` | Auth flows, rate limiting, cache, history |
+| `UseCases/AutoArmUseCaseImplTests.swift` | Auto-arm rules, location/network triggers |
+| `UseCases/PowerMonitorUseCaseImplTests.swift` | Power state changes, analyzer integration |
+| `UseCases/SecurityActionUseCaseImplTests.swift` | Action execution, config persistence |
+| `UseCases/SecurityActionUseCaseTests.swift` | Sequential/parallel execution, validation |
+| `UseCases/ProtectedActionUseCaseTests.swift` | Protected actions via policy + repository mocks |
+| `DomainProtocolTests.swift` | Domain models, enums, execution strategies |
+| `Protocols/ResourceProtectionProtocolsTests.swift` | Protection config structs and metrics |
+
+### SPM — `MagSafeGuardCoreTests`
+
+| File | Covers |
+|------|--------|
+| `Models/SettingsModelTests.swift` | Defaults, grace period, encoding, validation |
+| `Utilities/LoggerTests.swift` | Log levels, categories, concurrency |
+| `Utilities/FeatureFlagsTests.swift` | Defaults and environment overrides |
+| `Utilities/SentryLoggerTests.swift` | Sentry setup and privacy scrubbing |
+
+### Xcode — `MagSafeGuardTests`
+
+| File | Covers |
+|------|--------|
+| `Controllers/AppControllerTests.swift` | Arm/disarm, grace period entry/cancel, menu titles |
+| `Repositories/MacSystemActionsRepositoryTests.swift` | Repository + rate limiter + circuit breaker |
+| `Services/MacSystemActionsTests.swift` | Script validation, path sanitization |
+| `Services/ApplicationStatePersistenceTests.swift` | Armed-state save/load/clear |
+| `Security/CircuitBreakerTests.swift` | Circuit breaker state machine |
+| `Security/RateLimiterTests.swift` | Token bucket, refill, reset |
+| `Security/ResourceProtectorTests.swift` | Combined rate limit + circuit breaker |
+
+### Xcode — `MagSafeGuardUITests`
+
+| File | Covers |
+|------|--------|
+| `MagSafeGuardUITests.swift` | Template example, launch performance |
+| `MagSafeGuardUITestsLaunchTests.swift` | Launch screenshot |
+
+## Recommended Additional Tests
+
+Domain/core logic is well covered. Highest value is in the **app layer**, especially the power-disconnect → grace → trigger path.
+
+| Priority | Area | Suggested tests | Target file |
+|----------|------|-----------------|-------------|
+| **P0** | Power disconnect while armed | Grace period starts; timer fires → security actions; state `.triggered` | `AppControllerTests.swift` |
+| **P0** | Grace period = 0 | Immediate trigger, no grace UI | `AppControllerTests.swift` |
+| **P0** | Reconnect during grace | Timer cancelled, stay `.armed`, no actions | `AppControllerTests.swift` |
+| **P1** | `PowerMonitorCore` | Parse IOKit-style power dicts; `hasPowerStateChanged` edges | New `PowerMonitorCoreTests.swift` |
+| **P1** | `SecurityActionsService` | Rate limit + circuit breaker orchestration | New `SecurityActionsServiceTests.swift` |
+| **P2** | `ResourceProtectionPolicyAdapter` | Map protector errors to domain errors | New `ResourceProtectionPolicyAdapterTests.swift` |
+| **P2** | `AutoArmManager` | Cooldown deduplication; single arm per window | New `AutoArmManagerTests.swift` |
+| **P3** | `AuthenticationService` | App-layer LA wrapper success/failure paths | New `AuthenticationServiceTests.swift` |
+
+**Not worth automating (by design):** raw IOKit, CoreLocation hardware, CloudKit sync, real screen lock/shutdown — see [acceptance-tests.md](acceptance-tests.md).
+
+**Known gap:** One flaky concurrent test is disabled in `SecurityActionUseCaseTests.swift` — re-enable when stabilized.
+
 ## Test Organization
 
-### Unit Tests
+### Unit tests (automated)
 
-Location: `MagSafeGuardTests/`
+- **SPM:** `MagSafeGuardLib/Tests/` — run with `task test`
+- **Xcode app:** `MagSafeGuardTests/` — run with `task xcode:test`
+- **Mocks:** `MagSafeGuardLib/Tests/TestInfrastructure/` and inline mocks in app tests
 
-- **MockTests**: Tests using mocks for 100% coverage
-  - `AuthenticationServiceMockTests.swift`
-  - `SecurityActionsServiceTests.swift`
-  - `AppDelegateCoreTests.swift`
+### Manual acceptance tests
 
-- **Integration Tests**: Tests with some real components
-  - `PowerMonitorServiceTests.swift`
-  - `PowerMonitorCoreTests.swift`
+Location: [acceptance-tests.md](acceptance-tests.md)
 
-### Manual Acceptance Tests
-
-Location: `docs/maintainers/acceptance-tests.md`
-
-Cover real system integration that cannot be automated:
+Cover real system integration that cannot be automated safely:
 
 - Actual biometric authentication
-- Real screen locking
-- System shutdown/logout
+- Real screen locking and alarm
 - Hardware power disconnection
+- Release smoke on a clean Mac
 
 ## Running Tests
 
-### Using Taskfile (Recommended)
+### Quick reference
 
-The project includes a comprehensive Taskfile with test commands:
+| Goal | Command |
+|------|---------|
+| Daily dev (fast) | `task test` |
+| App-layer unit tests | `task xcode:test` |
+| Include UI smoke tests | `task xcode:test:full` |
+| Full local QA | `task qa` or `task qa:quick` |
+| Before release | `task release` (runs tests internally) |
+
+### SPM — domain and core (`task test`)
 
 ```bash
-# Run all tests
-task test
-
-# Run tests with coverage report
-task test:coverage
-
-# Generate HTML coverage report
-task test:coverage:html
-
-# Run specific test file
-task test -- --filter SecurityActionsServiceTests
-
-# Run tests
-task test
+task test                    # all SPM tests + LCOV coverage report
+task test:specific           # subset via TEST_FILES env var
 ```
 
-### Manual Test Commands
+`task test` writes `coverage.lcov`, `coverage.xml`, and `coverage-report.md` in the repo root.
+
+**Run a single SPM test class or method:**
 
 ```bash
-# Basic test run
-swift test
-
-# With coverage
-swift test --enable-code-coverage
-
-# Generate coverage report
-xcrun llvm-cov report \
-  .build/*/debug/MagSafeGuardPackageTests.xctest/Contents/MacOS/MagSafeGuardPackageTests \
-  -instr-profile=.build/*/debug/codecov/default.profdata \
-  -ignore-filename-regex=".*Tests\.swift|.*Mock.*\.swift"
+cd MagSafeGuardLib
+swift test --filter SettingsModelTests
+swift test --filter 'SettingsModelTests/testDefaultGracePeriod'
 ```
 
-### Environment Variables
-
-The test suite recognizes these environment variables:
-
-- **`CI=true`**: (Deprecated - no longer needed with protocol-based testing)
-  - Previously used to skip authentication dialogs
-  - No longer required since tests use mocks
-
-- **`SKIP_UI_TESTS=true`**: Skip UI-dependent tests
-
-- **`COVERAGE_THRESHOLD=80`**: Set minimum coverage requirement
-
-Example:
+**Specific files via Taskfile:**
 
 ```bash
-COVERAGE_THRESHOLD=85 task test:coverage
+TEST_FILES='SettingsModelTests,LoggerTests' task test:specific
+```
+
+### Xcode — app layer
+
+**Test plans** live in `MagSafeGuard.xcodeproj/xcshareddata/xctestplans/`:
+
+| Plan | Contents | Default |
+|------|----------|---------|
+| `MagSafeGuardUnit` | `MagSafeGuardTests` only | Yes (⌘U) |
+| `MagSafeGuardFull` | Unit + `MagSafeGuardUITests` | Manual |
+
+```bash
+task xcode:test                              # MagSafeGuardUnit plan
+task xcode:test:full                         # MagSafeGuardFull plan
+task xcode:test:verbose                      # verbose unit plan output
+TEST_FILTER='AppControllerTests' task xcode:test:specific
+TEST_FILTER='AppControllerTests/testInitialState' task xcode:test:specific
+```
+
+**In Xcode:**
+
+1. `open MagSafeGuard.xcodeproj`
+2. Scheme **MagSafeGuard** → **Product → Test** (⌘U) — uses `MagSafeGuardUnit` by default
+3. Switch plan: **Product → Test Plan → MagSafeGuardFull**
+4. Single test: Test navigator (◇) → play button on class or method
+
+### Combined workflow (recommended before push)
+
+```bash
+task test && task xcode:test
+```
+
+Or use the project QA tasks:
+
+```bash
+task qa:quick    # lint + SPM tests + Xcode build/test (slim)
+task qa          # full local QA suite
+```
+
+### Environment variables
+
+| Variable | Effect |
+|----------|--------|
+| `CI=true` | CI-oriented behavior in some tests (set automatically in old CI; optional locally) |
+| `MAGSAFE_GUARD_TEST_MODE=1` | Set in `MagSafeGuardUnit` test plan for app tests |
+| `COVERAGE_THRESHOLD=80` | Minimum coverage check in `task test` (default 80) |
+| `SKIP_TESTS=true` | Skip tests in `task release` |
+| `TEST_FILES` | Comma-separated SPM test filters for `task test:specific` |
+| `TEST_FILTER` | Xcode test class/method for `task xcode:test:specific` |
+
+Examples:
+
+```bash
+COVERAGE_THRESHOLD=85 task test
+SKIP_TESTS=true task release
+```
+
+### Coverage reports
+
+Coverage is generated automatically by `task test` (no separate `task test:coverage` command).
+
+After `task test`, open:
+
+- `coverage-report.md` — summary table
+- `coverage.lcov` — for IDEs and Codecov
+- `coverage.xml` — SonarCloud format
+
+SonarCloud upload (when token is set): `task sonar:scan` (uses existing `coverage.xml` or runs tests first).
+
+### Manual `swift test` (without Taskfile)
+
+```bash
+cd MagSafeGuardLib
+swift test --enable-code-coverage --parallel
 ```
 
 ## Writing Effective Tests
@@ -370,31 +492,15 @@ coverage:
 
 ## CI/CD Integration
 
-### GitHub Actions Configuration
+GitHub Actions runs **lightweight Ubuntu checks** on push/PR (`commit-message-check`, `enforce-clean-history`). **macOS test workflows are manual-only** to save Actions minutes — run `task test` and `task xcode:test` locally before pushing.
 
-```yaml
-- name: Run Tests with Coverage
-  env:
-    CI: true
-  run: |
-    # Install dependencies
-    brew install go-task/tap/go-task
-    
-    # Run tests with coverage
-    task test:coverage
-    
-    # Upload to codecov
-    bash <(curl -s https://codecov.io/bash)
-```
-
-### SonarCloud Integration
-
-The coverage report is automatically converted to SonarQube format:
+When macOS CI is triggered manually (Actions → **Tests** workflow):
 
 ```bash
-# Conversion happens in test:coverage task
-task test:convert  # Converts LCOV to SonarQube XML
+task test    # SPM tests + coverage (used by former CI test job)
 ```
+
+Codecov/SonarCloud track `MagSafeGuardLib` coverage from `coverage.xml` produced by `task test`.
 
 ## Best Practices
 
@@ -432,10 +538,9 @@ task test:convert  # Converts LCOV to SonarQube XML
    - Use explicit timeouts in async tests
 
 3. **"Coverage is lower than expected"**
-   - Check exclusion patterns in Taskfile
-   - Ensure all test files are being run
-   - Verify mock usage in tests
-   - Run `task test:coverage:html` to see detailed report
+   - Check exclusion patterns in `Taskfile.yml` and `.codecov.yml`
+   - Remember: only `MagSafeGuardLib` counts toward Codecov/Sonar
+   - Open `coverage-report.md` after `task test`
 
 4. **"Screen locks during test run"**
    - Ensure SecurityActionsService uses mock
@@ -463,10 +568,9 @@ override func tearDown() {
 
 ## Future Improvements
 
-1. **Property-Based Testing**: Use SwiftCheck for randomized testing
-2. **Snapshot Testing**: Add UI snapshot tests for views
-3. **Performance Testing**: Add XCTest performance tests
-4. **Integration Test Suite**: Separate integration tests from unit tests
-5. **Test Data Builders**: Create builders for complex test objects
-6. **Mutation Testing**: Use tools to verify test quality
-7. **Contract Testing**: Ensure mocks match real implementations
+1. **AppController power-disconnect path** — P0 tests (see [Recommended Additional Tests](#recommended-additional-tests))
+2. **`PowerMonitorCore` unit tests** — pure parsing logic, no IOKit
+3. **Re-enable flaky concurrent test** in `SecurityActionUseCaseTests.swift`
+4. **Test data builders** — expand `TestInfrastructure` for complex app scenarios
+5. **Property-based testing** — optional SwiftCheck for state machines
+6. **Manual acceptance checklist** — keep in sync with each release

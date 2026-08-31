@@ -139,28 +139,37 @@ public class AppController {
 
 #### Running Tests
 
+Full inventory, coverage notes, and recommended new tests: **[Testing Guide](maintainers/testing-guide.md)**.
+
 ```bash
-# Domain/core unit tests (Swift Package Manager — fastest)
+# Domain/core (SPM) — fast, includes coverage report
 task test
 
-# App-layer unit tests in Xcode (no UI tests)
+# App-layer unit tests (Xcode, no UI tests)
 task xcode:test
 
-# All Xcode tests including UI tests
+# All Xcode tests including UI smoke tests
 task xcode:test:full
 
-# Run with coverage reporting
-task test:coverage
+# Lint + tests (recommended before push)
+task qa:quick
 ```
 
-**Xcode test plans** (in `MagSafeGuard.xcodeproj/xcshareddata/xctestplans/`):
+**Xcode test plans** (`MagSafeGuard.xcodeproj/xcshareddata/xctestplans/`):
 
 | Plan | Contents |
 |------|----------|
 | `MagSafeGuardUnit` | `MagSafeGuardTests` only (default for ⌘U) |
 | `MagSafeGuardFull` | Unit + `MagSafeGuardUITests` |
 
-In Xcode: open `MagSafeGuard.xcodeproj`, scheme **MagSafeGuard**, then **Product → Test** (⌘U). Switch plans via **Product → Test Plan**.
+In Xcode: `open MagSafeGuard.xcodeproj` → scheme **MagSafeGuard** → **⌘U**. Switch plans via **Product → Test Plan**.
+
+**Single test:**
+
+```bash
+cd MagSafeGuardLib && swift test --filter SettingsModelTests
+TEST_FILTER='AppControllerTests' task xcode:test:specific
+```
 
 #### What to Test
 
@@ -404,7 +413,7 @@ brew install go-task/tap/go-task
 
    ```bash
    rm -rf .build
-   task test:coverage
+   task test
    ```
 
 4. **Git hooks not working**:
@@ -463,7 +472,7 @@ task run              # Build and run app
 
 ```bash
 task docs:update      # Update documentation
-task test:coverage    # Generate coverage report
+task test    # SPM tests + coverage report (coverage-report.md)
 task swift:sbom       # Generate software bill of materials
 ```
 

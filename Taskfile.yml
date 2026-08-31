@@ -688,7 +688,7 @@ tasks:
           echo "Example: TEST_FILES='AppControllerTests,AuthenticationServiceTests' task test:specific"
           exit 1
         fi
-      - task: swift:test:coverage
+      - task: swift:test
         vars:
           TEST_TARGETS: "{{.TEST_FILES}}"
       - echo "✅ Specific tests passed!"

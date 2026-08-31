@@ -123,7 +123,8 @@ task run          # Alternative: Debug-Build per Terminal starten
 
 ```bash
 task build        # SPM-Build
-task test         # Tests + Coverage
+task test         # SPM-Tests + Coverage (siehe docs/maintainers/testing-guide.md)
+task xcode:test   # App-Unit-Tests in Xcode
 task qa:quick     # Lint & Security
 task qa           # volle lokale QA
 ```
