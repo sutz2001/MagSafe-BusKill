@@ -49,5 +49,6 @@ private final class MockNetworkActions: NetworkActionsProtocol {
 
   func disconnectVPN() throws {}
   func clearSSHAgent() throws { clearSSHAgentCalled = true }
+  func clearClipboard() throws {}
   func disableWiFi() throws {}
 }

@@ -12,6 +12,7 @@ extension NetworkActionType {
     case .webhook: return L10n.tr("networkAction.webhook.name")
     case .disconnectVPN: return L10n.tr("networkAction.disconnectVPN.name")
     case .clearSSHAgent: return L10n.tr("networkAction.clearSSHAgent.name")
+    case .clearClipboard: return L10n.tr("networkAction.clearClipboard.name")
     case .disableWiFi: return L10n.tr("networkAction.disableWiFi.name")
     }
   }

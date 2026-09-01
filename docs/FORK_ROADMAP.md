@@ -1,7 +1,7 @@
 # Fork-Roadmap (sutz2001)
 
 Planung für [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
-Stand: nach **0.5.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
+Stand: nach **0.5.1** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
 
 **Kurzanleitung:** [user-guide.de.md](features/user-guide.de.md) · [user-guide.md](features/user-guide.md) (EN)
 
@@ -17,6 +17,8 @@ Stand: nach **0.5.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 | Netzwerk-Aktionen + Fernauslösung (`magsafeguard://`) | ✅ v0.4.0 |
 | Diskreter Betrieb (nur Menüleisten-Icon) | ✅ v0.4.3 |
 | **Panic-Modus** (0 Grace, Hotkey ⌃⌘P, sofort Shutdown) | ✅ v0.5.0 |
+| **Betriebsmodi** (Normal / Diskret / Panic-Presets) | ✅ v0.5.1 |
+| **Zwischenablage leeren** (Netzwerk-Aktion) | ✅ v0.5.1 |
 | **Paranoid-Modus** | ❌ geplant v0.6.0 |
 | **Stabilisierung (0.5.x)** | 🔄 **aktueller Fokus** — [Checkliste](maintainers/stabilization-checklist.md) |
 | Notarisierung (Developer ID) | ⏸️ wenn App reif + Paid Dev |
@@ -66,7 +68,7 @@ Stand: nach **0.5.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 
 ### Lieferumfang
 
-- [x] Outbound network actions (webhook, VPN, SSH, Wi‑Fi)
+- [x] Outbound network actions (webhook, VPN, SSH, clipboard, Wi‑Fi)
 - [x] Settings → Security → Network + Remote Trigger
 - [x] `magsafeguard://arm` + `magsafeguard://trigger`
 - [x] EN/DE · README · FORK_CHANGELOG (0.4.0)
@@ -86,7 +88,7 @@ Stand: nach **0.5.0** (August 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_
 ## Phase 2 — Panic-Modus (0.5.0) ✅
 
 **Ziel:** **Panic** — Gerät sofort unzugänglich machen **ohne** Daten zu löschen.  
-Design: [docs/features/panic-modes.md](features/panic-modes.md) · Anleitung: [user-guide.de.md §4](features/user-guide.de.md#4-panic-modus-v050)
+Design: [docs/features/panic-modes.md](features/panic-modes.md) · Anleitung: [user-guide.de.md §5](features/user-guide.de.md#5-panic-schutzmodus-v050)
 
 ### Verhalten (Panic) — ausgeliefert
 
@@ -108,6 +110,18 @@ Design: [docs/features/panic-modes.md](features/panic-modes.md) · Anleitung: [u
 - [x] Hotkey **⌃⌘P** + `magsafeguard://panic`
 - [x] Unit-Tests mit Mocks (`PanicModeExecutorTests`, `AppControllerTests`)
 - [x] `operating-modes.md` · `panic-modes.md` · README EN/DE · [user-guide](features/user-guide.md)
+
+---
+
+## Phase 2b — Betriebsmodi & Presets (0.5.x) ✅
+
+**Ziel:** Schnell zwischen **Normal**, **Diskret** und **Panic**-Defaults wechseln, ohne „Custom“-Modus in der UI.
+
+- [x] `OperationProfile` + `OperationProfilePresets` (Grace, Aktionen, Mitteilungen, Dock, Netzwerk)
+- [x] Settings → Security: segmentierter Picker, Karenz, Link zu Mitteilungen, Reset-Link
+- [x] **Zwischenablage leeren** als Netzwerk-Aktion; Panic-/Paranoid-Baseline
+- [x] Beispiel-Skripte unter `docs/examples/scripts/`
+- [x] Kurzanleitung + README EN/DE aktualisiert
 
 ---
 

@@ -248,30 +248,10 @@ minimal:
 ---
 
 # Custom Script Examples
+#
+# Copy scripts from docs/examples/scripts/ to ~/.magsafe/scripts/ (see README there).
+# Built-in network webhooks: use Settings → Network, not curl in scripts.
 
-# notify_it.sh - Send notification to IT department
-#!/bin/bash
-# Sends alert to IT security team
-curl -X POST https://company.slack.com/webhook \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "text": "Security Alert: Laptop power disconnected while locked",
-    "username": "MagSafeGuard",
-    "icon_emoji": ":warning:"
-  }'
+# notify_it.sh — use HTTP Webhook in Settings instead (curl is blocked in custom scripts)
 
-# emergency.sh - High security data protection
-#!/bin/bash
-# WARNING: Destructive actions
-# 1. Unmount encrypted volumes
-diskutil unmount force /Volumes/SecureData
-# 2. Clear sensitive caches
-rm -rf ~/Library/Caches/com.company.app/*
-# 3. Lock password manager
-osascript -e 'tell application "1Password 7" to quit'
-# 4. Clear clipboard
-pbcopy < /dev/null
-# 5. Send emergency beacon
-curl -X POST https://emergency.example.com/beacon \
-  -d "lat=$(CoreLocationCLI -format %latitude)" \
-  -d "lon=$(CoreLocationCLI -format %longitude)"
+# emergency.sh — illustrative only; prefer docs/examples/scripts/ for maintained samples

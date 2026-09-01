@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.0` (Build `9`) |
+| **Version** | `0.5.1` (Build `10`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -39,7 +39,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 | **Fork-Maintainer** | Marc Seitz |
 | **Namensnennung** | [`LICENSE`](LICENSE) (Doppel-Copyright) · [`NOTICE`](NOTICE) (Herkunft) |
 
-Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser Fork** setzt auf Personal Team, zweisprachige UI (EN/DE), eigene Versionierung, Release-Automatisierung (`task release`) und eine Roadmap zu Netzwerk-Aktionen und Panic-Modus — Verteilung über **GitHub + notarisierte DMG**, nicht über den App Store.
+Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser Fork** setzt auf Personal Team, zweisprachige UI (EN/DE), Betriebsmodus-Voreinstellungen, Netzwerk-Aktionen, Panic-Modus, Release-Automatisierung (`task release`) und **GitHub + notarisierte DMG** — nicht über den App Store.
 
 ---
 
@@ -69,7 +69,8 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 | --- | --- |
 | Ereignisprotokoll | **⌘L** oder Menü → Event Log |
 | Sprache | Einstellungen → Allgemein → System / EN / DE |
-| Grace Period | Einstellungen → Allgemein (5–30 s) |
+| Betriebsmodus & Karenz | Einstellungen → **Security** (Normal / Diskret / Panic) |
+| Nur Menüleiste | Einstellungen → Allgemein → **Im Dock anzeigen** aus (Standard) |
 
 ---
 
@@ -79,13 +80,14 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 | --- | --- | --- |
 | Netzteil-Abzug (MagSafe, USB-C) | **Ausgeliefert** | IOKit, kein Kernel-Treiber |
 | Scharf/Unscharf (Touch ID, Passwort) | **Ausgeliefert** | Überwachung nur wenn armed |
-| Grace Period + Menüleisten-Countdown | **Ausgeliefert** | Standard 30 s |
-| Sicherheitsaktionen (5 Typen) | **Ausgeliefert** | Sortierbar in Settings |
+| Grace Period + Menüleisten-Countdown | **Ausgeliefert** | Standard 30 s; Presets 20 s (Diskret) / 5 s (Panic-Profil) |
+| Betriebsmodi (Normal / Diskret / Panic) | **Ausgeliefert** | v0.5.1 — Einstellungen → Security · [Anleitung](docs/features/user-guide.de.md#2-betriebsmodi-einstellungs-presets) |
+| Sicherheitsaktionen (5 Typen) | **Ausgeliefert** | Sortierbar unter Einstellungen → Security |
 | Auto-Arm (Standort / Netzwerk) | **Ausgeliefert** | Optionale Berechtigungen |
 | Event-Log, Onboarding, EN/DE | **Ausgeliefert** | v0.3.0 |
-| Netzwerk-Aktionen + Fernauslösung | **Ausgeliefert** | v0.4.0 — Webhook, VPN, SSH, WLAN; `magsafeguard://` |
-| Diskreter Betrieb | **Ausgeliefert** | v0.4.3 — nur Icon; Warnungen/Töne optional aus · [Anleitung](docs/features/user-guide.de.md#3-diskreter-betrieb-v043) |
-| Panic-Modus | **Ausgeliefert** | v0.5.0 — keine Karenzzeit, **⌃⌘P**-Hotkey · [Anleitung](docs/features/user-guide.de.md#4-panic-modus-v050) |
+| Netzwerk-Aktionen + Fernauslösung | **Ausgeliefert** | v0.4.0 — Webhook, VPN, SSH, Zwischenablage, WLAN; `magsafeguard://` |
+| Diskreter Betrieb | **Ausgeliefert** | v0.4.3+ — Profil **Diskret** oder Mitteilungs-Schalter · [Anleitung](docs/features/user-guide.de.md#4-diskreter-betrieb) |
+| Panic-Modus | **Ausgeliefert** | v0.5.0 — 0 s Karenz im Panic-Schutz, **⌃⌘P** · [Anleitung](docs/features/user-guide.de.md#5-panic-schutzmodus-v050) |
 | Paranoid-Modus | **Geplant** | v0.6.0 — Vernichtung + Shutdown (FileVault + Setup nötig) |
 | Notarisierte DMG für Dritte | **Später** | v1.0 · Paid Dev optional |
 | Mac App Store | **Ausgeschlossen** | Sandbox inkompatibel |
@@ -100,8 +102,21 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 | Herunterfahren | Shutdown planen (Verzögerung konfigurierbar) |
 | Eigenes Skript | `.sh` / `.zsh` / `.bash` nur aus erlaubten Pfaden |
 
-**Pfade:** `~/.magsafe/scripts/` · `/usr/local/magsafe-scripts/`  
-**Einstellungen → Security** — mit **+** / **−** / Drag & Drop.
+### Netzwerk-Aktionen
+
+| Aktion | Wirkung |
+| --- | --- |
+| HTTP-Webhook | JSON-POST beim Trigger (Token im Schlüsselbund) |
+| VPN trennen | Aktive VPN-Verbindung beenden |
+| SSH-Agent leeren | Schlüssel aus `ssh-agent` entfernen |
+| Zwischenablage leeren | System-Zwischenablage leeren |
+| WLAN deaktivieren | Wi‑Fi aus (Hinweis zu „Mein Mac finden“) |
+
+**Einstellungen → Security** (Abschnitt Network). **Panic**-Preset aktiviert VPN, SSH-Agent und Zwischenablage (kein WLAN aus — Find My bleibt).
+
+**Skript-Pfade:** `~/.magsafe/scripts/` · `/usr/local/magsafe-scripts/`  
+**Beispielskripte:** [docs/examples/scripts/](docs/examples/scripts/) (Browser beenden, Verlauf best-effort)  
+Sicherheitsaktionen: **Einstellungen → Security** — **+** / **−** / Drag & Drop.
 
 ---
 
@@ -182,6 +197,7 @@ task release:clean
 | --- | --- | --- |
 | Erledigt | **0.4.x** | Netzwerk-Aktionen, Fernauslösung, diskreter Betrieb |
 | Erledigt | **0.5.0** | Panic-Modus — 0 Grace, Hotkey **⌃⌘P**, sofort Shutdown |
+| Erledigt | **0.5.1** | Betriebsmodi, Zwischenablage-Aktion, Settings/Doku |
 | Als Nächstes | **0.6.0** | Paranoid-Modus — Datenvernichtung (Setup nötig) |
 | Stabil | **1.0.0** | Notarisierte Developer-ID-Verteilung |
 
@@ -196,7 +212,7 @@ Details: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/F
 - [ ] Setup-Wizard (FileVault, Wipe-Pfade/Volumes)
 - [ ] Rechtliche Prüfung DE/EU (keine Rechtsberatung — ggf. Anwalt)
 
-**Panic (v0.5.0)** ist ausgeliefert — siehe [Kurzanleitung §4](docs/features/user-guide.de.md#4-panic-modus-v050).
+**Panic (v0.5.0)** ist ausgeliefert — siehe [Kurzanleitung §5](docs/features/user-guide.de.md#5-panic-schutzmodus-v050).
 
 ---
 
@@ -240,6 +256,9 @@ Optionaler Upstream-Vergleich (nur manuell): `git fetch upstream && git merge up
 | Dokument | Inhalt |
 | --- | --- |
 | [README.md](README.md) | Englische Version |
+| [docs/features/user-guide.de.md](docs/features/user-guide.de.md) | **Kurzanleitung** — Betriebsmodi, diskret, Panic · [EN](docs/features/user-guide.md) |
+| [docs/features/operating-modes.md](docs/features/operating-modes.md) | Zustandsmaschine & technische Abläufe |
+| [docs/examples/scripts/README.md](docs/examples/scripts/README.md) | Beispiel-Skripte |
 | [docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md) | Roadmap & Rechtliches |
 | [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md) | Fork-Release-Historie |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Ausführliche Build-Anleitung |
@@ -254,6 +273,6 @@ Optionaler Upstream-Vergleich (nur manuell): `git fetch upstream && git merge up
 
 - Konzept: [BusKill](https://github.com/BusKill/buskill-app)
 - Upstream: Tobias Lekman · [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill)
-- Fork-Anpassungen: Marc Seitz © 2025
+- Fork-Anpassungen: Marc Seitz © 2026
 
 MagSafe Guard wird **ohne Gewähr** bereitgestellt. Du trägst die Verantwortung für den Einsatz — auch auf Dienstgeräten und mit eigenen Skripten.

@@ -1,7 +1,7 @@
 # Panic & Paranoid Modes
 
 Design and reference for **v0.5.0** (Panic — **shipped**) and **v0.6.0** (Paranoid — planned).  
-**User guide:** [user-guide.md §4](user-guide.md#4-panic-mode-v050) · [user-guide.de.md §4](user-guide.de.md#4-panic-modus-v050)  
+**User guide:** [user-guide.md §5](user-guide.md#5-panic-protection-mode-v050) · [user-guide.de.md §5](user-guide.de.md#5-panic-schutzmodus-v050)  
 Companion: [operating-modes.md](operating-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md)
 
 **Status:** Panic mode is implemented (0.5.0). Paranoid mode is planning only.
@@ -33,7 +33,7 @@ Execute **in parallel** (fire-and-forget, circuit breaker **off**):
 
 1. Lock screen
 2. Force logout (all users)
-3. Network actions (if enabled): webhook `panic`, VPN off, SSH agent clear, Wi‑Fi off
+3. Network actions (if enabled): webhook `panic`, VPN off, SSH agent clear, clipboard clear, Wi‑Fi off
 4. **Immediate hard shutdown** — no dialog, no 1-minute delay, no auth cancel
 
 Shutdown is the terminal action; do not rely on “quit all apps” alone (macOS may still delay).
@@ -83,7 +83,7 @@ User must confirm before paranoid can be armed:
 
 | Action | Priority | Notes |
 |--------|----------|-------|
-| Clipboard clear | immediate | |
+| Clipboard clear | immediate | built-in network action (panic/paranoid preset) |
 | SSH agent clear | immediate | |
 | Browser / app session kill | immediate | best-effort |
 | Keychain items (configured) | fast | user-selected or preset list |

@@ -131,6 +131,9 @@ public struct Settings: Codable {
 
   // MARK: - General Settings
 
+  /// Selected operation preset (Normal / Discreet / Panic). Individual tweaks do not change this.
+  public var operationProfile: OperationProfile = .normal
+
   /// Automatically launch MagSafe Guard at user login (via `SMAppService`).
   public var launchAtLogin: Bool = false
 
@@ -270,4 +273,4 @@ public protocol SettingsMigrator {
 ///
 /// This version is incremented when breaking changes are made to the
 /// Settings structure that require migration logic.
-public let currentSettingsVersion = 1
+public let currentSettingsVersion = 6

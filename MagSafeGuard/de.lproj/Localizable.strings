@@ -19,7 +19,21 @@
 "settings.general.launchAtLogin.title" = "Beim Login starten";
 "settings.general.launchAtLogin.caption" = "MagSafe Guard automatisch beim Anmelden starten";
 "settings.general.showInDock.title" = "Im Dock anzeigen";
-"settings.general.showInDock.caption" = "App-Symbol im Dock anzeigen (Neustart erforderlich)";
+"settings.general.showInDock.caption" = "App im Dock anzeigen. Aus = nur Menüleisten-Icon.";
+"settings.general.showInDock.caption.panicArmed" = "Ausgeblendet, solange Panic oder Paranoid scharf ist. Zum Ändern entschärfen.";
+"settings.general.operationProfile.title" = "Betriebsmodus";
+"settings.general.operationProfile.normal" = "Normal";
+"settings.general.operationProfile.discreet" = "Diskret";
+"settings.general.operationProfile.panic" = "Panic";
+"settings.general.operationProfile.custom" = "Individuell";
+"settings.general.operationProfile.normal.caption" = "Bildschirm sperren und Alarm, 30 s Karenz, Mitteilungen an. Panic über das Menü scharf schalten.";
+"settings.general.operationProfile.discreet.caption" = "Wie Normal, aber nur Sperre — keine Töne oder Mitteilungen, 20 s Karenz. Dock aus.";
+"settings.general.operationProfile.panic.caption" = "Sperre, dann Abmeldung, 5 s Karenz, VPN, SSH-Agent und Zwischenablage leeren. Panic im Menü für sofortige Reaktion (0 s).";
+"settings.general.operationProfile.reset" = "Auf %@-Standard zurücksetzen";
+"settings.security.notifications.title" = "Mitteilungen";
+"settings.security.notifications.summary.on" = "Status, Sicherheitswarnungen und Töne sind an (siehe Tab Mitteilungen).";
+"settings.security.notifications.summary.off" = "Alle Mitteilungskanäle aus — nur Menüleisten-Icon.";
+"settings.security.openNotifications" = "Mitteilungen anpassen…";
 
 /* Language */
 "settings.language.title" = "Sprache";
@@ -49,6 +63,7 @@
 "settings.network.remote.triggerExample" = "Aktionen auslösen: %@";
 "settings.network.remote.armExample" = "Fern scharfschalten: %@";
 "settings.network.remote.panicExample" = "Panic-Auslösung (nur im Panic-Modus): %@";
+"settings.network.disableWiFi.warning" = "WLAN aus blockiert Find-My-Fernsperre, -löschung und -ortung, bis WLAN wieder an ist (Ethernet unberührt).";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Bildschirm sperren";
@@ -197,6 +212,9 @@
 "menu.eventLog.hint" = "Ereignisprotokoll der App öffnen";
 "menu.about" = "Über MagSafe Guard…";
 "menu.about.label" = "Über MagSafe Guard";
+"menu.showOnboarding" = "Einführung anzeigen…";
+"menu.showOnboarding.label" = "Einführung anzeigen";
+"menu.showOnboarding.hint" = "Erste-Schritte-Assistent öffnen";
 "menu.about.hint" = "Version und Copyright anzeigen";
 "menu.quit" = "MagSafe Guard beenden";
 "menu.quit.hint" = "App vollständig beenden";
@@ -224,8 +242,12 @@
 "app.quit.grace.confirm" = "Trotzdem beenden";
 
 /* About */
-"about.copyright" = "Copyright © 2025 Marc Seitz. Originalsoftware © 2025 Tobias Lekman.";
-"about.credits.body" = "MagSafe Guard — Fork\n\nBetreut von Marc Seitz\nhttps://github.com/sutz2001/MagSafe-BusKill\n\nOriginalsoftware: MagSafe Guard\nCopyright © 2025 Tobias Lekman\nhttps://github.com/lekman/magsafe-buskill\n\nFork-Anpassungen\nCopyright © 2025 Marc Seitz\n\nMIT-Lizenz\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+"about.copyright" = "Copyright © 2026 Marc Seitz\nCopyright © 2025 Originalsoftware";
+"about.credits.title" = "MagSafe Guard — Fork";
+"about.credits.maintainer" = "Betreut von Marc Seitz";
+"about.credits.upstream.label" = "Originalsoftware: MagSafe Guard";
+"about.credits.license" = "Lizenziert unter der MIT-Lizenz.";
+"about.credits.license.link" = "Lizenz anzeigen";
 
 /* Auto-arm notifications */
 "autoArm.disabled.title" = "Auto-Arm deaktiviert";
@@ -369,6 +391,7 @@
 "networkAction.webhook.name" = "HTTP-Webhook";
 "networkAction.disconnectVPN.name" = "VPN trennen";
 "networkAction.clearSSHAgent.name" = "SSH-Agent leeren";
+"networkAction.clearClipboard.name" = "Zwischenablage leeren";
 "networkAction.disableWiFi.name" = "WLAN deaktivieren";
 
 /* App states */
@@ -381,8 +404,13 @@
 "onboarding.windowTitle" = "Willkommen bei MagSafe Guard";
 "onboarding.welcome.title" = "Willkommen bei MagSafe Guard";
 "onboarding.welcome.body" = "Machen Sie Ihr Netzkabel zum Dead-Man's-Switch. Scharfschalten in öffentlichen Räumen.";
+"onboarding.welcome.fileVaultTip" = "Tipp: FileVault aktivieren (Systemeinstellungen → Datenschutz & Sicherheit) — Daten bleiben bei Diebstahl verschlüsselt.";
 "onboarding.arm.title" = "Vor dem Verlassen scharfschalten";
 "onboarding.arm.body" = "Schutz über die Menüleiste aktivieren. Beim Trennen des Adapters startet die Karenzzeit, danach laufen Sicherheitsaktionen.";
+"onboarding.arm.modes.title" = "Schutz-Modi";
+"onboarding.arm.modes.normal" = "Normal — Sperre, Alarm, 30 s Karenz, Mitteilungen";
+"onboarding.arm.modes.discreet" = "Diskret — nur Sperre, 20 s Karenz, keine Töne oder Mitteilungen";
+"onboarding.arm.modes.panic" = "Panic — Sperre + Abmeldung, Netz trennen; Panic im Menü für sofortige Reaktion";
 "onboarding.grace.title" = "Karenzzeit";
 "onboarding.grace.body" = "Sie können mit Touch ID oder Passwort abbrechen. Standard-Karenzzeit: 30 Sekunden.";
 "onboarding.permissions.title" = "Berechtigungen";
@@ -390,6 +418,9 @@
 "onboarding.back" = "Zurück";
 "onboarding.next" = "Weiter";
 "onboarding.done" = "Los geht's";
+"onboarding.pageIndicator.label" = "Schritt %d von %d";
+"onboarding.pageIndicator.current" = "Aktueller Schritt %d von %d";
+"onboarding.pageIndicator.other" = "Schritt %d von %d";
 
 /* Notification actions */
 "notification.cancelAction" = "Aktion abbrechen";

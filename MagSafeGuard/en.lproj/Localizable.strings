@@ -19,7 +19,21 @@
 "settings.general.launchAtLogin.title" = "Launch at Login";
 "settings.general.launchAtLogin.caption" = "Automatically start MagSafe Guard when you log in";
 "settings.general.showInDock.title" = "Show in Dock";
-"settings.general.showInDock.caption" = "Display application icon in dock (requires restart)";
+"settings.general.showInDock.caption" = "Show the app in the Dock. When off, only the menu bar icon is used.";
+"settings.general.showInDock.caption.panicArmed" = "Hidden while Panic or Paranoid is armed. Disarm to change.";
+"settings.general.operationProfile.title" = "Operation mode";
+"settings.general.operationProfile.normal" = "Normal";
+"settings.general.operationProfile.discreet" = "Discreet";
+"settings.general.operationProfile.panic" = "Panic";
+"settings.general.operationProfile.custom" = "Custom";
+"settings.general.operationProfile.normal.caption" = "Lock screen and alarm, 30 s grace, notifications on. Arm Panic from the menu when needed.";
+"settings.general.operationProfile.discreet.caption" = "Like Normal, but lock only — no sounds or notifications, 20 s grace. Dock hidden.";
+"settings.general.operationProfile.panic.caption" = "Lock then force logout, 5 s grace, VPN, SSH agent, and clipboard clear. Arm Panic from the menu for zero grace.";
+"settings.general.operationProfile.reset" = "Reset to %@ defaults";
+"settings.security.notifications.title" = "Notifications";
+"settings.security.notifications.summary.on" = "Status toasts, security alerts, and sounds are enabled (see Notifications tab).";
+"settings.security.notifications.summary.off" = "All notification channels are off — menu bar icon only.";
+"settings.security.openNotifications" = "Customize notifications…";
 
 /* Language */
 "settings.language.title" = "Language";
@@ -49,6 +63,7 @@
 "settings.network.remote.triggerExample" = "Trigger actions: %@";
 "settings.network.remote.armExample" = "Arm remotely: %@";
 "settings.network.remote.panicExample" = "Panic trigger (panic-armed only): %@";
+"settings.network.disableWiFi.warning" = "Disabling Wi‑Fi blocks Find My remote lock, erase, and location until Wi‑Fi is back on (Ethernet unaffected).";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
@@ -197,6 +212,9 @@
 "menu.eventLog.hint" = "Open the application event log";
 "menu.about" = "About MagSafe Guard...";
 "menu.about.label" = "About MagSafe Guard";
+"menu.showOnboarding" = "Show Introduction...";
+"menu.showOnboarding.label" = "Show Introduction";
+"menu.showOnboarding.hint" = "Open the getting started guide";
 "menu.about.hint" = "Show version and copyright information";
 "menu.quit" = "Quit MagSafe Guard";
 "menu.quit.hint" = "Exit the application completely";
@@ -224,8 +242,12 @@
 "app.quit.grace.confirm" = "Quit Anyway";
 
 /* About */
-"about.copyright" = "Copyright © 2025 Marc Seitz. Original software © 2025 Tobias Lekman.";
-"about.credits.body" = "MagSafe Guard — Fork\n\nMaintained by Marc Seitz\nhttps://github.com/sutz2001/MagSafe-BusKill\n\nOriginal software: MagSafe Guard\nCopyright © 2025 Tobias Lekman\nhttps://github.com/lekman/magsafe-buskill\n\nFork modifications\nCopyright © 2025 Marc Seitz\n\nMIT License\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+"about.copyright" = "Copyright © 2026 Marc Seitz\nCopyright © 2025 original software";
+"about.credits.title" = "MagSafe Guard — Fork";
+"about.credits.maintainer" = "Maintained by Marc Seitz";
+"about.credits.upstream.label" = "Original software: MagSafe Guard";
+"about.credits.license" = "Licensed under the MIT License.";
+"about.credits.license.link" = "View license";
 
 /* Auto-arm notifications */
 "autoArm.disabled.title" = "Auto-Arm Disabled";
@@ -369,6 +391,7 @@
 "networkAction.webhook.name" = "HTTP Webhook";
 "networkAction.disconnectVPN.name" = "Disconnect VPN";
 "networkAction.clearSSHAgent.name" = "Clear SSH Agent";
+"networkAction.clearClipboard.name" = "Clear Clipboard";
 "networkAction.disableWiFi.name" = "Disable Wi-Fi";
 
 /* App states */
@@ -381,8 +404,13 @@
 "onboarding.windowTitle" = "Welcome to MagSafe Guard";
 "onboarding.welcome.title" = "Welcome to MagSafe Guard";
 "onboarding.welcome.body" = "Turn your power cable into a dead-man's switch. Arm protection when you work in public spaces.";
+"onboarding.welcome.fileVaultTip" = "Tip: Enable FileVault (System Settings → Privacy & Security) so your data stays encrypted if the Mac is stolen.";
 "onboarding.arm.title" = "Arm Before You Leave";
 "onboarding.arm.body" = "Arm protection from the menu bar. Unplugging the adapter starts a grace period, then security actions run.";
+"onboarding.arm.modes.title" = "Protection modes";
+"onboarding.arm.modes.normal" = "Normal — lock, alarm, 30 s grace, notifications";
+"onboarding.arm.modes.discreet" = "Discreet — lock only, 20 s grace, no sounds or notifications";
+"onboarding.arm.modes.panic" = "Panic — lock + logout, network cut-off; arm Panic from menu for instant response";
 "onboarding.grace.title" = "Grace Period";
 "onboarding.grace.body" = "You have time to cancel with Touch ID or your password. Default grace period is 30 seconds.";
 "onboarding.permissions.title" = "Permissions";
@@ -390,6 +418,9 @@
 "onboarding.back" = "Back";
 "onboarding.next" = "Next";
 "onboarding.done" = "Get Started";
+"onboarding.pageIndicator.label" = "Step %d of %d";
+"onboarding.pageIndicator.current" = "Current step %d of %d";
+"onboarding.pageIndicator.other" = "Step %d of %d";
 
 /* Notification actions */
 "notification.cancelAction" = "Cancel Action";

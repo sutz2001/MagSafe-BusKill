@@ -1,7 +1,7 @@
 # MagSafe Guard — User Guide (mini)
 
 **Language:** English · [Deutsch (user-guide.de.md)](user-guide.de.md)  
-**Version:** fork **0.5.0** (build 9) · August 2026
+**Version:** fork **0.5.1** (build 10) · September 2026
 
 Short, practical guide for everyday use. Technical details: [operating-modes.md](operating-modes.md) · Panic design: [panic-modes.md](panic-modes.md)
 
@@ -14,13 +14,37 @@ MagSafe Guard is a **menu bar dead-man's switch**:
 1. You **arm** protection (Touch ID / password).
 2. While armed, **unplugging** the power adapter starts a **grace period** (default 30 seconds).
 3. When grace ends (or immediately if grace = 0), **security actions** run (lock screen, alarm, logout, shutdown, custom script).
-4. Optional **network actions** (webhook, VPN off, SSH agent clear, Wi‑Fi off) run on the same trigger.
+4. Optional **network actions** (webhook, VPN off, SSH agent clear, clipboard clear, Wi‑Fi off) run on the same trigger.
 
 If the system is **disarmed**, unplugging does **nothing**.
 
+The app runs from the **menu bar** by default (**Show in Dock** is off in Settings → General). Enable the Dock icon if you prefer a Dock shortcut.
+
 ---
 
-## 2. Normal mode — daily workflow
+## 2. Operation profiles (settings presets)
+
+**Settings → Security** (top of the tab) offers three **operation profiles**. Choosing one applies a bundle of defaults; you can still tweak individual settings afterward.
+
+| Profile | Grace | Security actions | Notifications | Dock | Network actions |
+|---------|-------|------------------|---------------|------|-----------------|
+| **Normal** | 30 s | Lock + alarm | On | Your choice | None |
+| **Discreet** | 20 s | Lock only | Off (icon only) | Hidden | None |
+| **Panic** (preset) | 5 s | Lock + force logout | Off | Hidden | VPN off, SSH clear, clipboard clear |
+
+**Notes:**
+
+- The segmented control **stays on the profile you picked** even if you change a single toggle (there is no automatic switch to “Custom”).
+- If settings no longer match the preset, use **Reset to [profile] defaults** under the caption.
+- **Panic preset ≠ Arm Panic Mode** (see §5). The preset configures normal armed behavior; **Arm Panic Mode** from the menu is a separate high-assurance armed state with **0 s grace** and immediate shutdown.
+
+**Grace period** and **allow cancel during grace** are on the same **Security** tab, below the profile picker (5–30 s slider).
+
+**Notifications:** link **Customize notifications…** to open the Notifications tab, or use the **Discreet** profile for all-off defaults.
+
+---
+
+## 3. Normal mode — daily workflow
 
 ### Arm and disarm
 
@@ -29,21 +53,40 @@ If the system is **disarmed**, unplugging does **nothing**.
 | Arm | Menu bar icon → **Arm Protection** (or **⌘A** when menu is open) |
 | Disarm | Menu → **Disarm Protection** + Touch ID / password |
 | Event log | **⌘L** or menu → **View Event Log** |
-| Settings | **⌘,** or menu → **Settings** |
+| Settings | **⌘,** or menu → **Settings** (opens on **Security** tab) |
 
 ### Grace period
 
-- Countdown appears in the **menu bar** (unless discreet mode — see §3).
+- Countdown appears in the **menu bar** (unless notifications/alerts are off — see §4).
 - **Reconnect power** during grace → grace is **cancelled**, system stays **armed**.
-- **Cancel grace** (if enabled in Settings → General) → Touch ID / password required.
+- **Cancel grace** (if enabled on Security tab) → Touch ID / password required.
 
-### Configure actions
+### Security actions
 
-**Settings → Security**
+**Settings → Security** — enable/disable the five action types, drag to **reorder**.
 
-- Enable/disable the five action types.
-- Drag to **reorder** (normal armed mode uses your order after lock-first optimization on cable trigger).
-- **Network** section: webhook, VPN, SSH, Wi‑Fi, remote URL token.
+On a cable trigger (normal armed), lock screen runs **first**, then other enabled actions (protection-first path).
+
+### Network actions
+
+**Settings → Security → Network**
+
+| Action | What it does |
+|--------|----------------|
+| HTTP Webhook | POST JSON `{event, source, timestamp}`; optional Bearer token |
+| Disconnect VPN | Stop active VPN |
+| Clear SSH Agent | `ssh-add -D` |
+| Clear Clipboard | Empty macOS pasteboard (universal) |
+| Disable Wi‑Fi | Turn off Wi‑Fi — **orange warning** (may affect Find My lock/erase/location) |
+
+Wi‑Fi off is **not** enabled by any preset (keeps Find My). Webhooks stay user-specific.
+
+### Custom scripts (optional)
+
+**Settings → Advanced → Custom Scripts** — add paths under `~/.magsafe/scripts/` or `/usr/local/magsafe-scripts/`.  
+Examples: [docs/examples/scripts/README.md](../examples/scripts/README.md) (browser quit, browsing data best-effort).
+
+Enable **Custom Script** in Security actions when a path is configured.
 
 ### Remote trigger (optional)
 
@@ -53,17 +96,19 @@ If enabled in **Settings → Security → Remote Trigger**:
 |-----|--------|
 | `magsafeguard://arm?token=YOUR_TOKEN` | Arm without interactive auth (when disarmed) |
 | `magsafeguard://trigger?token=YOUR_TOKEN` | Run actions when **normally** armed |
-| `magsafeguard://panic?token=YOUR_TOKEN` | Panic response when **panic-armed** (see §4) |
+| `magsafeguard://panic?token=YOUR_TOKEN` | Panic response when **panic-armed** (see §5) |
 
 Use from **Shortcuts** on iPhone/Mac. Keep the token secret.
 
 ---
 
-## 3. Discreet operation (v0.4.3)
+## 4. Discreet operation
 
-For low-visibility use (e.g. café, meeting): only the **menu bar icon** changes — no sounds or macOS notifications.
+**Low visibility:** menu bar icon only — no sounds or macOS notifications.
 
-**Settings → Notifications**
+**Fast path:** choose **Discreet** operation profile (Settings → Security).
+
+**Manual path:** **Settings → Notifications** — turn off all three:
 
 | Toggle | When off |
 |--------|----------|
@@ -71,75 +116,74 @@ For low-visibility use (e.g. café, meeting): only the **menu bar icon** changes
 | Show security alerts | No grace banner; no countdown text in menu bar |
 | Play critical alert sound | No beep when grace starts |
 
-**All three off** → discreet operation (icon only). Grace still runs; you can still disarm via menu.
+Grace still runs; you can still disarm via the menu.
 
 ---
 
-## 4. Panic mode (v0.5.0)
+## 5. Panic protection mode (v0.5.0)
 
-**Panic** is a separate, high-assurance profile: **no grace period**, **no cancel** during response, **immediate shutdown** after lock/logout/network actions. **No file deletion.**
+**Arm Panic Mode…** from the menu is separate from the **Panic** operation profile in Settings.
 
-### When to use
+| | Panic **profile** (Settings) | Panic **protection mode** (menu) |
+|---|------------------------------|----------------------------------|
+| Purpose | Aggressive defaults for **normal** armed use | Maximum response when cable is pulled |
+| Grace on disconnect | 5 s (configurable) | **0 s** — immediate |
+| Cancel during response | Per settings | **No** |
+| Shutdown | Per your security actions | **Immediate** |
+| How to enable | Settings → Security → Panic | Menu → **Arm Panic Mode…** + auth |
 
-Travel, high-risk environments, or when you want the Mac unusable instantly if the cable is pulled — without waiting 30 seconds.
+When **panic-armed**, unplugging runs the panic pipeline regardless of the profile grace slider.
 
-### How to arm panic
+### How to arm panic protection
 
 1. Menu bar → **Arm Panic Mode…** (shortcut **⌘P** when menu is open).
 2. **First time only:** read the short legal notice → **I Understand — Arm Panic**.
 3. Authenticate with Touch ID / password.
 4. Menu bar icon switches to the **triggered** style while panic-armed.
 
-To leave panic mode: menu → **Disarm Protection** (normal disarm flow).
+To leave: menu → **Disarm Protection** (normal disarm flow).
 
 ### How to trigger panic (when panic-armed)
 
 | Trigger | What happens |
 |---------|----------------|
 | **Unplug cable** | Immediate panic pipeline |
-| **⌃⌘P** (Control+Command+P) | Same — works **globally** while MagSafe Guard is running |
+| **⌃⌘P** (Control+Command+P) | Same — **globally** while MagSafe Guard is running |
 | `magsafeguard://panic?token=…` | Same — remote (Shortcuts, another device) |
 
-**⌃⌘P** tips:
+**⌃⌘P** only works when **panic-armed**; ignored when disarmed or normal-armed.
 
-- **P** = Panic (easy to remember).
-- **Control** avoids conflicting with **⌘P** (Print).
-- No Accessibility permission required.
-- Only works when you are **panic-armed**; ignored in normal/disarmed state.
+### What panic protection does
 
-### What panic does
-
-1. Network actions (if enabled)
+1. Enabled **network actions** (preset includes VPN, SSH, clipboard — plus any you added)
 2. Lock screen **first**, then logout/alarm in parallel
 3. **Immediate shutdown** (no 1-minute macOS dialog)
 
-**Does not:** delete files, wipe disks, or show a cancel dialog.
+**Does not:** delete files or wipe disks.
 
 ### ⚠️ Warnings
 
 - **Unsaved work may be lost.**
 - Test only on a machine you can afford to shut down.
 - **Work devices:** check employer policy before using panic on a managed Mac.
-- Reconnecting power during panic response **does not** cancel the shutdown.
+- Reconnecting power during panic response **does not** cancel shutdown.
 
 ---
 
-## 5. Normal vs panic — quick comparison
+## 6. Quick comparison
 
-| | Normal armed | Panic armed |
-|---|--------------|-------------|
-| Grace period | 5–30 s (default 30) | **0 s** |
-| Cancel during grace | Yes (if enabled) | **No** |
-| Cable reconnect during response | Cancels grace | **No effect** |
-| Shutdown | Scheduled (configurable delay) | **Immediate** |
-| Hotkey | — | **⌃⌘P** |
-| Data deletion | No | No |
+| | Normal armed | Discreet profile | Panic profile | Panic **protection** armed |
+|---|--------------|------------------|---------------|----------------------------|
+| Typical grace | 30 s | 20 s | 5 s | **0 s** |
+| Notifications | On | Off | Off | Off |
+| Shutdown on cable | Configurable delay | Configurable | Logout + your order | **Immediate** |
+| Hotkey | — | — | — | **⌃⌘P** |
 
-**Paranoid mode** (data destruction) is **not** implemented — planned v0.6.0.
+**Paranoid mode** (data destruction) is **not** implemented — planned v0.6.0 (will reuse panic-style network baseline including clipboard clear).
 
 ---
 
-## 6. Auto-arm (optional)
+## 7. Auto-arm (optional)
 
 **Settings → Auto-Arm**
 
@@ -149,12 +193,13 @@ To leave panic mode: menu → **Disarm Protection** (normal disarm flow).
 
 ---
 
-## 7. Troubleshooting
+## 8. Troubleshooting
 
 | Problem | Check |
 |---------|--------|
 | Unplugging does nothing | System is **disarmed** |
 | No menu bar icon | App running? Check menu bar overflow (•••) |
+| Can't find app | Settings → General → **Show in Dock** on, or use Spotlight |
 | Hotkey ⌃⌘P does nothing | Must be **panic-armed**; app must be running |
 | Remote URL ignored | Token correct? Remote trigger enabled in Settings? |
 | Build expired after ~7 days | Personal Team — rebuild with `task release` or Xcode |
@@ -163,12 +208,13 @@ More: [maintainers/troubleshooting.md](../maintainers/troubleshooting.md)
 
 ---
 
-## 8. Further reading
+## 9. Further reading
 
 | Document | Audience |
 |----------|----------|
 | [operating-modes.md](operating-modes.md) | Full state machine & technical flows |
 | [panic-modes.md](panic-modes.md) | Panic/Paranoid design & legal notes |
+| [examples/scripts/README.md](../examples/scripts/README.md) | Example custom scripts |
 | [behavior-gaps.md](behavior-gaps.md) | Resolved vs open UI/runtime items |
 | [FORK_CHANGELOG.md](../FORK_CHANGELOG.md) | Release history |
 | [README.md](../../README.md) | Build, install, roadmap |

@@ -17,12 +17,11 @@ import UniformTypeIdentifiers
 public struct SettingsView: View {
   @ObservedObject private var settingsManager = UserDefaultsManager.shared
   @ObservedObject private var languageManager = LanguageManager.shared
-  @State private var selectedTab: SettingsTab? = .general
+  @State private var selectedTab: SettingsTab? = .security
 
-  /// Initializes the settings view with the general tab selected
+  /// Initializes the settings view with the security tab selected
   public init() {
-    // Ensure we have an initial selection
-    _selectedTab = State(initialValue: .general)
+    _selectedTab = State(initialValue: .security)
   }
 
   private enum SettingsTab: CaseIterable, Identifiable {
@@ -79,32 +78,32 @@ public struct SettingsView: View {
       .listStyle(SidebarListStyle())
     } detail: {
       // Detail view
-      if let selectedTab = selectedTab {
-        switch selectedTab {
+      if let tab = selectedTab {
+        switch tab {
         case .general:
           GeneralSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(selectedTab.title)
+            .navigationTitle(tab.title)
         case .security:
-          SecuritySettingsView()
+          SecuritySettingsView(onOpenNotifications: { selectedTab = .notifications })
             .environmentObject(settingsManager)
-            .navigationTitle(selectedTab.title)
+            .navigationTitle(tab.title)
         case .autoArm:
           AutoArmSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(selectedTab.title)
+            .navigationTitle(tab.title)
         case .notifications:
           NotificationSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(selectedTab.title)
+            .navigationTitle(tab.title)
         case .cloudSync:
           CloudSyncSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(selectedTab.title)
+            .navigationTitle(tab.title)
         case .advanced:
           AdvancedSettingsView()
             .environmentObject(settingsManager)
-            .navigationTitle(selectedTab.title)
+            .navigationTitle(tab.title)
         }
       } else {
         Text(l10n: "settings.selectCategory")
@@ -137,14 +136,6 @@ struct GeneralSettingsView: View {
   private var generalSettingsContent: some View {
     VStack(alignment: .leading, spacing: 16) {
       languageSection
-
-      Divider()
-
-      gracePeriodSection
-
-      Divider()
-
-      allowCancellationToggle
 
       Divider()
 
@@ -185,6 +176,184 @@ struct GeneralSettingsView: View {
       get: { languageManager.preference },
       set: { languageManager.setPreference($0) }
     )
+  }
+
+  private var restoreArmedStateToggle: some View {
+    Toggle(
+      isOn: Binding(
+        get: { settingsManager.settings.restoreArmedStateOnLaunch },
+        set: { settingsManager.updateSetting(\.restoreArmedStateOnLaunch, value: $0) }
+      )
+    ) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(l10n: "settings.general.restoreArmed.title")
+        Text(l10n: "settings.general.restoreArmed.caption")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+    }
+  }
+
+  private var launchAtLoginToggle: some View {
+    Toggle(
+      isOn: Binding(
+        get: { settingsManager.settings.launchAtLogin },
+        set: { settingsManager.updateSetting(\.launchAtLogin, value: $0) }
+      )
+    ) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(l10n: "settings.general.launchAtLogin.title")
+        Text(l10n: "settings.general.launchAtLogin.caption")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+    }
+  }
+
+  private var showInDockToggle: some View {
+    Toggle(
+      isOn: Binding(
+        get: { settingsManager.settings.showInDock },
+        set: { settingsManager.updateSetting(\.showInDock, value: $0) }
+      )
+    ) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(l10n: "settings.general.showInDock.title")
+        Text(showInDockCaption)
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+    }
+    .disabled(forcesHiddenDockWhileArmed)
+  }
+
+  private var forcesHiddenDockWhileArmed: Bool {
+    guard let appDelegate = NSApp.delegate as? AppDelegate else { return false }
+    let controller = appDelegate.core.appController
+    return controller.protectionMode.forcesHiddenDock && controller.currentState != .disarmed
+  }
+
+  private var showInDockCaption: String {
+    if forcesHiddenDockWhileArmed {
+      return L10n.tr("settings.general.showInDock.caption.panicArmed")
+    }
+    return L10n.tr("settings.general.showInDock.caption")
+  }
+}
+
+// MARK: - Protection Mode & Grace (Security tab)
+
+struct ProtectionModeSettingsSections: View {
+  @EnvironmentObject var settingsManager: UserDefaultsManager
+  var onOpenNotifications: () -> Void = {}
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      operationProfileSection
+
+      Divider()
+
+      notificationsLinkSection
+
+      Divider()
+
+      gracePeriodSection
+
+      Divider()
+
+      allowCancellationToggle
+    }
+    .padding(.vertical, 4)
+  }
+
+  private var notificationsLinkSection: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text(l10n: "settings.security.notifications.title")
+        .font(.headline)
+
+      Text(notificationsSummary)
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      Button(L10n.tr("settings.security.openNotifications")) {
+        onOpenNotifications()
+      }
+      .buttonStyle(.link)
+      .font(.caption)
+    }
+  }
+
+  private var notificationsSummary: String {
+    if settingsManager.settings.isDiscreetOperation {
+      return L10n.tr("settings.security.notifications.summary.off")
+    }
+    return L10n.tr("settings.security.notifications.summary.on")
+  }
+
+  private var operationProfileSection: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(l10n: "settings.general.operationProfile.title")
+        .font(.headline)
+
+      Picker(selection: operationProfileBinding) {
+        ForEach(OperationProfile.selectableCases, id: \.self) { profile in
+          Text(operationProfileTitle(profile)).tag(profile)
+        }
+      } label: {
+        EmptyView()
+      }
+      .labelsHidden()
+      .pickerStyle(.segmented)
+
+      Text(operationProfileCaption)
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      if !profileUsesDefaults {
+        Button(L10n.tr(
+          "settings.general.operationProfile.reset",
+          operationProfileTitle(settingsManager.settings.operationProfile.selectable)
+        )) {
+          settingsManager.resetCurrentOperationProfile()
+        }
+        .buttonStyle(.link)
+        .font(.caption)
+      }
+    }
+  }
+
+  private var profileUsesDefaults: Bool {
+    OperationProfilePresets.isUsingDefaults(
+      for: settingsManager.settings.operationProfile,
+      settings: settingsManager.settings
+    )
+  }
+
+  private var operationProfileBinding: Binding<OperationProfile> {
+    Binding(
+      get: { settingsManager.settings.operationProfile.selectable },
+      set: { settingsManager.applyOperationProfile($0) }
+    )
+  }
+
+  private func operationProfileTitle(_ profile: OperationProfile) -> String {
+    switch profile {
+    case .normal: return L10n.tr("settings.general.operationProfile.normal")
+    case .discreet: return L10n.tr("settings.general.operationProfile.discreet")
+    case .panic: return L10n.tr("settings.general.operationProfile.panic")
+    case .custom: return L10n.tr("settings.general.operationProfile.custom")
+    }
+  }
+
+  private var operationProfileCaption: String {
+    let key: String
+    switch settingsManager.settings.operationProfile.selectable {
+    case .normal: key = "settings.general.operationProfile.normal.caption"
+    case .discreet: key = "settings.general.operationProfile.discreet.caption"
+    case .panic: key = "settings.general.operationProfile.panic.caption"
+    case .custom: key = "settings.general.operationProfile.normal.caption"
+    }
+    return L10n.tr(key)
   }
 
   private var gracePeriodSection: some View {
@@ -243,63 +412,21 @@ struct GeneralSettingsView: View {
       }
     }
   }
-
-  private var restoreArmedStateToggle: some View {
-    Toggle(
-      isOn: Binding(
-        get: { settingsManager.settings.restoreArmedStateOnLaunch },
-        set: { settingsManager.updateSetting(\.restoreArmedStateOnLaunch, value: $0) }
-      )
-    ) {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(l10n: "settings.general.restoreArmed.title")
-        Text(l10n: "settings.general.restoreArmed.caption")
-          .font(.caption)
-          .foregroundColor(.secondary)
-      }
-    }
-  }
-
-  private var launchAtLoginToggle: some View {
-    Toggle(
-      isOn: Binding(
-        get: { settingsManager.settings.launchAtLogin },
-        set: { settingsManager.updateSetting(\.launchAtLogin, value: $0) }
-      )
-    ) {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(l10n: "settings.general.launchAtLogin.title")
-        Text(l10n: "settings.general.launchAtLogin.caption")
-          .font(.caption)
-          .foregroundColor(.secondary)
-      }
-    }
-  }
-
-  private var showInDockToggle: some View {
-    Toggle(
-      isOn: Binding(
-        get: { settingsManager.settings.showInDock },
-        set: { settingsManager.updateSetting(\.showInDock, value: $0) }
-      )
-    ) {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(l10n: "settings.general.showInDock.title")
-        Text(l10n: "settings.general.showInDock.caption")
-          .font(.caption)
-          .foregroundColor(.secondary)
-      }
-    }
-  }
 }
 
 // MARK: - Security Settings Tab
 
 struct SecuritySettingsView: View {
   @EnvironmentObject var settingsManager: UserDefaultsManager
+  var onOpenNotifications: () -> Void = {}
 
   var body: some View {
     Form {
+      Section {
+        ProtectionModeSettingsSections(onOpenNotifications: onOpenNotifications)
+          .environmentObject(settingsManager)
+      }
+
       Section(header: securityActionsHeaderText) {
         enabledActionsSection
       }
@@ -327,8 +454,15 @@ struct SecuritySettingsView: View {
         .foregroundColor(.secondary)
 
       ForEach(NetworkActionType.allCases, id: \.self) { action in
-        Toggle(isOn: networkActionBinding(action)) {
-          Label(action.localizedName, systemImage: action.symbolName)
+        VStack(alignment: .leading, spacing: 4) {
+          Toggle(isOn: networkActionBinding(action)) {
+            Label(action.localizedName, systemImage: action.symbolName)
+          }
+          if action == .disableWiFi, settingsManager.settings.enabledNetworkActions.contains(.disableWiFi) {
+            Text(l10n: "settings.network.disableWiFi.warning")
+              .font(.caption)
+              .foregroundColor(.orange)
+          }
         }
       }
 

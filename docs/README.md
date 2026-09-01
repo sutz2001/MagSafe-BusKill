@@ -8,7 +8,7 @@ This documentation is organized by audience and role to help you find the inform
 
 ### For Users
 
-- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): normal mode, discreet operation, panic mode, hotkey
+- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): **operation profiles** (Normal / Discreet / Panic), discreet use, **panic protection mode**, hotkey
 - [Operating Modes & Flows](features/operating-modes.md) - What each state/mode does (with diagrams)
 - [Behavior Gaps](features/behavior-gaps.md) - Known UI vs runtime mismatches
 - [Panic & Paranoid modes](features/panic-modes.md) - Panic shipped (v0.5); Paranoid planned (v0.6)
@@ -106,6 +106,7 @@ Archived upstream-only: [SSDLC case study](archive/ssdlc-case-study.md) · [Secu
 - [User guide (mini)](features/user-guide.md) · [DE](features/user-guide.de.md)
 - [Operating modes](features/operating-modes.md)
 - [Panic & Paranoid modes](features/panic-modes.md)
+- [Example custom scripts](examples/scripts/README.md) — browser quit, clipboard, browsing data (copy to `~/.magsafe/scripts/`)
 - [Feature Flags](features/flags.md) - Runtime configuration options
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 

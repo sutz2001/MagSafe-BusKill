@@ -3,6 +3,22 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.1] — 2026-09-01
+
+### Added
+
+- **Operation profiles** (Normal / Discreet / Panic) on Settings → Security — presets with reset-to-defaults
+- **Clear clipboard** network action (`NSPasteboard`); enabled in Panic preset and planned paranoid baseline
+- Example custom scripts: [docs/examples/scripts/](examples/scripts/) (browser quit, browsing data, clipboard)
+- About panel: clickable repo/license links; copyright via `InfoPlist.strings`
+
+### Changed
+
+- Settings → **Security** tab: operation mode, grace period, security + network actions consolidated
+- Default **Show in Dock** off (menu bar first); dock hidden for Discreet/Panic presets and while panic/paranoid armed
+- Panic preset network actions: VPN + SSH + clipboard (no Wi‑Fi off — Find My)
+- User guides, README EN/DE, and technical docs updated (operation profiles vs panic protection mode)
+
 ## [0.5.0] — 2026-08-31
 
 ### Added

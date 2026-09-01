@@ -240,6 +240,15 @@ public class AppDelegateCore {
 
     menu.addItem(NSMenuItem.separator())
 
+    let introItem = NSMenuItem.accessibleMenuItem(
+      title: L10n.tr("menu.showOnboarding"),
+      accessibilityLabel: L10n.tr("menu.showOnboarding.label"),
+      hint: L10n.tr("menu.showOnboarding.hint"),
+      action: #selector(AppDelegate.showOnboarding),
+      target: appDelegate
+    )
+    menu.addItem(introItem)
+
     // About item
     let aboutItem = NSMenuItem.accessibleMenuItem(
       title: L10n.tr("menu.about"),

@@ -3,6 +3,7 @@
 //  MagSafe Guard
 //
 
+import AppKit
 import Foundation
 import MagSafeGuardCore
 
@@ -72,6 +73,10 @@ public final class MacNetworkActions: NetworkActionsProtocol {
 
   public func clearSSHAgent() throws {
     try runShell("/usr/bin/ssh-add", args: ["-D"])
+  }
+
+  public func clearClipboard() throws {
+    NSPasteboard.general.clearContents()
   }
 
   public func disableWiFi() throws {

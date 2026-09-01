@@ -30,22 +30,18 @@ The settings system provides a comprehensive UI for configuring application beha
 
 ### General Settings
 
-- **Grace Period Duration**: 5-30 seconds slider
-- **Allow Grace Period Cancellation**: Toggle for authentication during grace period
 - **Launch at Login**: Auto-start application
-- **Show in Dock**: Display dock icon (vs menu bar only)
+- **Show in Dock**: Display dock icon (default **off** — menu bar only)
+- **Language**: System / EN / DE
 
-### Security Settings
+### Security Settings (default tab)
 
-- **Security Actions**: Ordered list of actions to execute
-  - Lock Screen
-  - Log Out
-  - Shut Down
-  - Unmount External Volumes
-  - Clear Clipboard
-  - Run Custom Script
-- Drag-and-drop reordering
-- Add/remove actions dynamically
+- **Operation profile**: Normal / Discreet / Panic presets (`OperationProfilePresets`)
+- **Grace period**: 5–30 s slider + allow cancellation toggle
+- **Notifications summary** + link to Notifications tab
+- **Security actions**: Ordered list (lock, alarm, logout, shutdown, custom script)
+- **Network actions**: Webhook, VPN, SSH agent, clipboard, Wi‑Fi off
+- **Remote trigger**: `magsafeguard://` token and URL examples
 
 ### Auto-Arm Settings
 
@@ -56,13 +52,14 @@ The settings system provides a comprehensive UI for configuring application beha
 
 ### Notification Settings
 
-- **Show Status Changes**: Notifications for arm/disarm
-- **Play Alert Sound**: Critical alert sounds
-- Link to system notification preferences
+- **Show status notifications**: Arm/disarm toasts
+- **Show security alerts**: Grace banner + menu countdown
+- **Play critical alert sound**: Beep on grace start
+- All three off → discreet operation (or use **Discreet** operation profile)
 
 ### Advanced Settings
 
-- **Custom Scripts**: Shell scripts for security actions
+- **Custom Scripts**: Shell scripts (`~/.magsafe/scripts/`, `/usr/local/magsafe-scripts/`) — see [examples/scripts/README.md](../../examples/scripts/README.md)
 - **Debug Logging**: Verbose logging for troubleshooting
 - **Import/Export**: Settings backup and restore
 - **Reset to Defaults**: Factory reset option

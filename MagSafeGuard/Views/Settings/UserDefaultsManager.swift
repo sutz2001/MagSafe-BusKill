@@ -99,6 +99,7 @@ public class UserDefaultsManager: ObservableObject {
     self.userDefaults = userDefaults
 
     // Load settings first (before any service initialization)
+    let savedVersion = userDefaults.integer(forKey: Keys.settingsVersion)
     if let loadedSettings = Self.loadSettings(from: userDefaults) {
       self.settings = loadedSettings
     } else {
@@ -117,6 +118,8 @@ public class UserDefaultsManager: ObservableObject {
 
     // Save settings after all initialization
     if Self.loadSettings(from: userDefaults) == nil {
+      self.saveSettings()
+    } else if savedVersion < currentSettingsVersion {
       self.saveSettings()
     }
 
@@ -189,6 +192,19 @@ public class UserDefaultsManager: ObservableObject {
     saveSettings()
   }
 
+  /// Applies a Normal / Discreet / Panic preset bundle (notifications, actions, dock for discreet/panic).
+  public func applyOperationProfile(_ profile: OperationProfile) {
+    let selectable = profile.selectable
+    updateSettings { settings in
+      OperationProfilePresets.apply(selectable, to: &settings)
+    }
+  }
+
+  /// Re-applies factory defaults for the currently selected operation profile.
+  public func resetCurrentOperationProfile() {
+    applyOperationProfile(settings.operationProfile.selectable)
+  }
+
   /// Resets all settings to their default values.
   ///
   /// This operation creates a new Settings instance with default values
@@ -231,6 +247,10 @@ public class UserDefaultsManager: ObservableObject {
   // MARK: - Private Methods
 
   private func saveSettings() {
+    if settings.operationProfile == .custom {
+      settings.operationProfile = .normal
+    }
+
     do {
       let data = try encoder.encode(settings)
       userDefaults.set(data, forKey: Keys.settings)
@@ -240,6 +260,7 @@ public class UserDefaultsManager: ObservableObject {
       userDefaults.synchronize()
 
       SettingsRuntimeApplier.apply(settings)
+      SettingsRuntimeApplier.applyDockVisibility(settings: settings)
 
       // Trigger cloud sync
       if let syncService = syncService {
@@ -267,6 +288,7 @@ public class UserDefaultsManager: ObservableObject {
         guard let self else { return }
         self.settings = reloadedSettings
         SettingsRuntimeApplier.apply(reloadedSettings)
+        SettingsRuntimeApplier.applyDockVisibility(settings: reloadedSettings)
       }
     }
   }
@@ -294,18 +316,40 @@ public class UserDefaultsManager: ObservableObject {
   }
 
   private static func migrateSettings(_ settings: Settings, from version: Int) -> Settings {
-    // Placeholder for future migrations
-    // When settings format changes, implement migration logic here
-    return settings
+    var migrated = settings
+    if version < 2 {
+      // v0.5.x: dock on briefly after LSUIElement removal (superseded by v3 default).
+      migrated.showInDock = true
+    }
+    if version < 3 {
+      // Menu-bar-only default; dock only when explicitly enabled in Settings.
+      migrated.showInDock = false
+    }
+    if version < 4 {
+      // v0.5.x: show in Dock by default so the app is discoverable after launch.
+      migrated.showInDock = true
+    }
+    if version < 5 {
+      let detected = OperationProfilePresets.detect(from: migrated)
+      migrated.operationProfile = detected == .custom ? .normal : detected
+    }
+    if version < 6 {
+      if migrated.operationProfile == .panic,
+        !migrated.enabledNetworkActions.contains(.clearClipboard)
+      {
+        migrated.enabledNetworkActions.append(.clearClipboard)
+      }
+    }
+    return migrated
   }
 
   private func onFirstLaunch() {
-    // Set sensible defaults for first launch
     updateSettings { settings in
+      OperationProfilePresets.apply(.normal, to: &settings)
+      settings.showInDock = false
       settings.showStatusNotifications = true
       settings.playCriticalAlertSound = true
       settings.gracePeriodDuration = 30.0
-      settings.securityActions = [SecurityActionType.lockScreen, SecurityActionType.soundAlarm]
     }
   }
 }

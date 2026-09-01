@@ -2,7 +2,7 @@
 
 **Audience:** Users, contributors, and maintainers who need to know what the app *actually does* at runtime (not what the UI implies).
 
-**Version:** documents behavior as of fork **0.5.0** (build 9).  
+**Version:** documents behavior as of fork **0.5.1** (build 10).  
 **Primary code:** `MagSafeGuard/Controllers/AppController.swift`, services under `MagSafeGuard/Services/`.
 
 **Related:** [Behavior gaps & fix backlog](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) (planned features) · [README](../../README.md)
@@ -17,10 +17,31 @@ MagSafe Guard is a **menu bar dead-man's switch**: when **armed**, unplugging ex
 |--------|----------------|
 | **Mode / state** | One of four `AppState` values (disarmed, armed, grace period, triggered) |
 | **Security action** | Lock screen, alarm, logout, shutdown, or custom script |
-| **Network action** | Webhook, VPN disconnect, SSH agent clear, Wi‑Fi off (v0.4.0) |
+| **Network action** | Webhook, VPN disconnect, SSH agent clear, clipboard clear, Wi‑Fi off (v0.4.0+) |
 | **Auto-arm** | Optional automatic *attempt* to arm when location/network rules fire |
 | **Remote trigger** | Optional `magsafeguard://` URL to arm or fire actions from Shortcuts |
 | **Panic mode** | Optional high-assurance profile: **0 grace**, protection-first actions, immediate shutdown on cable pull (see [§10 Panic mode](#10-panic--paranoid-modes)) |
+| **Operation profile** | Settings preset (**Normal** / **Discreet** / **Panic**) — grace, actions, notifications, network defaults for **normal** armed use (see [§1b](#1b-operation-profiles-v05x)) |
+
+---
+
+## 1b. Operation profiles (v0.5.x)
+
+User-facing presets in **Settings → Security** (`OperationProfile` in `OperationProfile.swift`). Applying a profile updates defaults; individual toggles can diverge without switching the picker away from the selected profile. **Reset to [profile] defaults** restores the bundle.
+
+| Profile | Grace | Cancel grace | Security actions | Notifications | Dock | Network actions |
+|---------|-------|--------------|------------------|---------------|------|-----------------|
+| **Normal** | 30 s | Yes | Lock + alarm | All on | Unchanged | None |
+| **Discreet** | 20 s | Yes | Lock only | All off | Hidden | None |
+| **Panic** (preset) | 5 s | No | Lock + force logout | All off | Hidden | VPN off, SSH clear, clipboard clear |
+
+**Not the same as panic protection mode:** `ProtectionMode.panic` (menu **Arm Panic Mode…**) forces **0 s grace** and `PanicModeExecutor` regardless of the profile grace slider. The **Panic** profile only configures settings for everyday armed use.
+
+**Wi‑Fi off** is never preset-enabled (Find My). **Webhook** is user-specific.
+
+**Paranoid** (`ProtectionMode.paranoid`, v0.6 planned) will use `OperationProfilePresets.paranoidNetworkActions` — same network baseline as panic preset today.
+
+**User guide:** [user-guide.md §2](user-guide.md#2-operation-profiles-settings-presets) · [DE](user-guide.de.md#2-betriebsmodi-einstellungs-presets)
 
 ---
 
@@ -117,10 +138,10 @@ sequenceDiagram
 
 ## 3. Grace period
 
-### Settings (General tab)
+### Settings (Security tab — operation profile section)
 
-| Setting | Default | Range / behavior |
-|---------|---------|------------------|
+| Setting | Default (Normal profile) | Range / behavior |
+|---------|--------------------------|------------------|
 | `gracePeriodDuration` | 30 s | Clamped **5–30 s** in `Settings.validated()` |
 | `allowGracePeriodCancellation` | `true` | Controls **auth-based** cancel only |
 
@@ -204,7 +225,8 @@ flowchart LR
 - Panic shutdown uses `executeImmediateShutdown()` (no dialog, no minimum delay).
 - Second `executeActions` call while running is **ignored**.
 
-Allowed script paths (README): `~/.magsafe/scripts/`, `/usr/local/magsafe-scripts/`.
+Allowed script paths (README): `~/.magsafe/scripts/`, `/usr/local/magsafe-scripts/`.  
+Example scripts (browser quit, clipboard, best-effort history): [examples/scripts/README.md](../examples/scripts/README.md).
 
 ---
 
@@ -217,6 +239,7 @@ Configured in **Settings → Security** (network section). Executed **once per t
 | **HTTP webhook** | POST JSON `{event, source, timestamp}` | `URLSession`; Bearer token from Keychain |
 | **Disconnect VPN** | Stop active VPN | AppleScript + `scutil --nc stop` |
 | **Clear SSH agent** | Remove loaded keys | `/usr/bin/ssh-add -D` |
+| **Clear clipboard** | Empty the system pasteboard | `NSPasteboard.general.clearContents()` |
 | **Disable Wi‑Fi** | Turn off Wi‑Fi interface | `networksetup -setairportpower off` |
 
 ```mermaid
@@ -226,10 +249,12 @@ flowchart TD
     W --> WH[webhook POST]
     W --> VPN[disconnect VPN]
     W --> SSH[ssh-add -D]
+    W --> CLIP[clear clipboard]
     W --> WIFI[Wi-Fi off]
     WH --> SA[SecurityActionsService]
     VPN --> SA
     SSH --> SA
+    CLIP --> SA
     WIFI --> SA
 ```
 
@@ -360,6 +385,7 @@ Auto-arm uses `armAutomatically()` after a 2 s notification delay — **no Touch
 | Grace period, allow cancel (General) | **Yes** |
 | Restore armed on launch (General) | **Yes** |
 | Security action list / order (Security) | **Yes** — synced via `SecurityActionsSettingsSync` |
+| Operation profile + grace (Security tab) | **Yes** — Normal / Discreet / Panic presets |
 | Network actions + webhook (Security) | **Yes** |
 | Remote trigger token (Security) | **Yes** |
 | Auto-arm toggles + trusted networks (Auto-Arm) | **Yes** |
@@ -375,25 +401,29 @@ Full gap list: [behavior-gaps.md](behavior-gaps.md).
 
 ---
 
-## 9b. Discreet operation (v0.4.3)
+## 9b. Discreet operation (v0.4.3+)
 
 Optional low-visibility mode: **menu bar icon only** — no macOS notifications and no alert sounds.
 
-| Setting (`Settings → Notifications`) | Effect when disabled |
-|--------------------------------------|----------------------|
+**Fast path:** **Discreet** operation profile (Settings → Security) — also hides Dock by default.
+
+**Manual path:** per-toggle under **Settings → Notifications**:
+
+| Setting | Effect when disabled |
+|---------|----------------------|
 | `showStatusNotifications` | No arm/disarm toasts |
 | `showSecurityAlerts` | No grace banner; no countdown text in menu bar |
 | `playCriticalAlertSound` | No beep on grace start |
 
 All three off → `isDiscreetOperation`. Grace period and state changes still run; only feedback is suppressed.
 
-**User guide:** [user-guide.md §3](user-guide.md#3-discreet-operation-v043) · [user-guide.de.md §3](user-guide.de.md#3-diskreter-betrieb-v043)
+**User guide:** [user-guide.md §4](user-guide.md#4-discreet-operation) · [user-guide.de.md §4](user-guide.de.md#4-diskreter-betrieb)
 
 ---
 
 ## 10. Panic & Paranoid modes
 
-**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md) · **Mini guide:** [user-guide.md](user-guide.md#4-panic-mode-v050)
+**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** not in codebase. Full design: [panic-modes.md](panic-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md) · **Mini guide:** [user-guide.md §5](user-guide.md#5-panic-protection-mode-v050)
 
 ### Panic mode (shipped v0.5.0)
 
@@ -456,9 +486,9 @@ flowchart TD
 | Remote URLs | `RemoteTriggerService.swift`, `AppDelegate.swift` |
 | Panic mode | `ProtectionMode.swift`, `PanicModeExecutor.swift`, `PanicHotkeyService.swift`, `AppController.armPanic()` |
 | Auto-arm | `AutoArmManager.swift`, `LocationManager.swift`, `NetworkMonitor.swift` |
-| Settings model | `MagSafeGuardLib/.../SettingsModel.swift`, `SettingsView.swift` |
+| Settings model | `MagSafeGuardLib/.../SettingsModel.swift`, `OperationProfile.swift`, `SettingsView.swift` |
 | Event log UI | `MagSafeGuard/Views/EventLog/EventLogView.swift` |
 
 ---
 
-*Last updated: 2026-08-31 (fork 0.5.0).*
+*Last updated: 2026-09-01 (fork 0.5.1).*

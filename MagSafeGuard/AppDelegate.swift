@@ -13,6 +13,7 @@ import UserNotifications
 
 class AppDelegate: NSObject, NSApplicationDelegate {
   var statusItem: NSStatusItem?
+
   private var settingsWindow: NSWindow?
   private var settingsHostingController: NSViewController?
   private var windowDelegates: [NSWindow: WindowDelegate] = [:]
@@ -25,10 +26,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   // MARK: - Application Lifecycle
 
+  func applicationWillFinishLaunching(_ notification: Notification) {
+    guard !isTestEnvironment else { return }
+
+    // Activation policy must be set before the menu bar item is created.
+    SettingsRuntimeApplier.markApplicationReady()
+    SettingsRuntimeApplier.currentProtectionMode = core.appController.protectionMode
+    SettingsRuntimeApplier.applyDockVisibility(settings: UserDefaultsManager.shared.settings)
+  }
+
   func applicationDidFinishLaunching(_ notification: Notification) {
-    // Skip normal initialization during tests
-    if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
-      || ProcessInfo.processInfo.environment["MAGSAFE_GUARD_TEST_MODE"] != nil {
+    guard !isTestEnvironment else {
       Log.info("Running in test environment, skipping normal initialization", category: .general)
       return
     }
@@ -39,15 +47,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Check for previous crashes
     checkForPreviousCrashes()
 
-    // Hide dock icon as this is a menu bar app
-    SettingsRuntimeApplier.applyDockVisibility(
-      showInDock: UserDefaultsManager.shared.settings.showInDock)
-
     if NSApp.applicationIconImage == nil {
       NSApp.applicationIconImage = NSImage(named: "AppIcon")
     }
 
-    // Setup AppController callbacks
     setupAppControllerCallbacks()
 
     // Only request notification permissions if we have a valid bundle
@@ -61,36 +64,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       Log.info("  3. Build and Run, then manually launch from build folder", category: .ui)
     }
 
-    // Create the status item - use a strong reference
     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-
-    // Ensure the status item is retained
     statusItem?.isVisible = true
 
     if let button = statusItem?.button {
-      // Set a title first to ensure visibility
-      button.title = "MG"
-
-      // Then try to set the icon
       updateStatusIcon()
       button.action = #selector(statusItemClicked)
       button.target = self
-
-      // Force the button to be visible
       button.appearsDisabled = false
-
-      // Log status
-      Log.debug("Status button created: \(button)", category: .ui)
-      Log.debug("Button frame: \(button.frame)", category: .ui)
-      Log.debug("Button superview: \(button.superview?.description ?? "nil")", category: .ui)
-      Log.debug("Button image: \(button.image?.description ?? "nil")", category: .ui)
-      Log.debug("Button title: \(button.title)", category: .ui)
+      Log.debug("Status button created", category: .ui)
     } else {
       Log.fault("Failed to create status button", category: .ui)
     }
 
-    // Create menu
     setupMenu()
+
+    setupAccessibilityFeatures()
+    setupGracePeriodObservation()
+    restoreArmedStateIfNeeded()
+    registerRemoteTriggerHandler()
+    registerPanicHotkey()
 
     NotificationCenter.default.addObserver(
       forName: .appLanguageDidChange,
@@ -102,19 +95,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       self?.settingsWindow?.title = L10n.tr("app.settingsWindow")
     }
 
-    // Configure accessibility features
-    setupAccessibilityFeatures()
-
-    setupGracePeriodObservation()
-    restoreArmedStateIfNeeded()
-
-    Task { @MainActor in
+    DispatchQueue.main.async {
       OnboardingPresenter.showIfNeeded(settingsManager: UserDefaultsManager.shared)
+      NSApp.activate(ignoringOtherApps: true)
     }
+  }
 
-    // AppController now handles power monitoring internally
-    registerRemoteTriggerHandler()
-    registerPanicHotkey()
+  func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+    guard !flag else { return true }
+    Task { @MainActor in
+      OnboardingPresenter.present()
+    }
+    return true
+  }
+
+  private var isTestEnvironment: Bool {
+    ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+      || ProcessInfo.processInfo.environment["MAGSAFE_GUARD_TEST_MODE"] != nil
   }
 
   private func registerPanicHotkey() {
@@ -177,18 +174,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func setupMenu() {
-    let menu = core.createMenu(for: self)
-    statusItem?.menu = menu
-  }
-
-  private func setupAccessibilityFeatures() {
-    // Configure accessibility manager
-    AccessibilityManager.shared.configureVoiceOverSupport()
-    AccessibilityManager.shared.configureKeyboardNavigation()
-
-    refreshStatusItemAccessibility()
-
-    Log.info("Accessibility features configured", category: .general)
+    statusItem?.menu = core.createMenu(for: self)
   }
 
   private func refreshStatusItemAccessibility() {
@@ -199,73 +185,79 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     button.setAccessibilityRole(.menuButton)
   }
 
+  private func setupAccessibilityFeatures() {
+    AccessibilityManager.shared.configureVoiceOverSupport()
+    AccessibilityManager.shared.configureKeyboardNavigation()
+    refreshStatusItemAccessibility()
+    Log.info("Accessibility features configured", category: .general)
+  }
+
   private func setupAppControllerCallbacks() {
-    // Handle state changes
     core.appController.onStateChange = { [weak self] _, _ in
       DispatchQueue.main.async {
         self?.updateStatusIcon()
         self?.setupMenu()
+        self?.refreshDockVisibility()
       }
     }
 
-    // Handle notifications
+    core.appController.$protectionMode
+      .receive(on: DispatchQueue.main)
+      .sink { mode in
+        SettingsRuntimeApplier.currentProtectionMode = mode
+        self.refreshDockVisibility()
+      }
+      .store(in: &cancellables)
+
     core.appController.onNotification = { [weak self] title, message in
       self?.showNotification(title: title, message: message)
     }
   }
 
   private func updateStatusIcon() {
-    if let button = statusItem?.button {
-      let statusDescription = core.appController.statusDescription
-      let imageName = core.statusMenuBarImageName()
-      let showGraceCountdown =
-        core.appController.currentState == .gracePeriod
-        && UserDefaultsManager.shared.settings.showSecurityAlerts
+    guard let button = statusItem?.button else { return }
 
-      if let image = NSImage(named: imageName),
-        let templateImage = image.copy() as? NSImage {
-        templateImage.isTemplate = true
-        button.image = templateImage
-        if showGraceCountdown {
-          let seconds = max(0, Int(ceil(core.appController.gracePeriodRemaining)))
-          button.title = L10n.tr("menu.graceCountdown", seconds)
-        } else {
-          button.title = ""
-        }
-        Log.debug("Menu bar icon updated: \(imageName)", category: .ui)
-      } else if let image = NSImage(systemSymbolName: core.statusIconName(), accessibilityDescription: Self.appName) {
-        guard let templateImage = image.copy() as? NSImage else { return }
-        templateImage.isTemplate = true
-        button.image = templateImage
-        if showGraceCountdown {
-          let seconds = max(0, Int(ceil(core.appController.gracePeriodRemaining)))
-          button.title = L10n.tr("menu.graceCountdown", seconds)
-        } else {
-          button.title = ""
-        }
-        Log.debug("Menu bar icon updated (SF Symbol fallback): \(core.statusIconName())", category: .ui)
-      } else {
-        Log.warning("Failed to load menu bar icon, using text fallback", category: .ui)
-        button.image = nil
-        button.title = core.isArmed ? "MG!" : "MG"
-      }
+    let statusDescription = core.appController.statusDescription
+    let imageName = core.statusMenuBarImageName()
+    let showGraceCountdown =
+      core.appController.currentState == .gracePeriod
+      && UserDefaultsManager.shared.settings.showSecurityAlerts
 
-      button.contentTintColor = nil
+    if let image = MenuBarIconHelper.assetImage(named: imageName) {
+      button.image = image
+    } else if let image = MenuBarIconHelper.symbolImage(named: core.statusIconName()) {
+      button.image = image
+    } else {
+      Log.warning("Failed to load menu bar icon, using text fallback", category: .ui)
+      button.image = nil
+      button.title = core.isArmed ? "MG!" : "MG"
+      return
+    }
 
-      button.setAccessibilityLabel(L10n.tr("app.name"))
-      button.setAccessibilityValue(statusDescription)
-      button.setAccessibilityHelp(
-        L10n.tr("app.accessibility.menuHint", statusDescription))
+    if showGraceCountdown {
+      let seconds = max(0, Int(ceil(core.appController.gracePeriodRemaining)))
+      button.title = L10n.tr("menu.graceCountdown", seconds)
+    } else {
+      button.title = ""
+    }
 
-      if AccessibilityManager.shared.isVoiceOverEnabled {
-        AccessibilityAnnouncement.announceStateChange(
-          component: L10n.tr("app.accessibility.statusComponent"), newState: statusDescription)
-      }
+    button.contentTintColor = nil
+    button.setAccessibilityLabel(L10n.tr("app.name"))
+    button.setAccessibilityValue(statusDescription)
+    button.setAccessibilityHelp(L10n.tr("app.accessibility.menuHint", statusDescription))
+
+    if AccessibilityManager.shared.isVoiceOverEnabled {
+      AccessibilityAnnouncement.announceStateChange(
+        component: L10n.tr("app.accessibility.statusComponent"), newState: statusDescription)
     }
   }
 
   @objc private func statusItemClicked(_ sender: AnyObject?) {
-    // Menu will show automatically when clicked
+    // Menu shows automatically when the status item is clicked.
+  }
+
+  private func refreshDockVisibility() {
+    SettingsRuntimeApplier.applyDockVisibility(settings: UserDefaultsManager.shared.settings)
   }
 
   @objc func toggleArmed() {
@@ -383,8 +375,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Return to accessory mode if no windows are open
         if self?.settingsWindow == nil {
-          SettingsRuntimeApplier.applyDockVisibility(
-            showInDock: UserDefaultsManager.shared.settings.showInDock)
+          SettingsRuntimeApplier.applyDockVisibility(settings: UserDefaultsManager.shared.settings)
         }
       }
     }
@@ -410,6 +401,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   @objc func showAbout() {
     Task { @MainActor in
       AboutPresenter.show()
+    }
+  }
+
+  @objc func showOnboarding() {
+    Task { @MainActor in
+      OnboardingPresenter.present()
     }
   }
 
@@ -473,9 +470,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationDidBecomeActive(_ notification: Notification) {
-    // Refresh menu when app becomes active
-    setupMenu()
-
+    updateStatusIcon()
     Log.info("Application became active", category: .ui)
   }
 

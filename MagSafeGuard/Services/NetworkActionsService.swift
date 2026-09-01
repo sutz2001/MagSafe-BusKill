@@ -103,6 +103,8 @@ public final class NetworkActionsService {
       try networkActions.disconnectVPN()
     case .clearSSHAgent:
       try networkActions.clearSSHAgent()
+    case .clearClipboard:
+      try networkActions.clearClipboard()
     case .disableWiFi:
       try networkActions.disableWiFi()
     }

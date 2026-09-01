@@ -10,6 +10,7 @@ public protocol NetworkActionsProtocol: Sendable {
   func postWebhook(url: URL, event: String, token: String?) throws
   func disconnectVPN() throws
   func clearSSHAgent() throws
+  func clearClipboard() throws
   func disableWiFi() throws
 }
 
