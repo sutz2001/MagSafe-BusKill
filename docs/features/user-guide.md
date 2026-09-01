@@ -69,7 +69,7 @@ On a cable trigger (normal armed), lock screen runs **first**, then other enable
 
 ### Network actions
 
-**Settings → Security → Network**
+In the app, open **Settings → Security → Network**.
 
 | Action | What it does |
 |--------|----------------|
@@ -185,7 +185,7 @@ To leave: menu → **Disarm Protection** (normal disarm flow).
 
 ## 7. Auto-arm (optional)
 
-**Settings → Auto-Arm**
+In the app, open **Settings → Auto-Arm**.
 
 - Arm automatically when leaving a trusted location or joining an untrusted network.
 - Uses `armAutomatically()` — no Touch ID prompt on auto-arm (by design).

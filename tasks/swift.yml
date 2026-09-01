@@ -227,13 +227,13 @@ tasks:
           SUMMARY=$(tail -1 "$TEMP_FILE")
 
           # Check if there are violations
-          if echo "$SUMMARY" | grep -q "Found 0 violations"; then
+          if echo "$SUMMARY" | grep -qE "Found 0 violations?"; then
             echo "✅ SwiftLint passed - no violations found"
             rm "$TEMP_FILE"
           else
-            # Extract violation counts
-            VIOLATIONS=$(echo "$SUMMARY" | grep -oE "Found [0-9]+ violations" | grep -oE "[0-9]+" || echo "0")
-            SERIOUS=$(echo "$SUMMARY" | grep -oE "[0-9]+ serious" | grep -oE "[0-9]+" || echo "0")
+            # Extract violation counts (singular or plural)
+            VIOLATIONS=$(echo "$SUMMARY" | grep -oE "Found [0-9]+ violations?" | grep -oE "[0-9]+" | head -1)
+            SERIOUS=$(echo "$SUMMARY" | grep -oE "[0-9]+ serious" | grep -oE "[0-9]+" | head -1)
 
             echo "❌ SwiftLint found issues:"
             echo "   - Total violations: $VIOLATIONS"

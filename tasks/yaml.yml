@@ -336,6 +336,8 @@ tasks:
           VALIDATOR="prettier"
         elif command -v yamllint &> /dev/null; then
           VALIDATOR="yamllint"
+        elif ruby -ryaml -e 'exit 0' 2>/dev/null; then
+          VALIDATOR="ruby"
         else
           echo "❌ No YAML validator found!"
           echo ""
@@ -343,6 +345,7 @@ tasks:
           echo "  • npm install -g js-yaml (recommended)"
           echo "  • npm install -g prettier"
           echo "  • brew install yamllint"
+          echo "  • or use macOS Ruby (ruby -ryaml)"
           exit 1
         fi
 
@@ -421,6 +424,17 @@ tasks:
               # yamllint provides detailed error messages
               if ERROR_OUTPUT=$(yamllint -d relaxed "$file" 2>&1); then
                 # Success - don't print unless there's an error
+                :
+              else
+                echo "❌ Invalid: $file"
+                echo "   Error details:"
+                echo "$ERROR_OUTPUT" | sed 's/^/     /'
+                echo ""
+                FAILED=$((FAILED + 1))
+              fi
+              ;;
+            "ruby")
+              if ERROR_OUTPUT=$(ruby -ryaml -e "YAML.load_file(ARGV[0])" "$file" 2>&1); then
                 :
               else
                 echo "❌ Invalid: $file"

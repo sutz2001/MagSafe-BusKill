@@ -1,6 +1,6 @@
 //
 //  ApplicationStatePersistenceTests.swift
-//  MagSafeGuardTests
+//  MagSafe Guard
 //
 
 import XCTest

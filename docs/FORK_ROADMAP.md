@@ -216,7 +216,7 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 
 ## Zeitstrahl
 
-```
+```text
 Jetzt ──► 0.4.x  Netzwerk + Fernauslösung (done)
        ──► 0.4.3  Diskreter Betrieb (done)
        ──► 0.5.0  Panic (Shutdown, 0 Grace, Hotkey ⌃⌘P) (done)

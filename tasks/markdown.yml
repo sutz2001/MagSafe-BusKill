@@ -21,7 +21,7 @@ tasks:
         fi
 
         # Run the linter
-        if markdownlint '**/*.md' --ignore node_modules --ignore .build; then
+        if markdownlint '**/*.md' --ignore node_modules --ignore .build --ignore dist --ignore '**/DerivedData/**' --ignore-path .markdownlintignore; then
           echo "✅ Markdown lint passed"
         else
           echo "❌ Markdown lint found issues"
@@ -46,7 +46,7 @@ tasks:
 
         # Fix all markdown files
         echo "Running markdown formatter..."
-        markdownlint '**/*.md' --ignore node_modules --ignore .build --fix
+        markdownlint '**/*.md' --ignore node_modules --ignore .build --ignore dist --ignore '**/DerivedData/**' --ignore-path .markdownlintignore --fix
         echo "✅ Markdown files formatted"
 
         # Show which files were modified

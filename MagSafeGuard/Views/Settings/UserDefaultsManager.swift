@@ -335,8 +335,7 @@ public class UserDefaultsManager: ObservableObject {
     }
     if version < 6 {
       if migrated.operationProfile == .panic,
-        !migrated.enabledNetworkActions.contains(.clearClipboard)
-      {
+        !migrated.enabledNetworkActions.contains(.clearClipboard) {
         migrated.enabledNetworkActions.append(.clearClipboard)
       }
     }

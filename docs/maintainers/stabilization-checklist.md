@@ -42,15 +42,26 @@ Optional stretch: first **GitHub Release** with `.dmg` + `LICENSE` + `NOTICE`.
 
 ### P1 — should fix
 
-- [ ] **`task qa:quick` clean** (lint, security scan) before tagging releases.
+- [x] **`task qa:quick` clean** — passes locally (2026-09-01): SwiftLint, YAML (Ruby), Markdown, secrets scan.
 - [x] Re-enable or replace **disabled flaky test** in `SecurityActionUseCaseTests.swift` — fixed via `actionDelay` hold window.
-- [ ] Confirm **GitHub Actions** on `main` green after test fixes (commit-message check + any macOS workflow you run manually).
+- [x] **GitHub Actions on `main`** — **Commit Message Check** green on latest push (`d84dc76`, 0.5.1). **Tests** / **Security Scanning** workflows are **manual only** (`workflow_dispatch`); run locally or trigger in Actions when needed.
 
 ### P2 — nice to have
 
 - [x] `ResourceProtectionPolicyAdapter` tests (testing-guide P2).
 - [x] `AuthenticationService` app-layer tests (testing-guide P3).
-- [ ] Coverage stays ≥ 80% (`COVERAGE_THRESHOLD`).
+- [x] Coverage stays ≥ 80% (`COVERAGE_THRESHOLD`) — **96.7%** line coverage locally (2026-09-01, `task test`).
+
+### §1a — `task qa:quick` status (2026-09-01)
+
+| Step | Result | Notes |
+|------|--------|--------|
+| `task test` | ✅ | 268 tests passed |
+| Coverage | ✅ | ~96.7% lines (`coverage.lcov`) |
+| `swift:lint` | ✅ | 0 violations (file header aligned; `missing_docs` not in quick QA) |
+| `yaml:validate` | ✅ | Ruby `YAML.load_file` fallback when npm tools absent |
+| `markdown:lint` | ✅ | Ignores `dist/`, `DerivedData`, archive; `MD060` off; doc fixes for `MD036`/`MD040` |
+| `security:secrets` | ✅ | Bearer pattern tightened; webhook uses string concat |
 
 **Commands:**
 
@@ -134,10 +145,10 @@ Full manual checklist: [acceptance-tests.md](acceptance-tests.md) (includes disc
 
 ## 4. Documentation hygiene
 
-- [ ] [user-guide.md](../features/user-guide.md) / [user-guide.de.md](../features/user-guide.de.md) match what you ship.
+- [x] [user-guide.md](../features/user-guide.md) / [user-guide.de.md](../features/user-guide.de.md) — operation profiles, panic vs preset (0.5.1).
 - [x] [acceptance-tests.md](acceptance-tests.md) — panic + discreet sections; removed stale “Run Demo” menu item.
-- [ ] [behavior-gaps.md](../features/behavior-gaps.md) — log any new mismatch as GAP-16+ or Issues.
-- [ ] README roadmap reflects **stabilization focus** (not “panic planned”).
+- [x] [behavior-gaps.md](../features/behavior-gaps.md) — only Paranoid open; 0.5.1 batch noted.
+- [x] README EN/DE roadmap — 0.5.1 row, network actions table, doc links.
 
 ---
 
@@ -182,4 +193,4 @@ File GitHub Issue or add row to behavior-gaps **Open** until fixed.
 
 ---
 
-*Last updated: 2026-08-31 (fork 0.5.0 stabilization pass).*
+*Last updated: 2026-09-01 (fork 0.5.1 — QA status + doc hygiene).*

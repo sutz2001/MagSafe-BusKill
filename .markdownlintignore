@@ -1,5 +1,16 @@
 # Generated files that shouldn't be linted
 docs/CHANGELOG.md
+MagSafeGuardLib/coverage-report.md
+**/coverage-report.md
+coverage-report.txt
+
+# Build artifacts and SPM checkouts (not project docs)
+dist/
+**/DerivedData/
+.build/
+
+# Archived upstream changelog (imported as-is)
+docs/archive/
 
 # Dependency directories
 node_modules/

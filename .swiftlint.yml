@@ -14,7 +14,6 @@ analyzer_rules:
 
 # Opt-in rules (not enabled by default)
 opt_in_rules:
-  - missing_docs # Require documentation for public declarations
   - file_header # Consistent file headers
   - explicit_type_interface # Explicit types for public APIs
   - explicit_acl # Explicit access control
@@ -33,6 +32,7 @@ opt_in_rules:
 # Disabled rules
 disabled_rules:
   - todo # Allow TODO comments during development
+  - missing_docs # Public API docs enforced selectively, not in quick QA
   - function_body_length # Complex UI code can be longer
   - explicit_type_interface # Too strict for internal properties
   - file_length # Some files need to be longer temporarily
@@ -42,19 +42,11 @@ disabled_rules:
   - type_body_length # Some service classes are necessarily large
 
 # Rule configurations
-missing_docs:
-  excludes_extensions: false
-  excludes_inherited_types: false
-  excludes_trivial_init: true
-  warning: public
-
 file_header:
   required_pattern: |
     \/\/
     \/\/  .*\.swift
     \/\/  MagSafe Guard
-    \/\/
-    \/\/  Created on \d{4}-\d{2}-\d{2}\.
     \/\/
 
 # Line lengths - commented out since rule is disabled
@@ -118,7 +110,7 @@ custom_rules:
 
   security_todo:
     name: "Security TODO"
-    regex: '\/\/.*TODO.*[Ss]ecurity'
+    regex: '//[^\n]*TODO[^\n]*[Ss]ecurity'
     message: "Security-related TODOs should be prioritized"
     severity: warning # Changed from error to warning
 

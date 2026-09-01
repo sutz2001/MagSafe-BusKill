@@ -155,7 +155,7 @@ Everything in Panic, plus:
 
 ## App states
 
-```
+```text
 disarmed → armed (normal, grace 5–30 s)
          → panicArmed (0 s, shutdown path)
          → paranoidArmed (0 s, destruction + shutdown)
@@ -167,7 +167,7 @@ Only one high-assurance mode armed at a time. Normal **armed** and **panic/paran
 
 ## Architecture (planned)
 
-```
+```text
 PanicModeExecutor
   - executeImmediateShutdown()   // new: no 1-min AppleScript dialog
   - parallel: lock, logout, network, shutdown

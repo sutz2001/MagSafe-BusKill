@@ -69,7 +69,7 @@ Bei Kabeltrennung (normal scharf) läuft **Sperre zuerst**, dann weitere Aktione
 
 ### Netzwerk-Aktionen
 
-**Einstellungen → Security → Network**
+In der App: **Einstellungen → Security → Network**.
 
 | Aktion | Wirkung |
 |--------|---------|
@@ -185,7 +185,7 @@ Verlassen: Menü → **Schutz deaktivieren**.
 
 ## 7. Auto-Arm (optional)
 
-**Einstellungen → Auto-Arm**
+In der App: **Einstellungen → Auto-Arm**.
 
 - Automatisch scharfschalten beim Verlassen eines vertrauenswürdigen Ortes oder in unbekanntem Netz.
 - Nutzt `armAutomatically()` — kein Touch-ID-Dialog beim Auto-Arm (Absicht).

@@ -37,9 +37,9 @@ tasks:
           'GITHUB_TOKEN=ghs_[A-Za-z0-9]{36}'
           'GITHUB_TOKEN=github_pat_[A-Za-z0-9_]{82}'
 
-          # Bearer tokens
-          'Bearer\s+[A-Za-z0-9\-_.~+/]+=*'
-          'Authorization:\s*Bearer\s+[A-Za-z0-9\-_.~+/]+=*'
+          # Bearer tokens (real secrets — not webhook header templates)
+          'Bearer\s+[A-Za-z0-9\-_.~+/]{20,}'
+          'Authorization:\s*Bearer\s+[A-Za-z0-9\-_.~+/]{20,}'
 
           # Private keys
           '-----BEGIN\s+(RSA|DSA|EC|OPENSSH)\s+PRIVATE\s+KEY-----'

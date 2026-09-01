@@ -26,7 +26,7 @@ public final class MacNetworkActions: NetworkActionsProtocol {
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     if let token, !token.isEmpty {
-      request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+      request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization")
     }
     let body: [String: String] = [
       "event": event,
