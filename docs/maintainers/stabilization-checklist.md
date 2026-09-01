@@ -125,7 +125,7 @@ Use a **test session** or spare user if testing logout/shutdown. Save work first
 - [ ] App survives sleep/wake while armed.
 - [ ] Quit during grace → warning if still in progress.
 
-Full manual checklist: [acceptance-tests.md](acceptance-tests.md) (includes discreet + panic sections as of v0.5.0).
+Full manual checklist: [acceptance-tests.md](acceptance-tests.md) · **[Abhakbare Testliste v0.5.3](manual-test-0.5.3.md)** (DE)
 
 ---
 

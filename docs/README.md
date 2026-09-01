@@ -32,6 +32,7 @@ This documentation is organized by audience and role to help you find the inform
 
 - [Development Setup](DEVELOPMENT.md) - Complete development environment
 - **[Stabilization checklist](maintainers/stabilization-checklist.md)** — v0.5.x → daily driver (current focus)
+- **[Manual test checklist v0.5.3](maintainers/manual-test-0.5.3.md)** — abhakbare Smoke-Tests (DE)
 - [CI/CD Workflows](devops/ci-cd-workflows.md) - GitHub Actions and automation
 - [Code Signing Guide](maintainers/code-signing.md) - macOS app signing process
 - [Crash Prevention Guide](maintainers/crash-prevention-guide.md) - Stability best practices
