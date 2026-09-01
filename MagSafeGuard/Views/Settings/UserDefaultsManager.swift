@@ -339,6 +339,9 @@ public class UserDefaultsManager: ObservableObject {
         migrated.enabledNetworkActions.append(.clearClipboard)
       }
     }
+    if version < 7 {
+      migrated.menuBarIconAppearance = .monochrome
+    }
     return migrated
   }
 

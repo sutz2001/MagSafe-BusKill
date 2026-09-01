@@ -15,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   var statusItem: NSStatusItem?
 
   private var settingsWindow: NSWindow?
-  private var settingsHostingController: NSViewController?
+  private var settingsHostingController: NSHostingController<AnyView>?
   private var windowDelegates: [NSWindow: WindowDelegate] = [:]
   private var cancellables = Set<AnyCancellable>()
   let core = AppDelegateCore()
@@ -81,6 +81,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     setupAccessibilityFeatures()
     setupGracePeriodObservation()
+    setupMenuBarIconAppearanceObservation()
     restoreArmedStateIfNeeded()
     registerRemoteTriggerHandler()
     registerPanicHotkey()
@@ -144,6 +145,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let url = URL(string: urlString)
     else { return }
     openURLHandler?(url)
+  }
+
+  private func setupMenuBarIconAppearanceObservation() {
+    UserDefaultsManager.shared.$settings
+      .map(\.menuBarIconAppearance)
+      .removeDuplicates()
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        self?.updateStatusIcon()
+        self?.setupMenu()
+      }
+      .store(in: &cancellables)
   }
 
   private func setupGracePeriodObservation() {
@@ -219,18 +232,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     let statusDescription = core.appController.statusDescription
     let imageName = core.statusMenuBarImageName()
+    let appearance = UserDefaultsManager.shared.settings.menuBarIconAppearance
+    let visualState = menuBarVisualState()
     let showGraceCountdown =
       core.appController.currentState == .gracePeriod
       && UserDefaultsManager.shared.settings.showSecurityAlerts
 
-    if let image = MenuBarIconHelper.assetImage(named: imageName) {
+    if let image = MenuBarIconHelper.assetImage(
+      named: imageName, appearance: appearance, state: visualState)
+    {
       button.image = image
-    } else if let image = MenuBarIconHelper.symbolImage(named: core.statusIconName()) {
+    } else if let image = MenuBarIconHelper.symbolImage(
+      named: core.statusIconName(), appearance: appearance, state: visualState)
+    {
       button.image = image
     } else {
       Log.warning("Failed to load menu bar icon, using text fallback", category: .ui)
       button.image = nil
       button.title = core.isArmed ? "MG!" : "MG"
+      button.contentTintColor = nil
       return
     }
 
@@ -241,7 +261,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       button.title = ""
     }
 
-    button.contentTintColor = nil
+    button.contentTintColor = MenuBarIconHelper.contentTint(for: appearance, state: visualState)
     button.setAccessibilityLabel(L10n.tr("app.name"))
     button.setAccessibilityValue(statusDescription)
     button.setAccessibilityHelp(L10n.tr("app.accessibility.menuHint", statusDescription))
@@ -250,6 +270,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       AccessibilityAnnouncement.announceStateChange(
         component: L10n.tr("app.accessibility.statusComponent"), newState: statusDescription)
     }
+  }
+
+  private func menuBarVisualState() -> MenuBarIconHelper.VisualState {
+    if core.appController.currentState == .armed,
+      core.appController.protectionMode == .panic {
+      return .triggered
+    }
+    switch core.appController.currentState {
+    case .disarmed:
+      return .disarmed
+    case .armed:
+      return .armed
+    case .gracePeriod:
+      return .gracePeriod
+    case .triggered:
+      return .triggered
+    }
+  }
+
+  @objc func toggleMenuBarIconAppearance() {
+    let current = UserDefaultsManager.shared.settings.menuBarIconAppearance
+    let next: MenuBarIconAppearance = current == .monochrome ? .accent : .monochrome
+    UserDefaultsManager.shared.updateSetting(\.menuBarIconAppearance, value: next)
+    updateStatusIcon()
+    setupMenu()
   }
 
   @objc private func statusItemClicked(_ sender: AnyObject?) {
@@ -331,20 +376,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   @objc func showSettings() {
     Log.info("showSettings called", category: .ui)
 
-    // Safe window management pattern
     if let existingWindow = settingsWindow {
-      Log.info("Bringing existing settings window to front", category: .ui)
-      existingWindow.makeKeyAndOrderFront(nil)
-      NSApp.activate(ignoringOtherApps: true)
-      return
+      existingWindow.close()
+      settingsWindow = nil
+      settingsHostingController = nil
+      windowDelegates.removeValue(forKey: existingWindow)
     }
 
     Log.info("Creating new settings window", category: .ui)
 
     // Create new window safely
-    let settingsView = SettingsView()
-      .environmentObject(UserDefaultsManager.shared)
-
+    let hostingController = NSHostingController(
+      rootView: AnyView(
+        SettingsView()
+          .environmentObject(UserDefaultsManager.shared)
+      )
+    )
     let window = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 800, height: 500),
       styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -354,8 +401,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     window.title = L10n.tr("app.settingsWindow")
 
-    // Create and retain the hosting controller
-    let hostingController = NSHostingController(rootView: settingsView)
     settingsHostingController = hostingController
     window.contentViewController = hostingController
 

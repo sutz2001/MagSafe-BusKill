@@ -29,6 +29,7 @@ final class SettingsModelTests: XCTestCase {
     XCTAssertFalse(settings.isDiscreetOperation)
     XCTAssertFalse(settings.launchAtLogin)
     XCTAssertFalse(settings.showInDock)
+    XCTAssertEqual(settings.menuBarIconAppearance, .monochrome)
     XCTAssertFalse(settings.debugLoggingEnabled)
   }
 

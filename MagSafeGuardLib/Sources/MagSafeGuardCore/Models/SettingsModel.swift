@@ -140,6 +140,9 @@ public struct Settings: Codable {
   /// Display application icon in the dock when no settings window is open.
   public var showInDock: Bool = false
 
+  /// Menu bar icon style: monochrome (default) or subtle color accents per state.
+  public var menuBarIconAppearance: MenuBarIconAppearance = .monochrome
+
   /// Restore armed protection after relaunch (requires authentication on next arm attempt flow).
   ///
   /// When enabled, if the app was armed when it last quit, it will attempt to re-arm after launch.
@@ -273,4 +276,4 @@ public protocol SettingsMigrator {
 ///
 /// This version is incremented when breaking changes are made to the
 /// Settings structure that require migration logic.
-public let currentSettingsVersion = 6
+public let currentSettingsVersion = 7

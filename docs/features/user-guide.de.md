@@ -1,7 +1,7 @@
 # MagSafe Guard — Kurzanleitung
 
 **Sprache:** [English (user-guide.md)](user-guide.md) · Deutsch  
-**Version:** Fork **0.5.1** (Build 10) · September 2026
+**Version:** Fork **0.5.2** (Build 11) · September 2026
 
 Kurze Praxis-Anleitung für den Alltag. Technische Details: [operating-modes.md](operating-modes.md) (EN) · Panic-Design: [panic-modes.md](panic-modes.md)
 
@@ -18,7 +18,7 @@ MagSafe Guard ist ein **Dead-Man's-Switch in der Menüleiste**:
 
 Im Zustand **unscharf** passiert beim Abziehen des Netzteils **nichts**.
 
-Standardmäßig nur **Menüleiste** (**Im Dock anzeigen** unter Einstellungen → Allgemein ist aus). Dock-Icon bei Bedarf einschalten.
+Standardmäßig nur **Menüleiste** (**Im Dock anzeigen** unter Einstellungen → Allgemein ist aus). Dock-Icon bei Bedarf einschalten. Menüleisten-Icons sind standardmäßig **monochrom**; **Farbige Menüleisten-Icons** in Allgemein oder im Statusmenü schalten dezente Zustandsfarben ein.
 
 ---
 

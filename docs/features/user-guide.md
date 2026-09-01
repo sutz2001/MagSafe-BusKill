@@ -1,7 +1,7 @@
 # MagSafe Guard — User Guide (mini)
 
 **Language:** English · [Deutsch (user-guide.de.md)](user-guide.de.md)  
-**Version:** fork **0.5.1** (build 10) · September 2026
+**Version:** fork **0.5.2** (build 11) · September 2026
 
 Short, practical guide for everyday use. Technical details: [operating-modes.md](operating-modes.md) · Panic design: [panic-modes.md](panic-modes.md)
 
@@ -18,7 +18,7 @@ MagSafe Guard is a **menu bar dead-man's switch**:
 
 If the system is **disarmed**, unplugging does **nothing**.
 
-The app runs from the **menu bar** by default (**Show in Dock** is off in Settings → General). Enable the Dock icon if you prefer a Dock shortcut.
+The app runs from the **menu bar** by default (**Show in Dock** is off in Settings → General). Enable the Dock icon if you prefer a Dock shortcut. Menu bar icons are **monochrome** by default; enable **Colored Menu Bar Icons** in General or the status menu for subtle state colors.
 
 ---
 

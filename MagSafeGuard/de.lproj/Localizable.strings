@@ -21,6 +21,10 @@
 "settings.general.showInDock.title" = "Im Dock anzeigen";
 "settings.general.showInDock.caption" = "App im Dock anzeigen. Aus = nur Menüleisten-Icon.";
 "settings.general.showInDock.caption.panicArmed" = "Ausgeblendet, solange Panic oder Paranoid scharf ist. Zum Ändern entschärfen.";
+"settings.general.menuBarIcons.title" = "Farbige Menüleisten-Icons";
+"settings.general.menuBarIcons.caption" = "Aus = monochrom wie macOS. An = dezente Farben je Zustand (scharf, Karenz, ausgelöst).";
+"settings.general.menuBarIcons.monochrome" = "Monochrom";
+"settings.general.menuBarIcons.accent" = "Akzent";
 "settings.general.operationProfile.title" = "Betriebsmodus";
 "settings.general.operationProfile.normal" = "Normal";
 "settings.general.operationProfile.discreet" = "Diskret";
@@ -204,6 +208,9 @@
 "menu.power.connected" = "Netzteil angeschlossen";
 "menu.power.battery" = "Akkubetrieb";
 "menu.power.hint" = "Aktueller Status der Stromversorgung";
+"menu.coloredIcons" = "Farbige Menüleisten-Icons";
+"menu.coloredIcons.label" = "Farbige Menüleisten-Icons";
+"menu.coloredIcons.hint" = "Dezente Farbakzente für scharf, Karenz und ausgelöst";
 "menu.settings" = "Einstellungen…";
 "menu.settings.label" = "Einstellungen";
 "menu.settings.hint" = "App-Einstellungen öffnen";

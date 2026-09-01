@@ -217,6 +217,19 @@ public class AppDelegateCore {
 
     menu.addItem(NSMenuItem.separator())
 
+    let iconAppearance = UserDefaultsManager.shared.settings.menuBarIconAppearance
+    let coloredIconsItem = NSMenuItem.accessibleMenuItem(
+      title: L10n.tr("menu.coloredIcons"),
+      accessibilityLabel: L10n.tr("menu.coloredIcons.label"),
+      hint: L10n.tr("menu.coloredIcons.hint"),
+      action: #selector(AppDelegate.toggleMenuBarIconAppearance),
+      target: appDelegate
+    )
+    coloredIconsItem.state = iconAppearance == .accent ? .on : .off
+    menu.addItem(coloredIconsItem)
+
+    menu.addItem(NSMenuItem.separator())
+
     // Settings item with accessibility
     let settingsItem = NSMenuItem.accessibleMenuItem(
       title: L10n.tr("menu.settings"),

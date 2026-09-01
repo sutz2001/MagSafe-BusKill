@@ -143,6 +143,10 @@ struct GeneralSettingsView: View {
 
       Divider()
 
+      menuBarIconAppearancePicker
+
+      Divider()
+
       launchAtLoginToggle
 
       showInDockToggle
@@ -204,6 +208,27 @@ struct GeneralSettingsView: View {
       VStack(alignment: .leading, spacing: 4) {
         Text(l10n: "settings.general.launchAtLogin.title")
         Text(l10n: "settings.general.launchAtLogin.caption")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+    }
+  }
+
+  private var menuBarIconAppearancePicker: some View {
+    Toggle(
+      isOn: Binding(
+        get: { settingsManager.settings.menuBarIconAppearance == .accent },
+        set: { enabled in
+          settingsManager.updateSetting(
+            \.menuBarIconAppearance,
+            value: enabled ? .accent : .monochrome
+          )
+        }
+      )
+    ) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(l10n: "settings.general.menuBarIcons.title")
+        Text(l10n: "settings.general.menuBarIcons.caption")
           .font(.caption)
           .foregroundColor(.secondary)
       }

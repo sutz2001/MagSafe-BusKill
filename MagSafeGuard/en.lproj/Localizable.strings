@@ -21,6 +21,10 @@
 "settings.general.showInDock.title" = "Show in Dock";
 "settings.general.showInDock.caption" = "Show the app in the Dock. When off, only the menu bar icon is used.";
 "settings.general.showInDock.caption.panicArmed" = "Hidden while Panic or Paranoid is armed. Disarm to change.";
+"settings.general.menuBarIcons.title" = "Colored Menu Bar Icons";
+"settings.general.menuBarIcons.caption" = "Off = standard monochrome (macOS style). On = subtle color per state (armed, grace, triggered).";
+"settings.general.menuBarIcons.monochrome" = "Monochrome";
+"settings.general.menuBarIcons.accent" = "Accent";
 "settings.general.operationProfile.title" = "Operation mode";
 "settings.general.operationProfile.normal" = "Normal";
 "settings.general.operationProfile.discreet" = "Discreet";
@@ -204,6 +208,9 @@
 "menu.power.connected" = "Power Connected";
 "menu.power.battery" = "Running on Battery";
 "menu.power.hint" = "Current power adapter connection status";
+"menu.coloredIcons" = "Colored Menu Bar Icons";
+"menu.coloredIcons.label" = "Colored menu bar icons";
+"menu.coloredIcons.hint" = "Use subtle color accents for armed, grace period, and triggered states";
 "menu.settings" = "Settings...";
 "menu.settings.label" = "Settings";
 "menu.settings.hint" = "Open application settings and preferences";
