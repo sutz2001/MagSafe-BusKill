@@ -2,7 +2,7 @@
 
 **Goal:** Bring MagSafe Guard to a **reliable daily-driver** state on your Mac — without new features (no Paranoid, no LAN web trigger, no companion app).
 
-**Current version:** 0.5.1 (build 10)  
+**Current version:** 0.5.2 (build 11)  
 **Companion docs:** [acceptance-tests.md](acceptance-tests.md) · [testing-guide.md](testing-guide.md) · [behavior-gaps.md](../features/behavior-gaps.md)
 
 ---
@@ -44,7 +44,7 @@ Optional stretch: first **GitHub Release** with `.dmg` + `LICENSE` + `NOTICE`.
 
 - [x] **`task qa:quick` clean** — passes locally (2026-09-01): SwiftLint, YAML (Ruby), Markdown, secrets scan.
 - [x] Re-enable or replace **disabled flaky test** in `SecurityActionUseCaseTests.swift` — fixed via `actionDelay` hold window.
-- [x] **GitHub Actions on `main`** — **Commit Message Check** green on latest push (`d84dc76`, 0.5.1). **Tests** / **Security Scanning** workflows are **manual only** (`workflow_dispatch`); run locally or trigger in Actions when needed.
+- [x] **GitHub Actions on `main`** — **Commit Message Check** green on latest push (`ea242bc`, 0.5.2). **Tests** / **Security Scanning** workflows are **manual only** (`workflow_dispatch`); run locally or trigger in Actions when needed.
 
 ### P2 — nice to have
 
@@ -112,6 +112,7 @@ Use a **test session** or spare user if testing logout/shutdown. Save work first
 ### Menu bar & settings
 
 - [ ] Icon visible (light/dark); overflow menu (•••) if crowded.
+- [ ] **Colored menu bar icons** toggle (General + status menu): monochrome default; accent shows state colors.
 - [ ] Launch at login + show in dock toggles work.
 - [ ] EN/DE strings sane in menus and panic legal alert.
 - [ ] iCloud sync (if enabled): settings round-trip on second device or fresh profile.
@@ -136,7 +137,7 @@ Full manual checklist: [acceptance-tests.md](acceptance-tests.md) (includes disc
 
 ### First public binary (optional)
 
-- [ ] GitHub Release tag `v0.5.0` (or `v0.5.x` patch).
+- [ ] GitHub Release tag `v0.5.2` (or next `v0.5.x` patch).
 - [ ] Attach `.dmg` + `SHA256SUMS` from `dist/`.
 - [ ] Release notes from [FORK_CHANGELOG.md](../FORK_CHANGELOG.md).
 - [ ] `LICENSE` + `NOTICE` inside or alongside DMG.

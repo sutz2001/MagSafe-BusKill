@@ -198,6 +198,7 @@ task release:clean
 | Erledigt | **0.4.x** | Netzwerk-Aktionen, Fernauslösung, diskreter Betrieb |
 | Erledigt | **0.5.0** | Panic-Modus — 0 Grace, Hotkey **⌃⌘P**, sofort Shutdown |
 | Erledigt | **0.5.1** | Betriebsmodi, Zwischenablage-Aktion, Settings/Doku |
+| Erledigt | **0.5.2** | Optionale farbige Menüleisten-Icons (Standard: monochrom) |
 | Als Nächstes | **0.6.0** | Paranoid-Modus — Datenvernichtung (Setup nötig) |
 | Stabil | **1.0.0** | Notarisierte Developer-ID-Verteilung |
 

@@ -2,7 +2,7 @@
 
 Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches and their resolution status.
 
-**Last resolved batch:** 2026-09-01 (0.5.1: operation profiles, clipboard network action, docs sync)
+**Last resolved batch:** 2026-09-01 (0.5.2: colored menu bar icons; 0.5.1: operation profiles, clipboard network action)
 
 ---
 

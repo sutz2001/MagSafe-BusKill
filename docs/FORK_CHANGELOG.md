@@ -3,6 +3,18 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.2] — 2026-09-01
+
+### Added
+
+- **Colored menu bar icons** (optional): monochrome default (macOS style); subtle accent tints per state (armed, grace, triggered)
+- Toggle in **Settings → General** and status menu (**Colored Menu Bar Icons**)
+
+### Changed
+
+- Settings window is recreated on each open (avoids stale UI after updates)
+- User guides EN/DE note menu bar icon preference
+
 ## [0.5.1] — 2026-09-01
 
 ### Added

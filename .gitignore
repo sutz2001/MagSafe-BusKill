@@ -86,6 +86,7 @@ coverage*
 **/*coverage*
 *.lcov
 *.profdata
+*.profraw
 sonar-coverage.lcov
 .coverage/
 coverage/

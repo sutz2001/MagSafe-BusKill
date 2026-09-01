@@ -198,6 +198,7 @@ task release:clean                   # remove dist/
 | Done | **0.4.x** | Network actions, remote trigger, discreet operation |
 | Done | **0.5.0** | Panic mode — 0 grace, **⌃⌘P** hotkey, immediate shutdown |
 | Done | **0.5.1** | Operation profiles, clipboard network action, settings/docs polish |
+| Done | **0.5.2** | Optional colored menu bar icons (monochrome default) |
 | Next | **0.6.0** | Paranoid mode — data destruction (setup required) |
 | Stable | **1.0.0** | Notarized Developer ID distribution |
 

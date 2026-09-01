@@ -56,6 +56,7 @@ final class SyncServiceSettings {
     // General settings
     record["launchAtLogin"] = settings.launchAtLogin ? 1 : 0
     record["showInDock"] = settings.showInDock ? 1 : 0
+    record["menuBarIconAppearance"] = settings.menuBarIconAppearance.rawValue
 
     // Advanced settings
     if let customScriptsData = try? JSONEncoder().encode(settings.customScripts) {
@@ -209,6 +210,11 @@ final class SyncServiceSettings {
       let data = remoteString.data(using: .utf8),
       let remote = try? JSONDecoder().decode(RemoteTriggerSettings.self, from: data) {
       manager.updateSetting(\.remoteTrigger, value: remote)
+    }
+
+    if let appearanceRaw = record["menuBarIconAppearance"] as? String,
+      let appearance = MenuBarIconAppearance(rawValue: appearanceRaw) {
+      manager.updateSetting(\.menuBarIconAppearance, value: appearance)
     }
   }
 }
