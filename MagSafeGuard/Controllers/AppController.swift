@@ -178,7 +178,7 @@ public class AppController: ObservableObject {
 
   // MARK: - Private Properties
 
-  private var gracePeriodTimer: Timer?
+  private var gracePeriodDispatchTimer: DispatchSourceTimer?
   private var gracePeriodStartTime: Date?
   private var cancellables = Set<AnyCancellable>()
   private var eventLog: [EventLogEntry] = []
@@ -546,28 +546,44 @@ public class AppController: ObservableObject {
       message: L10n.tr("notification.graceAlert.message", Int(effectiveGracePeriodDuration))
     )
 
-    // Start countdown timer
-    gracePeriodTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-      guard let self = self else { return }
+    // Start countdown (GCD timer — keeps firing while a modal alert is open)
+    startGracePeriodTimer()
+  }
 
-      let elapsed = Date().timeIntervalSince(self.gracePeriodStartTime ?? Date())
-      self.gracePeriodRemaining = max(0, self.effectiveGracePeriodDuration - elapsed)
+  private func startGracePeriodTimer() {
+    stopGracePeriodTimer()
+    let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
+    timer.schedule(deadline: .now(), repeating: .milliseconds(100), leeway: .milliseconds(20))
+    timer.setEventHandler { [weak self] in
+      self?.tickGracePeriod()
+    }
+    gracePeriodDispatchTimer = timer
+    timer.resume()
+  }
 
-      if self.gracePeriodRemaining <= 0 {
-        self.gracePeriodTimer?.invalidate()
-        self.gracePeriodTimer = nil
-        guard self.isInGracePeriod, self.currentState == .gracePeriod else { return }
-        self.executeSecurityActions()
-      }
+  private func tickGracePeriod() {
+    let elapsed = Date().timeIntervalSince(gracePeriodStartTime ?? Date())
+    gracePeriodRemaining = max(0, effectiveGracePeriodDuration - elapsed)
+
+    if gracePeriodRemaining <= 0 {
+      stopGracePeriodTimer()
+      guard isInGracePeriod, currentState == .gracePeriod else { return }
+      executeSecurityActions()
     }
   }
 
+  private func stopGracePeriodTimer() {
+    gracePeriodDispatchTimer?.setEventHandler {}
+    gracePeriodDispatchTimer?.cancel()
+    gracePeriodDispatchTimer = nil
+  }
+
   private func cancelGracePeriod() {
-    gracePeriodTimer?.invalidate()
-    gracePeriodTimer = nil
+    stopGracePeriodTimer()
     isInGracePeriod = false
     gracePeriodRemaining = 0
     gracePeriodStartTime = nil
+    GracePeriodAlertPresenter.dismiss()
 
     logEventInternal(.gracePeriodCancelled, details: L10n.tr("logDetail.gracePeriodCancelled"))
   }
@@ -865,8 +881,8 @@ extension AppController {
   func expireGracePeriodForTesting() {
     guard Self.isTestEnvironment else { return }
     guard isInGracePeriod else { return }
-    gracePeriodTimer?.invalidate()
-    gracePeriodTimer = nil
+    gracePeriodDispatchTimer?.cancel()
+    gracePeriodDispatchTimer = nil
     executeSecurityActions()
   }
 

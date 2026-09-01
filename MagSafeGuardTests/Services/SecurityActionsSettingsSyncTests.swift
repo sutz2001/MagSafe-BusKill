@@ -34,6 +34,29 @@ final class SecurityActionsSettingsSyncTests: XCTestCase {
       Set([.soundAlarm, .lockScreen, .forceLogout]))
   }
 
+  func testSyncMapsAlarmVolumeSettings() {
+    var settings = Settings()
+    settings.alarmVolume = 0.75
+    settings.boostSystemVolumeForAlarm = false
+    settings.securityActions = [.soundAlarm]
+
+    SecurityActionsSettingsSync.sync(from: settings, to: service)
+
+    XCTAssertEqual(service.configuration.alarmVolume, 0.75, accuracy: 0.001)
+    XCTAssertFalse(service.configuration.boostSystemVolumeForAlarm)
+    XCTAssertEqual(service.configuration.alarmDurationSeconds, 15)
+  }
+
+  func testSyncMapsAlarmDuration() {
+    var settings = Settings()
+    settings.securityActions = [.soundAlarm]
+    settings.alarmDurationSeconds = 0
+
+    SecurityActionsSettingsSync.sync(from: settings, to: service)
+
+    XCTAssertEqual(service.configuration.alarmDurationSeconds, 0)
+  }
+
   func testSyncMapsCustomScriptPaths() {
     var settings = Settings()
     settings.securityActions = [.lockScreen, .customScript]

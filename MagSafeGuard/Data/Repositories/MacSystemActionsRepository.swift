@@ -77,7 +77,13 @@ public final class MacSystemActionsRepository: SecurityActionRepository, @unchec
                     }
 
                     do {
-                        try self.systemActions.playAlarm(volume: volume)
+                        try self.systemActions.playAlarm(
+                            volume: volume,
+                            boostSystemVolume: SecurityActionsService.shared.configuration
+                                .boostSystemVolumeForAlarm,
+                            durationSeconds: SecurityActionsService.shared.configuration
+                                .alarmDurationSeconds
+                        )
                         self.logger.info("Alarm playing at volume: \(volume)")
                         continuation.resume()
                     } catch {

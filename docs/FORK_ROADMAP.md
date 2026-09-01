@@ -1,7 +1,7 @@
 # Fork-Roadmap (sutz2001)
 
 Planung für [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
-Stand: nach **0.5.1** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
+Stand: nach **0.5.3** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
 
 **Kurzanleitung:** [user-guide.de.md](features/user-guide.de.md) · [user-guide.md](features/user-guide.md) (EN)
 
@@ -206,6 +206,7 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 
 ## Phase 4 — Nice-to-have (nach 1.0)
 
+- **iCloud: Skript-Inhalte syncen** (nicht nur Pfade) — wenn CloudKit aktiv: Custom-Scripts aus `~/.magsafe/scripts/` als Bundle/Records mit deployen (heute sync’t Settings nur die Pfad-Liste). Spielerei / Multi-Mac-Komfort, kein Muss.
 - **LAN trigger from phone** (same Wi‑Fi, minimal web UI?) — [Gedankenfetzen](features/future-ideas.md#lan-trigger-from-phone-same-wi-fi); heute nur `magsafeguard://` + Shortcuts
 - Home Assistant / MQTT Presets
 - Evidence / Forensik-Paket

@@ -62,6 +62,18 @@ public struct Settings: Codable {
   /// - Note: At least one action should be configured for effective security
   public var securityActions: [SecurityActionType] = [.lockScreen, .soundAlarm]
 
+  /// Alarm loudness for the sound-alarm action (0.1–1.0).
+  ///
+  /// When `boostSystemVolumeForAlarm` is enabled, macOS output volume is raised to this level
+  /// before playback so the alarm is audible even when system volume is low.
+  public var alarmVolume: Float = 1.0
+
+  /// Raise macOS system output volume to `alarmVolume` while the alarm plays.
+  public var boostSystemVolumeForAlarm: Bool = true
+
+  /// How long the alarm plays, in seconds (3–30). `0` = until stopped manually (endless).
+  public var alarmDurationSeconds: TimeInterval = 15.0
+
   // MARK: - Auto-Arm Settings
 
   /// Master enable/disable for automatic arming features.
@@ -240,6 +252,14 @@ public struct Settings: Codable {
       return true
     }
 
+    validated.alarmVolume = max(0.1, min(1.0, alarmVolume))
+
+    if alarmDurationSeconds > 0 {
+      validated.alarmDurationSeconds = max(3.0, min(30.0, alarmDurationSeconds))
+    } else {
+      validated.alarmDurationSeconds = 0
+    }
+
     return validated
   }
 
@@ -276,4 +296,4 @@ public protocol SettingsMigrator {
 ///
 /// This version is incremented when breaking changes are made to the
 /// Settings structure that require migration logic.
-public let currentSettingsVersion = 7
+public let currentSettingsVersion = 9

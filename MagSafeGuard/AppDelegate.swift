@@ -18,6 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private var settingsHostingController: NSHostingController<AnyView>?
   private var windowDelegates: [NSWindow: WindowDelegate] = [:]
   private var cancellables = Set<AnyCancellable>()
+  private let menuBarGracePulseController = MenuBarGracePulseController()
   let core = AppDelegateCore()
 
   // MARK: - Constants
@@ -239,12 +240,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       && UserDefaultsManager.shared.settings.showSecurityAlerts
 
     if let image = MenuBarIconHelper.assetImage(
-      named: imageName, appearance: appearance, state: visualState)
-    {
+      named: imageName, appearance: appearance, state: visualState) {
       button.image = image
     } else if let image = MenuBarIconHelper.symbolImage(
-      named: core.statusIconName(), appearance: appearance, state: visualState)
-    {
+      named: core.statusIconName(), appearance: appearance, state: visualState) {
       button.image = image
     } else {
       Log.warning("Failed to load menu bar icon, using text fallback", category: .ui)
@@ -261,7 +260,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       button.title = ""
     }
 
-    button.contentTintColor = MenuBarIconHelper.contentTint(for: appearance, state: visualState)
+    button.contentTintColor = nil
     button.setAccessibilityLabel(L10n.tr("app.name"))
     button.setAccessibilityValue(statusDescription)
     button.setAccessibilityHelp(L10n.tr("app.accessibility.menuHint", statusDescription))
@@ -270,6 +269,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       AccessibilityAnnouncement.announceStateChange(
         component: L10n.tr("app.accessibility.statusComponent"), newState: statusDescription)
     }
+
+    let shouldPulse = MenuBarGracePulsePolicy.shouldPulse(
+      isInGracePeriod: core.appController.isInGracePeriod,
+      showSecurityAlerts: UserDefaultsManager.shared.settings.showSecurityAlerts,
+      graceRemaining: core.appController.gracePeriodRemaining,
+      protectionMode: core.appController.protectionMode
+    )
+    menuBarGracePulseController.update(
+      button: button,
+      shouldPulse: shouldPulse,
+      reducedMotion: AccessibilityManager.shared.isReducedMotionEnabled
+    )
   }
 
   private func menuBarVisualState() -> MenuBarIconHelper.VisualState {
@@ -376,6 +387,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   @objc func showSettings() {
     Log.info("showSettings called", category: .ui)
 
+    if let existingWindow = settingsWindow, existingWindow.isVisible {
+      existingWindow.makeKeyAndOrderFront(nil)
+      NSApp.activate(ignoringOtherApps: true)
+      return
+    }
+
     if let existingWindow = settingsWindow {
       existingWindow.close()
       settingsWindow = nil
@@ -413,6 +430,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Clean up when window closes
     let delegate = WindowDelegate { [weak self] in
       Task { @MainActor in
+        SettingsRuntimeApplier.isSettingsWindowOpen = false
         self?.windowDelegates.removeValue(forKey: window)
         window.contentViewController = nil
         self?.settingsWindow = nil
@@ -428,6 +446,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.delegate = delegate
     windowDelegates[window] = delegate
     settingsWindow = window
+    SettingsRuntimeApplier.isSettingsWindowOpen = true
 
     // Temporarily make the app regular so it appears in Dock and Cmd+Tab
     NSApp.setActivationPolicy(.regular)

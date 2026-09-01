@@ -17,20 +17,15 @@ import UserNotifications
 public class MacSystemActions: SystemActionsProtocol {
 
   private var alarmPlayer: AVAudioPlayer?
+  private var savedSystemOutputVolume: Int?
+  private var alarmStopTimer: DispatchSourceTimer?
 
   /// Check if running in test mode to prevent actual system actions
   private var isTestMode: Bool {
-    // Check for CI environment
-    if ProcessInfo.processInfo.environment["CI"] != nil {
+    if ProcessInfo.processInfo.environment["MAGSAFE_GUARD_TEST_MODE"] != nil {
       return true
     }
 
-    // Check for test-specific environment variable
-    if ProcessInfo.processInfo.environment["MAGSAFE_TEST_MODE"] != nil {
-      return true
-    }
-
-    // Check for XCTest framework
     if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
       return true
     }
@@ -178,45 +173,137 @@ public class MacSystemActions: SystemActionsProtocol {
   }
 
   /// Plays an alarm sound at the specified volume
-  /// - Parameter volume: Volume level from 0.0 to 1.0
+  /// - Parameters:
+  ///   - volume: Volume level from 0.0 to 1.0 (player level; also used as system volume target when boosting)
+  ///   - boostSystemVolume: When true, temporarily raises macOS output volume to `volume` before playback
+  ///   - durationSeconds: Playback limit (3–30). `0` plays until `stopAlarm()` is called.
   /// - Throws: SystemActionError if playback fails
-  public func playAlarm(volume: Float) throws {
+  public func playAlarm(volume: Float, boostSystemVolume: Bool, durationSeconds: TimeInterval) throws {
     // In test mode, simulate the alarm without actually playing sound
     if isTestMode {
-      Log.info("TEST MODE: Simulating alarm sound at volume \(volume) (no actual sound played)", category: .security)
+      Log.info(
+        "TEST MODE: Simulating alarm sound at volume \(volume) boost=\(boostSystemVolume) duration=\(durationSeconds)s (no actual sound played)",
+        category: .security)
       return
     }
 
-    // Play alarm sound
-    guard let soundURL = Bundle.main.url(forResource: "alarm", withExtension: "wav") else {
-      // Use system sound as fallback
-      NSSound.beep()
+    cancelAlarmStopTimer()
+    let clampedVolume = min(max(volume, 0), 1)
 
-      // Play multiple beeps
-      for _ in 0..<5 {
-        NSSound.beep()
-        Thread.sleep(forTimeInterval: 0.5)
-      }
+    if boostSystemVolume {
+      savedSystemOutputVolume = readSystemOutputVolume()
+      setSystemOutputVolume(Int(clampedVolume * 100))
+    }
+
+    // Play bundled siren loop (Resources/alarm.wav)
+    guard let soundURL = Self.alarmSoundURL else {
+      Log.warning("Alarm sound missing from app bundle — using system beep fallback", category: .security)
+      playSystemBeepFallback()
       return
     }
 
     do {
       alarmPlayer = try AVAudioPlayer(contentsOf: soundURL)
-      alarmPlayer?.volume = volume
+      alarmPlayer?.volume = 1.0
       alarmPlayer?.numberOfLoops = -1  // Loop indefinitely
-      alarmPlayer?.play()
+      alarmPlayer?.prepareToPlay()
+      guard alarmPlayer?.play() == true else {
+        throw SystemActionError.alarmPlaybackFailed
+      }
+      scheduleAlarmStop(after: durationSeconds)
     } catch {
       Log.error("Failed to play alarm sound", error: error, category: .security)
-      // Fallback to system beep
-      NSSound.beep()
+      restoreSystemOutputVolumeIfNeeded()
+      playSystemBeepFallback()
       throw SystemActionError.alarmPlaybackFailed
+    }
+  }
+
+  private static var alarmSoundURL: URL? {
+    Bundle.main.url(forResource: "alarm", withExtension: "wav")
+      ?? Bundle.main.url(forResource: "alarm", withExtension: "wav", subdirectory: "Resources")
+  }
+
+  private func playSystemBeepFallback() {
+    NSSound.beep()
+    for _ in 0..<5 {
+      NSSound.beep()
+      Thread.sleep(forTimeInterval: 0.5)
     }
   }
 
   /// Stops the currently playing alarm sound
   public func stopAlarm() {
+    cancelAlarmStopTimer()
     alarmPlayer?.stop()
     alarmPlayer = nil
+    restoreSystemOutputVolumeIfNeeded()
+  }
+
+  private func scheduleAlarmStop(after seconds: TimeInterval) {
+    guard seconds > 0 else { return }
+
+    let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
+    timer.schedule(deadline: .now() + seconds)
+    timer.setEventHandler { [weak self] in
+      self?.stopAlarm()
+    }
+    alarmStopTimer = timer
+    timer.resume()
+  }
+
+  private func cancelAlarmStopTimer() {
+    alarmStopTimer?.setEventHandler {}
+    alarmStopTimer?.cancel()
+    alarmStopTimer = nil
+  }
+
+  private func readSystemOutputVolume() -> Int? {
+    let task = Process()
+    task.launchPath = systemPaths.osascriptPath
+    task.arguments = ["-e", "output volume of (get volume settings)"]
+    let pipe = Pipe()
+    task.standardOutput = pipe
+
+    do {
+      try task.run()
+      task.waitUntilExit()
+      guard task.terminationStatus == 0 else { return nil }
+      let data = pipe.fileHandleForReading.readDataToEndOfFile()
+      guard let text = String(data: data, encoding: .utf8)?
+        .trimmingCharacters(in: .whitespacesAndNewlines),
+        let volume = Int(text)
+      else {
+        return nil
+      }
+      return volume
+    } catch {
+      Log.warning("Could not read system output volume", category: .security)
+      return nil
+    }
+  }
+
+  private func setSystemOutputVolume(_ volume: Int) {
+    let clamped = max(0, min(100, volume))
+    let task = Process()
+    task.launchPath = systemPaths.osascriptPath
+    task.arguments = ["-e", "set volume output volume \(clamped)"]
+
+    do {
+      try task.run()
+      task.waitUntilExit()
+      if task.terminationStatus != 0 {
+        Log.warning("set volume exited with status \(task.terminationStatus)", category: .security)
+      }
+    } catch {
+      Log.warning("Could not set system output volume: \(error.localizedDescription)", category: .security)
+    }
+  }
+
+  private func restoreSystemOutputVolumeIfNeeded() {
+    guard let savedSystemOutputVolume else { return }
+    setSystemOutputVolume(savedSystemOutputVolume)
+    self.savedSystemOutputVolume = nil
   }
 
   /// Forces logout of all users using AppleScript

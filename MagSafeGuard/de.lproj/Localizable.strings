@@ -55,6 +55,16 @@
 "settings.security.actionsSelected" = "%lld Aktionen ausgewählt";
 "settings.security.resetDefaults" = "Auf Standard zurücksetzen";
 "settings.security.removeAction" = "Aktion entfernen";
+"settings.security.alarm.title" = "Alarmton";
+"settings.security.alarm.volume.min" = "Leise";
+"settings.security.alarm.volume.max" = "Laut";
+"settings.security.alarm.volume.value" = "Lautstärke: %lld%%";
+"settings.security.alarm.boost.title" = "Systemlautstärke während Alarm erhöhen";
+"settings.security.alarm.boost.caption" = "Setzt die macOS-Ausgabelautstärke vorübergehend auf den Wert oben — auch wenn die Systemlautstärke niedrig ist.";
+"settings.security.alarm.duration.min" = "3 s";
+"settings.security.alarm.duration.max" = "∞";
+"settings.security.alarm.duration.value" = "Dauer: %lld s";
+"settings.security.alarm.duration.endless" = "Dauer: bis gestoppt";
 "settings.network.title" = "Netzwerk-Aktionen";
 "settings.network.caption" = "Bei Sicherheits-Trigger ausführen (zusätzlich zu Sperre, Alarm, …)";
 "settings.network.webhookURL" = "Webhook-URL";

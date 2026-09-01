@@ -10,22 +10,24 @@ import XCTest
 
 final class MenuBarIconHelperTests: XCTestCase {
 
-  func testMonochromeHasNoContentTint() {
-    for state: MenuBarIconHelper.VisualState in [
-      .disarmed, .armed, .gracePeriod, .triggered,
-    ] {
-      XCTAssertNil(
-        MenuBarIconHelper.contentTint(for: .monochrome, state: state),
-        "Expected nil tint for \(state)"
-      )
-    }
+  func testMonochromeUsesTemplateStyleImage() {
+    let image = MenuBarIconHelper.assetImage(
+      named: "MenuBarIconArmed",
+      appearance: .monochrome,
+      state: .armed
+    )
+    XCTAssertNotNil(image)
+    XCTAssertTrue(image?.isTemplate == true)
   }
 
-  func testAccentProvidesTintPerState() {
-    XCTAssertNotNil(MenuBarIconHelper.contentTint(for: .accent, state: .armed))
-    XCTAssertNotNil(MenuBarIconHelper.contentTint(for: .accent, state: .gracePeriod))
-    XCTAssertNotNil(MenuBarIconHelper.contentTint(for: .accent, state: .triggered))
-    XCTAssertNotNil(MenuBarIconHelper.contentTint(for: .accent, state: .disarmed))
+  func testAccentBakesTintIntoImage() {
+    let image = MenuBarIconHelper.assetImage(
+      named: "MenuBarIconArmed",
+      appearance: .accent,
+      state: .armed
+    )
+    XCTAssertNotNil(image)
+    XCTAssertFalse(image?.isTemplate == true)
   }
 
   func testAccentTintsDifferByState() {

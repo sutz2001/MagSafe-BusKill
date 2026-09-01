@@ -61,4 +61,16 @@ Update [FORK_ROADMAP.md](../FORK_ROADMAP.md), [panic-modes.md](panic-modes.md) (
 
 ---
 
+## iCloud: Custom-Script-Inhalte syncen
+
+**Captured:** 2026-09-01 (Marc) · **Priorität:** Nice-to-have / Spielerei
+
+Heute (wenn CloudKit aktiv): nur die **Pfad-Liste** in Settings (`customScripts`), nicht die `.sh`-Dateien selbst. Auf einem zweiten Mac fehlen die Skripte oft — genau dort wäre Sync am nützlichsten.
+
+**Grobe Idee:** Skripte unter `~/.magsafe/scripts/` als CloudKit-Records oder Bundle (Inhalt + SHA-256 + `lastModified`); beim Download deployen mit bestehender Validierung in `MacSystemActions`. Voraussetzung: Paid Dev + CloudKit-Entitlements (Tab derzeit ausgeblendet ohne Entitlement).
+
+**Nicht jetzt** — erst nach 1.0 / wenn iCloud-Sync überhaupt produktiv genutzt wird.
+
+---
+
 *Add new sections below as one-off ideas. Keep each block short.*

@@ -55,6 +55,16 @@
 "settings.security.actionsSelected" = "%lld actions selected";
 "settings.security.resetDefaults" = "Reset to Defaults";
 "settings.security.removeAction" = "Remove action";
+"settings.security.alarm.title" = "Alarm Sound";
+"settings.security.alarm.volume.min" = "Quiet";
+"settings.security.alarm.volume.max" = "Loud";
+"settings.security.alarm.volume.value" = "Volume: %lld%%";
+"settings.security.alarm.boost.title" = "Raise system volume during alarm";
+"settings.security.alarm.boost.caption" = "Temporarily sets macOS output volume to the level above so the alarm is audible even when volume is low.";
+"settings.security.alarm.duration.min" = "3 s";
+"settings.security.alarm.duration.max" = "∞";
+"settings.security.alarm.duration.value" = "Duration: %lld s";
+"settings.security.alarm.duration.endless" = "Duration: until stopped";
 "settings.network.title" = "Network Actions";
 "settings.network.caption" = "Run when security triggers fire (alongside lock, alarm, etc.)";
 "settings.network.webhookURL" = "Webhook URL";

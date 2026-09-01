@@ -2,7 +2,7 @@
 
 **Audience:** Users, contributors, and maintainers who need to know what the app *actually does* at runtime (not what the UI implies).
 
-**Version:** documents behavior as of fork **0.5.1** (build 10).  
+**Version:** documents behavior as of fork **0.5.3** (build 12).  
 **Primary code:** `MagSafeGuard/Controllers/AppController.swift`, services under `MagSafeGuard/Services/`.
 
 **Related:** [Behavior gaps & fix backlog](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) (planned features) · [README](../../README.md)
@@ -414,6 +414,8 @@ Optional low-visibility mode: **menu bar icon only** — no macOS notifications 
 | `showStatusNotifications` | No arm/disarm toasts |
 | `showSecurityAlerts` | No grace banner; no countdown text in menu bar |
 | `playCriticalAlertSound` | No beep on grace start |
+
+When `showSecurityAlerts` is off, the menu bar icon **pulses** in the final seconds of grace (last **10 s** normal armed, last **5 s** panic/paranoid). With **Reduce motion** enabled, the icon stays steady at full opacity (grace accent color if colored icons are on).
 
 All three off → `isDiscreetOperation`. Grace period and state changes still run; only feedback is suppressed.
 

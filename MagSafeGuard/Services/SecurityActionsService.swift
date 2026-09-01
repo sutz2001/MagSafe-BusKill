@@ -72,6 +72,10 @@ public class SecurityActionsService {
     var actionDelay: TimeInterval
     /// Alarm volume level (0.0 to 1.0)
     var alarmVolume: Float
+    /// Raise macOS output volume to `alarmVolume` while the alarm plays
+    var boostSystemVolumeForAlarm: Bool
+    /// Alarm playback limit in seconds (3–30). `0` = until stopped manually.
+    var alarmDurationSeconds: TimeInterval
     /// Delay in seconds before system shutdown
     var shutdownDelay: TimeInterval
     /// Path to custom script file (legacy single path)
@@ -86,6 +90,8 @@ public class SecurityActionsService {
       actionOrder: [.lockScreen],
       actionDelay: 0,
       alarmVolume: 1.0,
+      boostSystemVolumeForAlarm: true,
+      alarmDurationSeconds: 15,
       shutdownDelay: 30,
       customScriptPath: nil,
       customScriptPaths: [],
@@ -97,6 +103,8 @@ public class SecurityActionsService {
       case actionOrder
       case actionDelay
       case alarmVolume
+      case boostSystemVolumeForAlarm
+      case alarmDurationSeconds
       case shutdownDelay
       case customScriptPath
       case customScriptPaths
@@ -108,6 +116,8 @@ public class SecurityActionsService {
       actionOrder: [SecurityAction],
       actionDelay: TimeInterval,
       alarmVolume: Float,
+      boostSystemVolumeForAlarm: Bool,
+      alarmDurationSeconds: TimeInterval,
       shutdownDelay: TimeInterval,
       customScriptPath: String?,
       customScriptPaths: [String],
@@ -117,6 +127,8 @@ public class SecurityActionsService {
       self.actionOrder = actionOrder
       self.actionDelay = actionDelay
       self.alarmVolume = alarmVolume
+      self.boostSystemVolumeForAlarm = boostSystemVolumeForAlarm
+      self.alarmDurationSeconds = alarmDurationSeconds
       self.shutdownDelay = shutdownDelay
       self.customScriptPath = customScriptPath
       self.customScriptPaths = customScriptPaths
@@ -129,6 +141,10 @@ public class SecurityActionsService {
       actionOrder = Self.decodeActionList(from: container, key: .actionOrder)
       actionDelay = try container.decode(TimeInterval.self, forKey: .actionDelay)
       alarmVolume = try container.decode(Float.self, forKey: .alarmVolume)
+      boostSystemVolumeForAlarm =
+        try container.decodeIfPresent(Bool.self, forKey: .boostSystemVolumeForAlarm) ?? true
+      alarmDurationSeconds =
+        try container.decodeIfPresent(TimeInterval.self, forKey: .alarmDurationSeconds) ?? 15
       shutdownDelay = try container.decode(TimeInterval.self, forKey: .shutdownDelay)
       customScriptPath = try container.decodeIfPresent(String.self, forKey: .customScriptPath)
       customScriptPaths =
@@ -722,7 +738,11 @@ public class SecurityActionsService {
   }
 
   private func executeSoundAlarm() throws {
-    try systemActions.playAlarm(volume: configuration.alarmVolume)
+    try systemActions.playAlarm(
+      volume: configuration.alarmVolume,
+      boostSystemVolume: configuration.boostSystemVolumeForAlarm,
+      durationSeconds: configuration.alarmDurationSeconds
+    )
   }
 
   private func executeForceLogout() throws {

@@ -17,6 +17,9 @@ enum SettingsRuntimeApplier {
   /// Updated by `AppDelegate` when protection mode changes (panic/paranoid force Dock hidden).
   static var currentProtectionMode: ProtectionMode = .normal
 
+  /// Set while the custom settings `NSWindow` is open — blocks dock policy from hiding it.
+  static var isSettingsWindowOpen = false
+
   static func markApplicationReady() {
     isApplicationReady = true
   }
@@ -46,6 +49,10 @@ enum SettingsRuntimeApplier {
     }
 
     let update = {
+      if isSettingsWindowOpen {
+        return
+      }
+
       let settingsWindowOpen = NSApp.windows.contains {
         $0.title == L10n.tr("app.settingsWindow") && $0.isVisible
       }

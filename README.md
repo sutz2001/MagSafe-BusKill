@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.2` (build `11`) |
+| **Version** | `0.5.3` (build `12`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -199,6 +199,7 @@ task release:clean                   # remove dist/
 | Done | **0.5.0** | Panic mode — 0 grace, **⌃⌘P** hotkey, immediate shutdown |
 | Done | **0.5.1** | Operation profiles, clipboard network action, settings/docs polish |
 | Done | **0.5.2** | Optional colored menu bar icons (monochrome default) |
+| Done | **0.5.3** | Grace period reliability, alarm settings, discreet menu bar pulse |
 | Next | **0.6.0** | Paranoid mode — data destruction (setup required) |
 | Stable | **1.0.0** | Notarized Developer ID distribution |
 

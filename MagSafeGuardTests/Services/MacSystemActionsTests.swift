@@ -79,13 +79,13 @@ final class MacSystemActionsTests: XCTestCase {
 
     func testPlayAlarmValidVolume() throws {
         // Test valid volume ranges
-        XCTAssertNoThrow(try sut.playAlarm(volume: 0.0))
+        XCTAssertNoThrow(try sut.playAlarm(volume: 0.0, boostSystemVolume: false, durationSeconds: 0))
         sut.stopAlarm()
 
-        XCTAssertNoThrow(try sut.playAlarm(volume: 0.5))
+        XCTAssertNoThrow(try sut.playAlarm(volume: 0.5, boostSystemVolume: false, durationSeconds: 15))
         sut.stopAlarm()
 
-        XCTAssertNoThrow(try sut.playAlarm(volume: 1.0))
+        XCTAssertNoThrow(try sut.playAlarm(volume: 1.0, boostSystemVolume: false, durationSeconds: 30))
         sut.stopAlarm()
     }
 
@@ -94,7 +94,7 @@ final class MacSystemActionsTests: XCTestCase {
         sut.stopAlarm()
 
         // Start and stop
-        try? sut.playAlarm(volume: 0.5)
+        try? sut.playAlarm(volume: 0.5, boostSystemVolume: false, durationSeconds: 0)
         sut.stopAlarm()
     }
 

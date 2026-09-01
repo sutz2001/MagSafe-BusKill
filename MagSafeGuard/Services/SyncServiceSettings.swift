@@ -36,6 +36,9 @@ final class SyncServiceSettings {
     // Encode security actions as a comma-separated string
     let actionsString = settings.securityActions.map { $0.rawValue }.joined(separator: ",")
     record["securityActions"] = actionsString
+    record["alarmVolume"] = Double(settings.alarmVolume)
+    record["boostSystemVolumeForAlarm"] = settings.boostSystemVolumeForAlarm ? 1 : 0
+    record["alarmDurationSeconds"] = settings.alarmDurationSeconds
 
     // Auto-arm settings
     record["autoArmEnabled"] = settings.autoArmEnabled ? 1 : 0
@@ -144,6 +147,14 @@ final class SyncServiceSettings {
         manager.updateSetting(mapping.keyPath, value: value)
       }
     }
+
+    if let alarmVolume = record["alarmVolume"] as? Double {
+      manager.updateSetting(\.alarmVolume, value: Float(alarmVolume))
+    }
+
+    if let alarmDuration = record["alarmDurationSeconds"] as? TimeInterval {
+      manager.updateSetting(\.alarmDurationSeconds, value: alarmDuration)
+    }
   }
 
   private func applyBooleanSettings(from record: CKRecord, to manager: UserDefaultsManager) {
@@ -155,6 +166,7 @@ final class SyncServiceSettings {
       ("showStatusNotifications", \.showStatusNotifications),
       ("showSecurityAlerts", \.showSecurityAlerts),
       ("playCriticalAlertSound", \.playCriticalAlertSound),
+      ("boostSystemVolumeForAlarm", \.boostSystemVolumeForAlarm),
       ("panicLegalNoticeAccepted", \.panicLegalNoticeAccepted),
       ("launchAtLogin", \.launchAtLogin),
       ("showInDock", \.showInDock),

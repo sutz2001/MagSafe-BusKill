@@ -20,6 +20,8 @@ class MockSystemActions: SystemActionsProtocol {
   var playAlarmCalled = false
   var playAlarmVolume: Float?
   var lastAlarmVolume: Float?
+  var lastBoostSystemVolume: Bool?
+  var lastAlarmDurationSeconds: TimeInterval?
   var stopAlarmCalled = false
   var forceLogoutCalled = false
   var forceLogoutCallCount = 0
@@ -55,6 +57,8 @@ class MockSystemActions: SystemActionsProtocol {
     playAlarmCalled = false
     playAlarmVolume = nil
     lastAlarmVolume = nil
+    lastBoostSystemVolume = nil
+    lastAlarmDurationSeconds = nil
     stopAlarmCalled = false
     forceLogoutCalled = false
     forceLogoutCallCount = 0
@@ -95,10 +99,12 @@ class MockSystemActions: SystemActionsProtocol {
     }
   }
 
-  func playAlarm(volume: Float) throws {
+  func playAlarm(volume: Float, boostSystemVolume: Bool, durationSeconds: TimeInterval) throws {
     playAlarmCalled = true
     playAlarmVolume = volume
     lastAlarmVolume = volume
+    lastBoostSystemVolume = boostSystemVolume
+    lastAlarmDurationSeconds = durationSeconds
 
     if !playAlarmShouldSucceed || shouldFailAlarm {
       throw SystemActionError.alarmPlaybackFailed

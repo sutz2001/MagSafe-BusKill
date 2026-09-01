@@ -2,7 +2,7 @@
 
 **Goal:** Bring MagSafe Guard to a **reliable daily-driver** state on your Mac — without new features (no Paranoid, no LAN web trigger, no companion app).
 
-**Current version:** 0.5.2 (build 11)  
+**Current version:** 0.5.3 (build 12)  
 **Companion docs:** [acceptance-tests.md](acceptance-tests.md) · [testing-guide.md](testing-guide.md) · [behavior-gaps.md](../features/behavior-gaps.md)
 
 ---
@@ -80,10 +80,10 @@ Use a **test session** or spare user if testing logout/shutdown. Save work first
 ### Normal armed mode
 
 - [ ] Arm / disarm via menu + Touch ID.
-- [ ] Unplug adapter → grace countdown (or immediate actions if grace = 0).
+- [x] Unplug adapter → grace countdown (or immediate actions if grace = 0). *(0.5.3 session)*
 - [ ] Reconnect during grace → grace cancelled, stays armed.
 - [ ] Cancel grace (if enabled) → auth required.
-- [ ] Security actions run in expected order (lock at minimum).
+- [x] Security actions run in expected order (lock at minimum). *(logout tested, 0.5.3 session)*
 - [ ] Event log shows power disconnect + grace / actions.
 - [ ] Settings: change action order → survives relaunch and affects trigger.
 
@@ -91,6 +91,7 @@ Use a **test session** or spare user if testing logout/shutdown. Save work first
 
 - [ ] All three notification toggles off → no toasts, no grace banner, no countdown text; icon still changes.
 - [ ] Re-enable one toggle at a time → expected feedback returns.
+- [x] Discreet grace menu bar pulse in last 10 s (5 s panic). *(0.5.3 session)*
 
 ### Network & remote (if you use them)
 
@@ -112,7 +113,8 @@ Use a **test session** or spare user if testing logout/shutdown. Save work first
 ### Menu bar & settings
 
 - [ ] Icon visible (light/dark); overflow menu (•••) if crowded.
-- [ ] **Colored menu bar icons** toggle (General + status menu): monochrome default; accent shows state colors.
+- [x] **Colored menu bar icons** toggle (General + status menu): monochrome default; accent shows state colors. *(0.5.3 session)*
+- [x] Settings window opens reliably (no disappear-on-click). *(0.5.3 session)*
 - [ ] Launch at login + show in dock toggles work.
 - [ ] EN/DE strings sane in menus and panic legal alert.
 - [ ] iCloud sync (if enabled): settings round-trip on second device or fresh profile.
@@ -137,7 +139,7 @@ Full manual checklist: [acceptance-tests.md](acceptance-tests.md) (includes disc
 
 ### First public binary (optional)
 
-- [ ] GitHub Release tag `v0.5.2` (or next `v0.5.x` patch).
+- [ ] GitHub Release tag `v0.5.3` (or next `v0.5.x` patch).
 - [ ] Attach `.dmg` + `SHA256SUMS` from `dist/`.
 - [ ] Release notes from [FORK_CHANGELOG.md](../FORK_CHANGELOG.md).
 - [ ] `LICENSE` + `NOTICE` inside or alongside DMG.
@@ -148,7 +150,7 @@ Full manual checklist: [acceptance-tests.md](acceptance-tests.md) (includes disc
 
 - [x] [user-guide.md](../features/user-guide.md) / [user-guide.de.md](../features/user-guide.de.md) — operation profiles, panic vs preset (0.5.1).
 - [x] [acceptance-tests.md](acceptance-tests.md) — panic + discreet sections; removed stale “Run Demo” menu item.
-- [x] [behavior-gaps.md](../features/behavior-gaps.md) — only Paranoid open; 0.5.1 batch noted.
+- [x] [behavior-gaps.md](../features/behavior-gaps.md) — only Paranoid open; 0.5.3 GAP-16 resolved.
 - [x] README EN/DE roadmap — 0.5.1 row, network actions table, doc links.
 
 ---
@@ -194,4 +196,4 @@ File GitHub Issue or add row to behavior-gaps **Open** until fixed.
 
 ---
 
-*Last updated: 2026-09-01 (fork 0.5.1 — QA status + doc hygiene).*
+*Last updated: 2026-09-01 (fork 0.5.3 — grace/alarm fix, partial manual smoke).*

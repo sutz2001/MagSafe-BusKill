@@ -43,8 +43,10 @@ public protocol SystemActionsProtocol {
   /// The alarm continues until stopped manually or the system is powered off.
   ///
   /// - Parameter volume: Audio volume level (0.0 to 1.0)
+  /// - Parameter boostSystemVolume: When true, temporarily raises macOS output volume to match `volume`
+  /// - Parameter durationSeconds: Playback limit (3–30). `0` plays until `stopAlarm()` is called.
   /// - Throws: `SystemActionError.alarmPlaybackFailed` if audio cannot be played
-  func playAlarm(volume: Float) throws
+  func playAlarm(volume: Float, boostSystemVolume: Bool, durationSeconds: TimeInterval) throws
 
   /// Stop any ongoing alarm sound playback.
   ///

@@ -2,7 +2,7 @@
 
 Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches and their resolution status.
 
-**Last resolved batch:** 2026-09-01 (0.5.2: colored menu bar icons; 0.5.1: operation profiles, clipboard network action)
+**Last resolved batch:** 2026-09-01 (0.5.3: grace period + alarm reliability; 0.5.2: colored menu bar icons; 0.5.1: operation profiles, clipboard network action)
 
 ---
 
@@ -32,6 +32,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 | GAP-13 | Dual enums (`SecurityActionType` vs service enum) | `SecurityActionsService` uses domain `SecurityActionType`; legacy `screen_lock` decode |
 | GAP-14 | Auto-arm required interactive auth | `armAutomatically()` for auto-arm and remote `arm` URL (opt-in flows) |
 | GAP-15 | Theft trigger used user action order; lock not prioritized; rate limit / circuit breaker could block lock | v0.5 — `SecurityActionExecutionContext.theftTrigger` / `.panic` protection-first path; rate limit and breaker only for `.standard` |
+| GAP-16 | Grace countdown stuck; actions never ran after 30 s | v0.5.3 — GCD grace timer; non-blocking grace sheet (not `runModal()`); alarm volume + optional system-volume boost in Settings; `CI=true` no longer disables system actions |
 
 ---
 
@@ -49,6 +50,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 - [x] iCloud sync includes network actions and remote trigger settings
 - [x] Auto-arm arms without Touch ID prompt after notification delay
 - [x] Cable disconnect in normal armed mode uses protection-first path (lock first, no rate limit)
+- [x] Grace countdown ticks in menu bar while alert is visible; actions run when timer expires
 - [x] Panic mode skips grace and runs immediate shutdown pipeline
 - [x] Panic hotkey ⌃⌘P triggers response when panic-armed
 

@@ -3,6 +3,25 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.3] — 2026-09-01
+
+### Fixed
+
+- **Grace period:** countdown no longer stuck; security actions run when the timer expires (non-blocking grace sheet instead of `NSAlert.runModal()`; GCD grace timer)
+- **Alarm:** bundled `alarm.wav` siren; `CI=true` no longer disables real system actions in local runs
+- **Menu bar icons:** colored accent tints render correctly (baked into image, not `contentTintColor`)
+- **Settings window:** first open no longer disappears on click (sidebar selection fix; dock policy blocked while settings open)
+
+### Added
+
+- **Alarm settings** (Security tab, when Sound Alarm enabled): volume slider, optional system-volume boost, auto-stop duration (3–30 s or endless)
+- **Discreet grace pulse:** subtle menu bar icon pulse in the last 10 s of grace (5 s in panic); respects Reduce Motion
+- **iCloud tab** hidden when CloudKit entitlement is absent (Personal Team builds)
+
+### Changed
+
+- Settings schema v9 (`alarmVolume`, `boostSystemVolumeForAlarm`, `alarmDurationSeconds`)
+
 ## [0.5.2] — 2026-09-01
 
 ### Added

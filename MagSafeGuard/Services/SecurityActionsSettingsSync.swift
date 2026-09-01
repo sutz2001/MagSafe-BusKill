@@ -30,6 +30,10 @@ enum SecurityActionsSettingsSync {
       config.customScriptPath = nil
     }
 
+    config.alarmVolume = settings.alarmVolume
+    config.boostSystemVolumeForAlarm = settings.boostSystemVolumeForAlarm
+    config.alarmDurationSeconds = settings.alarmDurationSeconds
+
     service.applyConfiguration(config)
   }
 }

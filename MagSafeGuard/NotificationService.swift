@@ -202,11 +202,16 @@ public class NotificationService {
       return
     }
 
-    if !permissionsGranted {
-      requestPermissions()
-    }
-
     let identifier = "MagSafeGuard-critical-\(UUID().uuidString)"
+    let isGraceAlert = Self.isGracePeriodAlert(message: message)
+
+    // Grace period: non-blocking sheet (countdown keeps running) instead of runModal().
+    if isGraceAlert {
+      if UserDefaultsManager.shared.settings.showSecurityAlerts {
+        GracePeriodAlertPresenter.show(title: title, message: message)
+      }
+      return
+    }
 
     if deliveryMethod is UserNotificationDelivery {
       if !permissionsGranted {
@@ -243,9 +248,17 @@ public class NotificationService {
     UNUserNotificationCenter.current().add(request) { error in
       if let error {
         Log.error("Error showing critical notification", error: error)
-        AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+        if !NotificationService.isGracePeriodAlert(message: message) {
+          AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+        }
       }
     }
+  }
+
+  /// Grace-period alerts must not use blocking NSAlert.runModal (freezes countdown and actions).
+  static func isGracePeriodAlert(message: String) -> Bool {
+    message.contains("Security action in")
+      || message.contains("Sicherheitsaktion in")
   }
 }
 
@@ -278,8 +291,9 @@ private class UserNotificationDelivery: NotificationDeliveryProtocol {
     UNUserNotificationCenter.current().add(request) { error in
       if let error = error {
         Log.error("Error showing notification", error: error)
-        // Fallback to alert window
-        AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+        if !NotificationService.isGracePeriodAlert(message: message) {
+          AlertWindowDelivery().deliver(title: title, message: message, identifier: identifier)
+        }
       }
     }
   }
@@ -312,8 +326,12 @@ private class AlertWindowDelivery: NotificationDeliveryProtocol {
 
   func deliver(title: String, message: String, identifier: String) {
     DispatchQueue.main.async {
-      // Also log to console
       Log.info("🔔 NOTIFICATION: \(title) - \(message)")
+
+      if NotificationService.isGracePeriodAlert(message: message) {
+        GracePeriodAlertPresenter.show(title: title, message: message)
+        return
+      }
 
       let alert = NSAlert()
       alert.messageText = title

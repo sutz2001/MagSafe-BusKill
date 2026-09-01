@@ -24,7 +24,7 @@ public struct SettingsView: View {
     _selectedTab = State(initialValue: .security)
   }
 
-  private enum SettingsTab: CaseIterable, Identifiable {
+  private enum SettingsTab: CaseIterable, Identifiable, Hashable {
     case general
     case security
     case autoArm
@@ -63,16 +63,20 @@ public struct SettingsView: View {
         return "wrench.and.screwdriver"
       }
     }
+
+    static var visibleCases: [SettingsTab] {
+      allCases.filter { tab in
+        tab != .cloudSync || CloudSyncUIAvailability.isTabVisible
+      }
+    }
   }
 
   /// The main view body containing the sidebar navigation interface
   public var body: some View {
     NavigationSplitView {
-      // Sidebar
-      List(SettingsTab.allCases, selection: $selectedTab) { tab in
-        NavigationLink(value: tab) {
-          Label(tab.title, systemImage: tab.symbolName)
-        }
+      List(SettingsTab.visibleCases, selection: $selectedTab) { tab in
+        Label(tab.title, systemImage: tab.symbolName)
+          .tag(tab)
       }
       .navigationSplitViewColumnWidth(min: 200, ideal: 220, max: 300)
       .listStyle(SidebarListStyle())
@@ -115,6 +119,11 @@ public struct SettingsView: View {
     .navigationSplitViewStyle(.balanced)
     .frame(minWidth: 800, minHeight: 500)
     .id(languageManager.preference)
+    .onAppear {
+      if let selectedTab, !SettingsTab.visibleCases.contains(selectedTab) {
+        self.selectedTab = .security
+      }
+    }
   }
 }
 
@@ -466,6 +475,10 @@ struct SecuritySettingsView: View {
         securityActionsFooter
       }
 
+      if settingsManager.settings.securityActions.contains(.soundAlarm) {
+        alarmVolumeSection
+      }
+
       networkActionsSection
       remoteTriggerSection
     }
@@ -656,6 +669,87 @@ struct SecuritySettingsView: View {
       }
       .buttonStyle(.link)
     }
+  }
+
+  private var alarmVolumeSection: some View {
+    Section(header: Text(l10n: "settings.security.alarm.title")) {
+      VStack(alignment: .leading, spacing: 8) {
+        HStack {
+          Text(l10n: "settings.security.alarm.volume.min")
+          Slider(
+            value: alarmVolumeBinding,
+            in: 0.1...1.0,
+            step: 0.05
+          )
+          Text(l10n: "settings.security.alarm.volume.max")
+        }
+        Text(L10n.tr("settings.security.alarm.volume.value", Int(settingsManager.settings.alarmVolume * 100)))
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+
+      Toggle(isOn: boostSystemVolumeBinding) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(l10n: "settings.security.alarm.boost.title")
+          Text(l10n: "settings.security.alarm.boost.caption")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
+      }
+
+      VStack(alignment: .leading, spacing: 8) {
+        HStack {
+          Text(l10n: "settings.security.alarm.duration.min")
+          Slider(
+            value: alarmDurationSliderBinding,
+            in: 3...31,
+            step: 1
+          )
+          Text(l10n: "settings.security.alarm.duration.max")
+        }
+        Text(alarmDurationLabel)
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+    }
+  }
+
+  private var alarmDurationLabel: String {
+    let duration = settingsManager.settings.alarmDurationSeconds
+    if duration <= 0 {
+      return L10n.tr("settings.security.alarm.duration.endless")
+    }
+    return L10n.tr("settings.security.alarm.duration.value", Int(duration))
+  }
+
+  private var alarmDurationSliderBinding: Binding<Double> {
+    Binding(
+      get: {
+        let duration = settingsManager.settings.alarmDurationSeconds
+        return duration <= 0 ? 31 : duration
+      },
+      set: { newValue in
+        if newValue >= 31 {
+          settingsManager.updateSetting(\.alarmDurationSeconds, value: 0)
+        } else {
+          settingsManager.updateSetting(\.alarmDurationSeconds, value: newValue)
+        }
+      }
+    )
+  }
+
+  private var alarmVolumeBinding: Binding<Double> {
+    Binding(
+      get: { Double(settingsManager.settings.alarmVolume) },
+      set: { settingsManager.updateSetting(\.alarmVolume, value: Float($0)) }
+    )
+  }
+
+  private var boostSystemVolumeBinding: Binding<Bool> {
+    Binding(
+      get: { settingsManager.settings.boostSystemVolumeForAlarm },
+      set: { settingsManager.updateSetting(\.boostSystemVolumeForAlarm, value: $0) }
+    )
   }
 
   private var availableActions: [SecurityActionType] {

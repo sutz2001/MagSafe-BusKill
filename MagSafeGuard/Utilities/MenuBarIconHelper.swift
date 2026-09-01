@@ -43,9 +43,9 @@ enum MenuBarIconHelper {
   }
 
   /// Tint for `NSStatusBarButton.contentTintColor`; `nil` = system monochrome.
+  /// Accent colors are baked into the image in `preparedImage` for reliable status-bar rendering.
   static func contentTint(for appearance: MenuBarIconAppearance, state: VisualState) -> NSColor? {
-    guard appearance == .accent else { return nil }
-    return accentTint(for: state)
+    nil
   }
 
   static func accentTint(for state: VisualState) -> NSColor {
@@ -67,10 +67,33 @@ enum MenuBarIconHelper {
     state: VisualState
   ) -> NSImage {
     let copy = (image.copy() as? NSImage) ?? image
-    copy.isTemplate = true
     copy.size = menuBarPointSize
-    _ = appearance
-    _ = state
-    return copy
+
+    switch appearance {
+    case .monochrome:
+      copy.isTemplate = true
+      return copy
+    case .accent:
+      copy.isTemplate = true
+      return tintedImage(copy, color: accentTint(for: state))
+    }
+  }
+
+  private static func tintedImage(_ image: NSImage, color: NSColor) -> NSImage {
+    let size = image.size
+    let tinted = NSImage(size: size)
+    tinted.lockFocus()
+    color.setFill()
+    NSRect(origin: .zero, size: size).fill()
+    image.draw(
+      in: NSRect(origin: .zero, size: size),
+      from: NSRect(origin: .zero, size: size),
+      operation: .destinationIn,
+      fraction: 1.0
+    )
+    tinted.unlockFocus()
+    tinted.isTemplate = false
+    tinted.size = menuBarPointSize
+    return tinted
   }
 }
