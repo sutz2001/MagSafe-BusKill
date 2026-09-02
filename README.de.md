@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.6` (Build `15`) |
+| **Version** | `0.5.7` (Build `16`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -203,6 +203,7 @@ task release:clean
 | Erledigt | **0.5.4** | Shutdown nach Bildschirmsperre (Timer + Reihenfolge) |
 | Erledigt | **0.5.5** | Trigger-Pipeline: Hygiene-Phase, Skript-Budget, Logout + sofort Shutdown |
 | Erledigt | **0.5.6** | Einsteiger-Preset, Risiko-Labels, Erst-Scharf-Hinweis, `magsafeguard-cli` |
+| Erledigt | **0.5.7** | Onboarding aufgeteilt (Alltag vs. Panic/Paranoid), CLI in Kurzanleitung |
 | Als Nächstes | **0.6.0** | Paranoid-Modus — Datenvernichtung (Setup nötig) |
 | Stabil | **1.0.0** | Notarisierte Developer-ID-Verteilung |
 

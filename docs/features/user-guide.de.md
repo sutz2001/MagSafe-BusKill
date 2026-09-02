@@ -1,7 +1,7 @@
 # MagSafe Guard — Kurzanleitung
 
 **Sprache:** [English (user-guide.md)](user-guide.md) · Deutsch  
-**Version:** Fork **0.5.5** (Build 14) · September 2026
+**Version:** Fork **0.5.7** (Build 16) · September 2026
 
 Kurze Praxis-Anleitung für den Alltag. Technische Details: [operating-modes.md](operating-modes.md) (EN) · Panic-Design: [panic-modes.md](panic-modes.md)
 
@@ -24,16 +24,19 @@ Standardmäßig nur **Menüleiste** (**Im Dock anzeigen** unter Einstellungen �
 
 ## 2. Betriebsmodi (Einstellungs-Presets)
 
-**Einstellungen → Security** (oben im Tab): drei **Betriebsmodi**. Die Auswahl setzt Standardwerte; einzelne Schalter können danach angepasst werden.
+**Einstellungen → Security** (oben im Tab): vier **Betriebsmodi** (Auswahlmenü). Die Auswahl setzt Standardwerte; einzelne Schalter können danach angepasst werden.
 
 | Modus | Karenz | Sicherheitsaktionen | Mitteilungen | Dock | Netzwerk-Aktionen |
 |-------|--------|---------------------|--------------|------|-------------------|
+| **Einsteiger** | 30 s | Nur Sperre | An | Ihre Wahl | Keine |
 | **Normal** | 30 s | Sperre + Alarm | An | Ihre Wahl | Keine |
 | **Diskret** | 20 s | Nur Sperre | Aus (nur Icon) | Aus | Keine |
 | **Panic** (Preset) | 5 s | Sperre + Abmelden | Aus | Aus | VPN aus, SSH leeren, Zwischenablage leeren |
 
 **Hinweise:**
 
+- **Einsteiger** ist Standard bei **Neuinstallation** — empfohlen für die ersten Tage (nur Sperre, volle Karenz zum Abbrechen).
+- Farbige **Auswirkungs-Stufen** (Sicher / Datenverlust möglich / Hohes Risiko) bei Aktionen und Presets — nur Hinweis, nichts wird gesperrt.
 - Die Auswahl **bleibt auf dem gewählten Modus**, auch wenn Sie einzelne Einstellungen ändern (kein automatischer Wechsel zu „Individuell“).
 - Weicht die Konfiguration ab: **Auf [Modus]-Standard zurücksetzen** unter der Beschreibung.
 - **Panic-Preset ≠ Panic-Schutz aktivieren** (siehe §5). Das Preset gilt für **normal scharf**; **Panic-Modus aktivieren** im Menü ist ein separater Zustand mit **0 s Karenz** und sofortigem Shutdown.
@@ -99,6 +102,35 @@ Wenn aktiviert unter **Einstellungen → Security → Remote Trigger**:
 | `magsafeguard://panic?token=IHR_TOKEN` | Panic-Reaktion im **Panic-Schutz** (siehe §5) |
 
 Aus **Shortcuts** auf iPhone/Mac. Token geheim halten.
+
+### Kommandozeilen-CLI (optional)
+
+Für **lokale Automation** (Skripte, LaunchAgents) auf dem gleichen Mac — kein Ersatz für die URL-Scheme-Fernauslösung von anderen Geräten.
+
+**Voraussetzung:** MagSafe Guard läuft in der **Menüleiste**.
+
+**Einmal bauen** (aus einem Repo-Klon):
+
+```bash
+task cli:build
+```
+
+Dann das Wrapper-Skript (oder die Binary unter `MagSafeGuardLib/.build/release/MagSafeGuardCLI`):
+
+```bash
+./scripts/magsafeguard-cli status
+./scripts/magsafeguard-cli apply-profile beginner
+./scripts/magsafeguard-cli arm
+./scripts/magsafeguard-cli disarm
+```
+
+| Befehl | Wirkung |
+|--------|---------|
+| `status` | Gibt JSON aus `~/Library/Application Support/MagSafeGuard/cli-status.json` aus (Zustand, Profil, konfiguriertes Risiko, Version) |
+| `apply-profile <name>` | Betriebsmodus setzen: `beginner`, `normal`, `discreet` oder `panic` — ohne Auth |
+| `arm` / `disarm` | Wie im Menü — **Touch ID / Passwort** in der App |
+
+`arm` umgeht **keine** Authentifizierung (anders als `magsafeguard://arm?token=…` mit aktiviertem Remote Trigger).
 
 ---
 
@@ -202,6 +234,8 @@ In der App: **Einstellungen → Auto-Arm**.
 | App nicht findbar | Einstellungen → Allgemein → **Im Dock anzeigen**, oder Spotlight |
 | Hotkey ⌃⌘P ohne Wirkung | Muss **panic-scharf** sein; App muss laufen |
 | Fern-URL ignoriert | Token korrekt? Fernauslösung aktiv? |
+| CLI: „Status unavailable“ | Läuft die App? Einmal `status` nach Start ausführen, damit die Statusdatei geschrieben wird |
+| CLI `arm` läuft in Timeout | Touch ID / Passwort in der App bestätigen; bis 30 s warten |
 | Build nach ~7 Tagen abgelaufen | Personal Team — neu bauen mit `task release` oder Xcode |
 
 Mehr: [maintainers/troubleshooting.md](../maintainers/troubleshooting.md)

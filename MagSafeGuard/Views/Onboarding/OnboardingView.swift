@@ -12,8 +12,8 @@ struct OnboardingView: View {
   @Binding var isPresented: Bool
   @State private var page = 0
 
-  private let pageCount = 4
-  private let windowSize = CGSize(width: 440, height: 340)
+  private let pageCount = 5
+  private let windowSize = CGSize(width: 440, height: 400)
   private let markCompleteOnDismiss: Bool
 
   init(isPresented: Binding<Bool>, markCompleteOnDismiss: Bool = true) {
@@ -22,7 +22,7 @@ struct OnboardingView: View {
   }
 
   var body: some View {
-    VStack(spacing: 16) {
+    VStack(spacing: 14) {
       pageIndicator
 
       Group {
@@ -30,14 +30,16 @@ struct OnboardingView: View {
         case 0:
           welcomeOnboardingPage
         case 1:
-          armOnboardingPage
+          dailyModesOnboardingPage
         case 2:
+          highAssuranceOnboardingPage
+        case 3:
           onboardingPage(
             titleKey: "onboarding.grace.title",
             bodyKey: "onboarding.grace.body",
             symbol: "timer"
           )
-        case 3:
+        case 4:
           onboardingPage(
             titleKey: "onboarding.permissions.title",
             bodyKey: "onboarding.permissions.body",
@@ -112,39 +114,53 @@ struct OnboardingView: View {
         .multilineTextAlignment(.center)
         .fixedSize(horizontal: false, vertical: true)
 
-      Text(L10n.tr("onboarding.welcome.fileVaultTip"))
-        .font(.caption)
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.center)
-        .fixedSize(horizontal: false, vertical: true)
-        .padding(.top, 4)
+      calloutBox {
+        VStack(alignment: .leading, spacing: 6) {
+          Label {
+            Text(L10n.tr("onboarding.welcome.fileVaultTip"))
+              .font(.caption)
+              .foregroundColor(.primary)
+              .fixedSize(horizontal: false, vertical: true)
+          } icon: {
+            Image(systemName: "lock.fill")
+              .foregroundColor(.accentColor)
+          }
+
+          Label {
+            Text(L10n.tr("onboarding.welcome.cliTip"))
+              .font(.caption)
+              .foregroundColor(.primary)
+              .fixedSize(horizontal: false, vertical: true)
+          } icon: {
+            Image(systemName: "terminal")
+              .foregroundColor(.accentColor)
+          }
+        }
+      }
     }
     .padding(.horizontal, 4)
   }
 
-  private var armOnboardingPage: some View {
-    VStack(spacing: 12) {
+  private var dailyModesOnboardingPage: some View {
+    VStack(spacing: 10) {
       onboardingPage(
-        titleKey: "onboarding.arm.title",
-        bodyKey: "onboarding.arm.body",
+        titleKey: "onboarding.arm.daily.title",
+        bodyKey: "onboarding.arm.daily.body",
         symbol: "lock.shield"
       )
 
-      VStack(alignment: .leading, spacing: 6) {
-        Text(L10n.tr("onboarding.arm.modes.title"))
-          .font(.caption)
-          .fontWeight(.semibold)
-          .foregroundColor(.secondary)
+      calloutBox {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(L10n.tr("onboarding.arm.daily.modes.title"))
+            .font(.caption)
+            .fontWeight(.semibold)
+            .foregroundColor(.secondary)
 
-        modeSummaryRow(symbol: "graduationcap", key: "onboarding.arm.modes.beginner")
-        modeSummaryRow(symbol: "shield.checkered", key: "onboarding.arm.modes.normal")
-        modeSummaryRow(symbol: "eye.slash", key: "onboarding.arm.modes.discreet")
-        modeSummaryRow(symbol: "bolt.shield", key: "onboarding.arm.modes.panic")
+          modeSummaryRow(symbol: "graduationcap", key: "onboarding.arm.modes.beginner")
+          modeSummaryRow(symbol: "shield.checkered", key: "onboarding.arm.modes.normal")
+          modeSummaryRow(symbol: "eye.slash", key: "onboarding.arm.modes.discreet")
+        }
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(10)
-      .background(Color.secondary.opacity(0.08))
-      .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
       Text(L10n.tr("onboarding.arm.beginnerTip"))
         .font(.caption)
@@ -153,6 +169,44 @@ struct OnboardingView: View {
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+  }
+
+  private var highAssuranceOnboardingPage: some View {
+    VStack(spacing: 10) {
+      onboardingPage(
+        titleKey: "onboarding.highAssurance.title",
+        bodyKey: "onboarding.highAssurance.body",
+        symbol: "bolt.shield"
+      )
+
+      calloutBox {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(L10n.tr("onboarding.highAssurance.modes.title"))
+            .font(.caption)
+            .fontWeight(.semibold)
+            .foregroundColor(.secondary)
+
+          modeSummaryRow(symbol: "flame", key: "onboarding.arm.modes.panicPreset")
+          modeSummaryRow(symbol: "bolt.circle", key: "onboarding.arm.modes.panicMenu")
+          modeSummaryRow(symbol: "exclamationmark.shield", key: "onboarding.arm.modes.paranoid")
+        }
+      }
+
+      Text(L10n.tr("onboarding.highAssurance.scriptsTip"))
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .multilineTextAlignment(.leading)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+  }
+
+  private func calloutBox<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+    content()
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(10)
+      .background(Color.secondary.opacity(0.08))
+      .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
   }
 
   private func modeSummaryRow(symbol: String, key: String) -> some View {
@@ -199,7 +253,7 @@ struct OnboardingView: View {
 }
 
 enum OnboardingPresenter {
-  private static let windowSize = CGSize(width: 440, height: 340)
+  private static let windowSize = CGSize(width: 440, height: 400)
   private static var onboardingWindow: NSWindow?
 
   @MainActor

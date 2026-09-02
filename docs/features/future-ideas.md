@@ -5,6 +5,33 @@ Capture rough ideas before they become specs. Remove or promote to [FORK_ROADMAP
 
 ---
 
+## Cryptomator unmount & volume eject (BusKill-style scripts)
+
+**Captured:** 2026-09-02 (Marc)
+
+### Idea
+
+On trigger, optionally:
+
+- **Unmount Cryptomator** volumes (inspired by [BusKill/trigger_cryptomator_umount](https://github.com/BusKill/trigger_cryptomator_umount))
+- **Eject** external disks / DMGs (`diskutil eject`)
+
+Today this fits **custom scripts** in phase B of the trigger pipeline — not a built-in toggle (paths and volume names are machine-specific).
+
+### Rough directions
+
+- Ship **example scripts** in `docs/examples/scripts/` (`cryptomator-umount-best-effort.sh`, `eject-removable-volumes.sh`)
+- Document in user guide + onboarding (done as pointer to examples)
+- Optional built-in network/hygiene action later only if we can do it safely without false promises
+
+### Open questions
+
+- Script validation rules vs. `diskutil` / Cryptomator CLI paths
+- Full Disk Access for some eject paths
+- Order: before or after lock (hygiene phase vs. script budget)
+
+---
+
 ## LAN trigger from phone (same Wi‑Fi)
 
 **Captured:** 2026-08-31 (Marc)

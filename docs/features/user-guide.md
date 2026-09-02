@@ -1,7 +1,7 @@
 # MagSafe Guard — User Guide (mini)
 
 **Language:** English · [Deutsch (user-guide.de.md)](user-guide.de.md)  
-**Version:** fork **0.5.5** (build 14) · September 2026
+**Version:** fork **0.5.7** (build 16) · September 2026
 
 Short, practical guide for everyday use. Technical details: [operating-modes.md](operating-modes.md) · Panic design: [panic-modes.md](panic-modes.md)
 
@@ -24,17 +24,20 @@ The app runs from the **menu bar** by default (**Show in Dock** is off in Settin
 
 ## 2. Operation profiles (settings presets)
 
-**Settings → Security** (top of the tab) offers three **operation profiles**. Choosing one applies a bundle of defaults; you can still tweak individual settings afterward.
+**Settings → Security** (top of the tab) offers four **operation profiles** (menu picker). Choosing one applies a bundle of defaults; you can still tweak individual settings afterward.
 
 | Profile | Grace | Security actions | Notifications | Dock | Network actions |
 |---------|-------|------------------|---------------|------|-----------------|
+| **Beginner** | 30 s | Lock only | On | Your choice | None |
 | **Normal** | 30 s | Lock + alarm | On | Your choice | None |
 | **Discreet** | 20 s | Lock only | Off (icon only) | Hidden | None |
 | **Panic** (preset) | 5 s | Lock + force logout | Off | Hidden | VPN off, SSH clear, clipboard clear |
 
 **Notes:**
 
-- The segmented control **stays on the profile you picked** even if you change a single toggle (there is no automatic switch to “Custom”).
+- **Beginner** is the default for **new installs** — recommended for the first days (lock only, full cancel window).
+- Colored **impact labels** (Safe / Data loss possible / High impact) appear next to actions and presets — informational only; nothing is blocked.
+- The picker **stays on the profile you chose** even if you change a single toggle (there is no automatic switch to “Custom”).
 - If settings no longer match the preset, use **Reset to [profile] defaults** under the caption.
 - **Panic preset ≠ Arm Panic Mode** (see §5). The preset configures normal armed behavior; **Arm Panic Mode** from the menu is a separate high-assurance armed state with **0 s grace** and immediate shutdown.
 
@@ -99,6 +102,35 @@ If enabled in **Settings → Security → Remote Trigger**:
 | `magsafeguard://panic?token=YOUR_TOKEN` | Panic response when **panic-armed** (see §5) |
 
 Use from **Shortcuts** on iPhone/Mac. Keep the token secret.
+
+### Command-line CLI (optional)
+
+For **local automation** (scripts, LaunchAgents) on the same Mac — not a replacement for the URL scheme on other devices.
+
+**Requires:** MagSafe Guard **running** in the menu bar.
+
+**Build once** (from a clone of the repo):
+
+```bash
+task cli:build
+```
+
+Then use the wrapper (or the binary at `MagSafeGuardLib/.build/release/MagSafeGuardCLI`):
+
+```bash
+./scripts/magsafeguard-cli status
+./scripts/magsafeguard-cli apply-profile beginner
+./scripts/magsafeguard-cli arm
+./scripts/magsafeguard-cli disarm
+```
+
+| Command | Effect |
+|---------|--------|
+| `status` | Prints JSON from `~/Library/Application Support/MagSafeGuard/cli-status.json` (state, profile, configured risk level, version) |
+| `apply-profile <name>` | Sets operation profile: `beginner`, `normal`, `discreet`, or `panic` — no auth |
+| `arm` / `disarm` | Same as the menu — **Touch ID / password** prompt in the app |
+
+`arm` does **not** bypass authentication (unlike `magsafeguard://arm?token=…` with remote trigger enabled).
 
 ---
 
@@ -202,6 +234,8 @@ In the app, open **Settings → Auto-Arm**.
 | Can't find app | Settings → General → **Show in Dock** on, or use Spotlight |
 | Hotkey ⌃⌘P does nothing | Must be **panic-armed**; app must be running |
 | Remote URL ignored | Token correct? Remote trigger enabled in Settings? |
+| CLI says “Status unavailable” | Is the app running? Run `status` once after launch so the status file is written |
+| CLI `arm` times out | Complete Touch ID / password in the app; allow up to 30 s |
 | Build expired after ~7 days | Personal Team — rebuild with `task release` or Xcode |
 
 More: [maintainers/troubleshooting.md](../maintainers/troubleshooting.md)

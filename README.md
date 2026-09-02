@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.6` (build `15`) |
+| **Version** | `0.5.7` (build `16`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -203,6 +203,7 @@ task release:clean                   # remove dist/
 | Done | **0.5.4** | Shutdown after screen lock (timer + protection-first order) |
 | Done | **0.5.5** | Trigger pipeline: hygiene phase, script budget, logout then immediate shutdown |
 | Done | **0.5.6** | Beginner preset, risk labels, first-arm advisory, `magsafeguard-cli` |
+| Done | **0.5.7** | Onboarding split (daily vs panic/paranoid), user guide CLI section |
 | Next | **0.6.0** | Paranoid mode — data destruction (setup required) |
 | Stable | **1.0.0** | Notarized Developer ID distribution |
 

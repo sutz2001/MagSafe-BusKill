@@ -8,7 +8,7 @@ This documentation is organized by audience and role to help you find the inform
 
 ### For Users
 
-- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): **operation profiles** (Normal / Discreet / Panic), discreet use, **panic protection mode**, hotkey
+- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): **operation profiles** (Beginner / Normal / Discreet / Panic), impact labels, **`magsafeguard-cli`**, discreet use, **panic protection mode**, hotkey
 - [Operating Modes & Flows](features/operating-modes.md) - What each state/mode does (with diagrams)
 - [Behavior Gaps](features/behavior-gaps.md) - Known UI vs runtime mismatches
 - [Panic & Paranoid modes](features/panic-modes.md) - Panic shipped (v0.5); Paranoid planned (v0.6)

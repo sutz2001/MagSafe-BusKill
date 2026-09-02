@@ -3,6 +3,17 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.7] — 2026-09-02
+
+### Changed
+
+- **Onboarding** split into five steps: welcome (FileVault + CLI pointer), everyday profiles, panic/paranoid page, grace, permissions — taller window, less clipping
+- **User guide** EN/DE: Beginner preset, impact labels, `magsafeguard-cli` section
+
+### Added
+
+- **future-ideas:** Cryptomator unmount and volume eject (BusKill-style custom scripts)
+
 ## [0.5.6] — 2026-09-02
 
 ### Added
