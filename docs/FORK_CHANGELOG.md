@@ -3,6 +3,24 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.5] — 2026-09-02
+
+### Added
+
+- **Trigger pipeline** on cable/panic: phase A hygiene (clipboard → SSH → webhook → VPN, max 2 s), phase B custom scripts (user budget, default **3 s**), phase C lock → logout → immediate shutdown
+- **Script time budget** setting (0–30 s) under Settings → Advanced → Custom Scripts
+
+### Changed
+
+- Network hygiene uses fixed priority order, not settings list order, on trigger
+- Webhook requests use a timeout during hygiene phase (no indefinite block)
+- Panic mode always runs immediate shutdown even when shutdown action is not toggled
+
+### Fixed
+
+- Custom scripts run **before** logout/shutdown (phase B), not after
+- Shutdown on theft trigger: logout first, then immediate shutdown (no 30 s delay)
+
 ## [0.5.4] — 2026-09-02
 
 ### Fixed

@@ -178,7 +178,7 @@ public final class MacSystemActionsRepository: SecurityActionRepository, @unchec
                     }
 
                     do {
-                        try self.systemActions.executeScript(at: path)
+                        try self.systemActions.executeScript(at: path, timeLimit: nil)
                         self.logger.warning("Script executed: \(path)")
                         continuation.resume()
                     } catch {

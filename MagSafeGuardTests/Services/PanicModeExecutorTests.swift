@@ -18,10 +18,12 @@ final class PanicModeExecutorTests: XCTestCase {
     securityActions = SecurityActionsService(systemActions: mockSystemActions)
     securityActions.resetToDefault()
     securityActions.resetProtectionStateForTesting()
-    sut = PanicModeExecutor(
+    let pipeline = SecurityTriggerPipeline(
+      networkActions: NetworkActionsService(settingsManager: .shared),
       securityActions: securityActions,
-      systemActions: mockSystemActions
+      settingsManager: .shared
     )
+    sut = PanicModeExecutor(pipeline: pipeline)
   }
 
   override func tearDown() {

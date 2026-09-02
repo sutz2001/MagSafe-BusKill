@@ -1269,10 +1269,44 @@ struct AdvancedSettingsView: View {
     Section(header: Text(l10n: "settings.advanced.customScripts")) {
       customScriptsContent
 
+      scriptTimeBudgetSection
+
       Button(L10n.tr("settings.advanced.addScript")) {
         addCustomScript()
       }
     }
+  }
+
+  private var scriptTimeBudgetSection: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack {
+        Text(l10n: "settings.advanced.scriptBudget.min")
+        Slider(
+          value: scriptTimeBudgetBinding,
+          in: 0...30,
+          step: 1
+        )
+        Text(l10n: "settings.advanced.scriptBudget.max")
+      }
+      Text(scriptTimeBudgetLabel)
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+  }
+
+  private var scriptTimeBudgetLabel: String {
+    let seconds = Int(settingsManager.settings.scriptTimeBudgetSeconds)
+    if seconds <= 0 {
+      return L10n.tr("settings.advanced.scriptBudget.skip")
+    }
+    return L10n.tr("settings.advanced.scriptBudget.value", seconds)
+  }
+
+  private var scriptTimeBudgetBinding: Binding<Double> {
+    Binding(
+      get: { settingsManager.settings.scriptTimeBudgetSeconds },
+      set: { settingsManager.updateSetting(\.scriptTimeBudgetSeconds, value: $0) }
+    )
   }
 
   private var debugSection: some View {

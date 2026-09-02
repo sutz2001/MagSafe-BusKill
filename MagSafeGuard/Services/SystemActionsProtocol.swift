@@ -84,14 +84,10 @@ public protocol SystemActionsProtocol {
 
   /// Execute a custom script at the specified path.
   ///
-  /// Runs a user-defined script to perform custom security actions.
-  /// Scripts should be validated and trusted as they run with user privileges.
-  ///
-  /// - Parameter path: Absolute path to the script file
-  /// - Throws: `SystemActionError.scriptNotFound` if script doesn't exist,
-  ///   `SystemActionError.scriptExecutionFailed` if execution fails,
-  ///   `SystemActionError.permissionDenied` if insufficient permissions
-  func executeScript(at path: String) throws
+  /// - Parameters:
+  ///   - path: Absolute path to the script file
+  ///   - timeLimit: Maximum seconds before the script is terminated (`nil` = 30 s default)
+  func executeScript(at path: String, timeLimit: TimeInterval?) throws
 }
 
 /// Errors that can occur during system action execution.

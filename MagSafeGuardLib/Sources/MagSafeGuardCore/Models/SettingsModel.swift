@@ -74,6 +74,9 @@ public struct Settings: Codable {
   /// How long the alarm plays, in seconds (3–30). `0` = until stopped manually (endless).
   public var alarmDurationSeconds: TimeInterval = 15.0
 
+  /// Time budget for custom scripts after network hygiene and before logout/shutdown (0–30 s). `0` = skip.
+  public var scriptTimeBudgetSeconds: TimeInterval = 3.0
+
   // MARK: - Auto-Arm Settings
 
   /// Master enable/disable for automatic arming features.
@@ -260,6 +263,8 @@ public struct Settings: Codable {
       validated.alarmDurationSeconds = 0
     }
 
+    validated.scriptTimeBudgetSeconds = max(0, min(30.0, scriptTimeBudgetSeconds))
+
     return validated
   }
 
@@ -296,4 +301,4 @@ public protocol SettingsMigrator {
 ///
 /// This version is incremented when breaking changes are made to the
 /// Settings structure that require migration logic.
-public let currentSettingsVersion = 9
+public let currentSettingsVersion = 10

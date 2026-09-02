@@ -39,6 +39,7 @@ final class SyncServiceSettings {
     record["alarmVolume"] = Double(settings.alarmVolume)
     record["boostSystemVolumeForAlarm"] = settings.boostSystemVolumeForAlarm ? 1 : 0
     record["alarmDurationSeconds"] = settings.alarmDurationSeconds
+    record["scriptTimeBudgetSeconds"] = settings.scriptTimeBudgetSeconds
 
     // Auto-arm settings
     record["autoArmEnabled"] = settings.autoArmEnabled ? 1 : 0
@@ -154,6 +155,9 @@ final class SyncServiceSettings {
 
     if let alarmDuration = record["alarmDurationSeconds"] as? TimeInterval {
       manager.updateSetting(\.alarmDurationSeconds, value: alarmDuration)
+    }
+    if let scriptBudget = record["scriptTimeBudgetSeconds"] as? TimeInterval {
+      manager.updateSetting(\.scriptTimeBudgetSeconds, value: scriptBudget)
     }
   }
 

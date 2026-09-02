@@ -37,12 +37,18 @@ final class AppControllerTests: XCTestCase {
     authService.resetAuthenticationAttempts()
     mockSecurityActions = MockSystemActions()
     mockNotificationService = MockNotificationService()
+    let securityService = SecurityActionsService(systemActions: mockSecurityActions)
 
     sut = AppController(
       powerMonitor: PowerMonitorService.shared,  // Use real service for now
       authService: authService,
-      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
-      notificationService: NotificationService(deliveryMethod: mockNotificationService)
+      securityActions: securityService,
+      notificationService: NotificationService(deliveryMethod: mockNotificationService),
+      triggerPipeline: SecurityTriggerPipeline(
+        networkActions: NetworkActionsService(settingsManager: .shared),
+        securityActions: securityService,
+        settingsManager: .shared
+      )
     )
   }
 
@@ -500,16 +506,20 @@ final class AppControllerTests: XCTestCase {
     UserDefaultsManager.shared.updateSetting(\.panicLegalNoticeAccepted, value: true)
     mockAuthService.shouldSucceed = true
 
-    let panicExecutor = PanicModeExecutor(
-      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
-      systemActions: mockSecurityActions
+    let securityService = SecurityActionsService(systemActions: mockSecurityActions)
+    let pipeline = SecurityTriggerPipeline(
+      networkActions: NetworkActionsService(settingsManager: .shared),
+      securityActions: securityService,
+      settingsManager: .shared
     )
+    let panicExecutor = PanicModeExecutor(pipeline: pipeline)
     sut = AppController(
       powerMonitor: PowerMonitorService.shared,
       authService: mockAuthService.createConfiguredService(),
-      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
+      securityActions: securityService,
       notificationService: NotificationService(deliveryMethod: mockNotificationService),
-      panicExecutor: panicExecutor
+      panicExecutor: panicExecutor,
+      triggerPipeline: pipeline
     )
 
     let armExpectation = expectation(description: "arm panic")
@@ -530,16 +540,20 @@ final class AppControllerTests: XCTestCase {
     UserDefaultsManager.shared.updateSetting(\.panicLegalNoticeAccepted, value: true)
     mockAuthService.shouldSucceed = true
 
-    let panicExecutor = PanicModeExecutor(
-      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
-      systemActions: mockSecurityActions
+    let securityService = SecurityActionsService(systemActions: mockSecurityActions)
+    let pipeline = SecurityTriggerPipeline(
+      networkActions: NetworkActionsService(settingsManager: .shared),
+      securityActions: securityService,
+      settingsManager: .shared
     )
+    let panicExecutor = PanicModeExecutor(pipeline: pipeline)
     sut = AppController(
       powerMonitor: PowerMonitorService.shared,
       authService: mockAuthService.createConfiguredService(),
-      securityActions: SecurityActionsService(systemActions: mockSecurityActions),
+      securityActions: securityService,
       notificationService: NotificationService(deliveryMethod: mockNotificationService),
-      panicExecutor: panicExecutor
+      panicExecutor: panicExecutor,
+      triggerPipeline: pipeline
     )
 
     let armExpectation = expectation(description: "arm panic")

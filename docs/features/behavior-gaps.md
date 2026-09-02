@@ -2,7 +2,7 @@
 
 Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches and their resolution status.
 
-**Last resolved batch:** 2026-09-02 (0.5.4: shutdown after screen lock; 0.5.3: grace period + alarm reliability)
+**Last resolved batch:** 2026-09-02 (0.5.5: trigger pipeline + script budget; 0.5.4: shutdown after screen lock)
 
 ---
 
@@ -33,7 +33,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 | GAP-14 | Auto-arm required interactive auth | `armAutomatically()` for auto-arm and remote `arm` URL (opt-in flows) |
 | GAP-15 | Theft trigger used user action order; lock not prioritized; rate limit / circuit breaker could block lock | v0.5 — `SecurityActionExecutionContext.theftTrigger` / `.panic` protection-first path; rate limit and breaker only for `.standard` |
 | GAP-16 | Grace countdown stuck; actions never ran after 30 s | v0.5.3 — GCD grace timer; non-blocking grace sheet (not `runModal()`); alarm volume + optional system-volume boost in Settings; `CI=true` no longer disables system actions |
-| GAP-17 | Shutdown did not run after screen lock on cable trigger | v0.5.4 — schedule shutdown before lock; in-app timer (seconds, default 30 s); cancel on disarm/grace cancel; Automation permission for System Events may be required |
+| GAP-17 | Shutdown did not run after screen lock on cable trigger | v0.5.5 — trigger pipeline: hygiene (2 s) → scripts (budget) → logout → immediate shutdown; panic always shuts down |
 
 ---
 
@@ -52,7 +52,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 - [x] Auto-arm arms without Touch ID prompt after notification delay
 - [x] Cable disconnect in normal armed mode uses protection-first path (lock first, no rate limit)
 - [x] Grace countdown ticks in menu bar while alert is visible; actions run when timer expires
-- [x] Shutdown schedules before lock; fires after configured delay (default 30 s)
+- [x] Shutdown on cable trigger: logout (if enabled) then immediate shutdown (no grace-period delay)
 - [x] Panic mode skips grace and runs immediate shutdown pipeline
 - [x] Panic hotkey ⌃⌘P triggers response when panic-armed
 

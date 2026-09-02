@@ -32,6 +32,49 @@ public final class NetworkActionsService {
   }
 
   @discardableResult
+  public func executeHygienePhase(event: String = "security_trigger") -> NetworkActionResult {
+    let settings = settingsManager.settings
+    let enabled = Set(settings.enabledNetworkActions)
+    guard !enabled.isEmpty else {
+      return NetworkActionResult(executed: [], failed: [])
+    }
+
+    let deadline = Date().addingTimeInterval(HygienePhasePolicy.maxDuration)
+    var executed: [NetworkActionType] = []
+    var failed: [(NetworkActionType, Error)] = []
+
+    for action in HygienePhasePolicy.orderedActions {
+      guard enabled.contains(action) else { continue }
+      let remaining = deadline.timeIntervalSinceNow
+      guard remaining > 0 else {
+        Log.info("Hygiene phase budget exhausted — skipping \(action.rawValue)", category: .security)
+        break
+      }
+
+      do {
+        try execute(
+          action: action,
+          event: event,
+          settings: settings,
+          timeLimit: remaining
+        )
+        executed.append(action)
+      } catch {
+        failed.append((action, error))
+        Log.error("Hygiene action failed: \(action)", error: error, category: .security)
+      }
+    }
+
+    if !executed.isEmpty {
+      Log.info(
+        "Hygiene phase executed: \(executed.map(\.rawValue).joined(separator: ", "))",
+        category: .security)
+    }
+
+    return NetworkActionResult(executed: executed, failed: failed)
+  }
+
+  @discardableResult
   public func executeActions(event: String = "security_trigger") -> NetworkActionResult {
     let settings = settingsManager.settings
     guard !settings.enabledNetworkActions.isEmpty else {
@@ -92,13 +135,25 @@ public final class NetworkActionsService {
     return token
   }
 
-  private func execute(action: NetworkActionType, event: String, settings: Settings) throws {
+  private func execute(
+    action: NetworkActionType,
+    event: String,
+    settings: Settings,
+    timeLimit: TimeInterval? = nil
+  ) throws {
     switch action {
     case .webhook:
       guard let url = URL(string: settings.webhookURL), !settings.webhookURL.isEmpty else {
         throw NetworkActionError.invalidURL
       }
-      try networkActions.postWebhook(url: url, event: event, token: loadWebhookToken())
+      let webhookTimeout: TimeInterval
+      if let timeLimit {
+        webhookTimeout = min(timeLimit, HygienePhasePolicy.webhookTimeout)
+      } else {
+        webhookTimeout = 60
+      }
+      try networkActions.postWebhook(
+        url: url, event: event, token: loadWebhookToken(), timeout: webhookTimeout)
     case .disconnectVPN:
       try networkActions.disconnectVPN()
     case .clearSSHAgent:

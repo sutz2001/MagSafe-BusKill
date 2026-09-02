@@ -342,6 +342,9 @@ public class UserDefaultsManager: ObservableObject {
     if version < 7 {
       migrated.menuBarIconAppearance = .monochrome
     }
+    if version < 10 {
+      migrated.scriptTimeBudgetSeconds = 3.0
+    }
     return migrated
   }
 

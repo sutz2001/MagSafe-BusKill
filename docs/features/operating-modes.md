@@ -2,7 +2,7 @@
 
 **Audience:** Users, contributors, and maintainers who need to know what the app *actually does* at runtime (not what the UI implies).
 
-**Version:** documents behavior as of fork **0.5.4** (build 13).  
+**Version:** documents behavior as of fork **0.5.5** (build 14).  
 **Primary code:** `MagSafeGuard/Controllers/AppController.swift`, services under `MagSafeGuard/Services/`.
 
 **Related:** [Behavior gaps & fix backlog](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) (planned features) · [README](../../README.md)
@@ -187,7 +187,7 @@ Runtime executor: `SecurityActionsService` in `MagSafeGuard/Services/SecurityAct
 | Lock screen | `CGSession` / screen lock | Enabled | Enabled |
 | Sound alarm | Looping alarm audio | Enabled | Disabled |
 | Force logout | Log out all users | Off | Off |
-| System shutdown | App timer + AppleScript (default **30 s** after trigger); scheduled **before** screen lock | Off | Off |
+| System shutdown | **Cable/panic:** phase C — logout then **immediate** shutdown; **manual:** configurable delay (default 30 s) | Off | Off |
 | Custom script | Run `.sh` / `.zsh` / `.bash` from allowed paths | Off | Off (needs path in service config) |
 
 ### When actions run
@@ -221,7 +221,7 @@ flowchart LR
 **`SecurityActionsService` behavior:**
 
 - **Standard context** (manual runs from Settings): sequential by default; **rate limit** (5 s minimum, 10 per 60 s) and **circuit breaker** (3 failures → 60 s open) apply.
-- **Theft / panic context** (`theftTrigger`, `panic`): **protection-first** — lock screen first, then parallel tier-2 (logout, alarm), then tier-3 (shutdown / scripts). **No rate limit or circuit breaker** on these paths.
+- **Theft / panic context** (`theftTrigger`, `panic`): **protection-first** — lock screen, alarm (async), **logout then immediate shutdown**, then scripts. **No rate limit or circuit breaker** on these paths.
 - Panic shutdown uses `executeImmediateShutdown()` (no dialog, no minimum delay).
 - Second `executeActions` call while running is **ignored**.
 
@@ -232,7 +232,23 @@ Example scripts (browser quit, clipboard, best-effort history): [examples/script
 
 ## 5. Network actions (v0.4.0)
 
-Configured in **Settings → Security** (network section). Executed **once per trigger**, in list order, **before** security actions complete (started from the same `executeSecurityActions` call).
+Configured in **Settings → Security** (network section). On cable/panic triggers they run in **phase A (hygiene)** before security actions — fixed priority, **2 s** total budget:
+
+1. Clear clipboard  
+2. Clear SSH agent  
+3. Webhook (≤ 1.5 s timeout)  
+4. Disconnect VPN (only if time remains)  
+5. Disable Wi‑Fi (only if time remains)
+
+Legacy `executeActions` (settings list order) remains for non-pipeline callers.
+
+### Trigger pipeline (v0.5.5)
+
+```text
+Phase A — hygiene (max 2 s)     → network actions (order above)
+Phase B — scripts (user budget) → custom scripts (default 3 s, 0 = skip)
+Phase C — hard stop             → lock → logout → immediate shutdown
+```
 
 | Type | What it does | Implementation |
 |------|----------------|----------------|

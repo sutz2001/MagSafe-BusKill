@@ -151,6 +151,7 @@ public class AppController: ObservableObject {
   private let securityActions: SecurityActionsService
   private let notificationService: NotificationService
   private let panicExecutor: PanicModeExecutor
+  private let triggerPipeline: SecurityTriggerPipeline
   private var autoArmManager: AutoArmManager?
 
   // MARK: - Configuration
@@ -225,13 +226,21 @@ public class AppController: ObservableObject {
     authService: AuthenticationService = .shared,
     securityActions: SecurityActionsService = .shared,
     notificationService: NotificationService = .shared,
-    panicExecutor: PanicModeExecutor = PanicModeExecutor()
+    panicExecutor: PanicModeExecutor = PanicModeExecutor(),
+    triggerPipeline: SecurityTriggerPipeline? = nil
   ) {
     self.powerMonitor = powerMonitor
     self.authService = authService
     self.securityActions = securityActions
     self.notificationService = notificationService
     self.panicExecutor = panicExecutor
+    self.triggerPipeline =
+      triggerPipeline
+      ?? SecurityTriggerPipeline(
+        networkActions: NetworkActionsService(settingsManager: .shared),
+        securityActions: securityActions,
+        settingsManager: .shared
+      )
 
     setupPowerMonitoring()
     loadConfiguration()
@@ -603,11 +612,12 @@ public class AppController: ObservableObject {
     transitionToState(.triggered)
     cancelGracePeriod()
 
-    logNetworkActionResults(
-      NetworkActionsService.shared.executeActions(event: "security_trigger"))
-
-    securityActions.executeActions(context: .theftTrigger) { [weak self] result in
-      guard let self = self else { return }
+    triggerPipeline.execute(
+      context: .theftTrigger,
+      event: "security_trigger"
+    ) { [weak self] networkResult, result in
+      guard let self else { return }
+      self.logNetworkActionResults(networkResult)
 
       if result.allSucceeded {
         self.logEventInternal(

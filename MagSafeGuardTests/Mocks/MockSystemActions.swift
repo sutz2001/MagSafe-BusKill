@@ -149,7 +149,7 @@ class MockSystemActions: SystemActionsProtocol {
     }
   }
 
-  func executeScript(at path: String) throws {
+  func executeScript(at path: String, timeLimit: TimeInterval? = nil) throws {
     executeScriptCalled = true
     executedScriptPath = path
     lastScriptPath = path

@@ -526,7 +526,7 @@ public class SecurityActionsService {
     }
   }
 
-  /// Protection-first ordering for theft and panic triggers: lock, then parallel tier-2, then tier-3.
+  /// Protection-first ordering for theft and panic triggers: lock, logout, immediate shutdown.
   private func executeProtectionFirstActions(
     context: SecurityActionExecutionContext
   ) -> ([SecurityAction], [(SecurityAction, Error)]) {
@@ -534,66 +534,93 @@ public class SecurityActionsService {
     var executed: [SecurityAction] = []
     var failed: [(SecurityAction, Error)] = []
 
-    let tier2: Set<SecurityAction> = [.forceLogout, .soundAlarm]
-    let tier3: Set<SecurityAction> = [.shutdown, .customScript]
+    runProtectionAction(.lockScreen, enabled: enabled, executed: &executed, failed: &failed) {
+      try self.executeAction(.lockScreen)
+    }
 
-    // Start shutdown before lock — AppleScript shutdown fails once the session is locked.
-    if enabled.contains(.shutdown) {
+    if enabled.contains(.soundAlarm) {
+      DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        try? self?.executeAction(.soundAlarm)
+      }
+      executed.append(.soundAlarm)
+    }
+
+    runProtectionAction(.forceLogout, enabled: enabled, executed: &executed, failed: &failed) {
+      try self.executeAction(.forceLogout)
+    }
+
+    if context == .panic || enabled.contains(.shutdown) {
       do {
-        if context == .panic {
-          try systemActions.executeImmediateShutdown()
-        } else {
-          try executeAction(.shutdown)
-        }
+        try systemActions.executeImmediateShutdown()
         executed.append(.shutdown)
       } catch {
         failed.append((.shutdown, error))
-        Log.error("Failed to schedule shutdown", error: error, category: .security)
-      }
-    }
-
-    if enabled.contains(.lockScreen) {
-      do {
-        try executeAction(.lockScreen)
-        executed.append(.lockScreen)
-      } catch {
-        failed.append((.lockScreen, error))
-        Log.error("Failed to execute lockScreen", error: error, category: .security)
-      }
-    }
-
-    let parallelActions = enabled.filter { tier2.contains($0) }
-    if !parallelActions.isEmpty {
-      let group = DispatchGroup()
-      let resultsQueue = DispatchQueue(label: "com.magsafeguard.protection-first.results")
-      for action in parallelActions {
-        group.enter()
-        DispatchQueue.global(qos: .userInitiated).async {
-          do {
-            try self.executeAction(action)
-            resultsQueue.sync { executed.append(action) }
-          } catch {
-            resultsQueue.sync { failed.append((action, error)) }
-            Log.error("Failed to execute \(action)", error: error, category: .security)
-          }
-          group.leave()
-        }
-      }
-      group.wait()
-    }
-
-    let deferredActions = enabled.filter { tier3.contains($0) && $0 != .shutdown }
-    for action in deferredActions {
-      do {
-        try executeAction(action)
-        executed.append(action)
-      } catch {
-        failed.append((action, error))
-        Log.error("Failed to execute \(action)", error: error, category: .security)
+        Log.error("Failed to execute shutdown", error: error, category: .security)
       }
     }
 
     return (executed, failed)
+  }
+
+  /// Phase B: run custom scripts within a time budget before logout/shutdown.
+  @discardableResult
+  public func executeScriptsPhase(timeBudget: TimeInterval) -> ExecutionResult {
+    guard timeBudget > 0 else {
+      return ExecutionResult(executedActions: [], failedActions: [], timestamp: Date())
+    }
+
+    guard configuration.enabledActions.contains(.customScript) else {
+      return ExecutionResult(executedActions: [], failedActions: [], timestamp: Date())
+    }
+
+    let paths =
+      configuration.customScriptPaths.isEmpty
+      ? (configuration.customScriptPath.map { [$0] } ?? [])
+      : configuration.customScriptPaths
+
+    guard !paths.isEmpty else {
+      return ExecutionResult(executedActions: [], failedActions: [], timestamp: Date())
+    }
+
+    let deadline = Date().addingTimeInterval(timeBudget)
+    var executed: [SecurityAction] = []
+    var failed: [(SecurityAction, Error)] = []
+
+    for path in paths {
+      let remaining = deadline.timeIntervalSinceNow
+      guard remaining > 0 else {
+        failed.append((.customScript, SystemActionError.scriptExecutionTimeout))
+        Log.warning("Script phase budget exhausted — skipping remaining scripts", category: .security)
+        break
+      }
+
+      do {
+        try systemActions.executeScript(at: path, timeLimit: remaining)
+        executed.append(.customScript)
+      } catch {
+        failed.append((.customScript, error))
+        Log.error("Failed to execute custom script", error: error, category: .security)
+      }
+    }
+
+    return ExecutionResult(executedActions: executed, failedActions: failed, timestamp: Date())
+  }
+
+  private func runProtectionAction(
+    _ action: SecurityAction,
+    enabled: [SecurityAction],
+    executed: inout [SecurityAction],
+    failed: inout [(SecurityAction, Error)],
+    perform: () throws -> Void
+  ) {
+    guard enabled.contains(action) else { return }
+    do {
+      try perform()
+      executed.append(action)
+    } catch {
+      failed.append((action, error))
+      Log.error("Failed to execute \(action)", error: error, category: .security)
+    }
   }
 
   /// Apply configured delay before executing actions
@@ -771,7 +798,7 @@ public class SecurityActionsService {
     }
 
     for path in paths {
-      try systemActions.executeScript(at: path)
+      try systemActions.executeScript(at: path, timeLimit: nil)
     }
   }
 

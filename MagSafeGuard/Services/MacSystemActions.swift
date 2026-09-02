@@ -354,8 +354,8 @@ public class MacSystemActions: SystemActionsProtocol {
 
     cancelScheduledShutdown()
 
-    // In-app timer keeps running after the screen is locked.
-    let delay = afterSeconds == 0 ? 2 : afterSeconds
+    // In-app timer keeps running after the screen is locked (standard path only).
+    let delay = afterSeconds
     Log.info("Scheduling system shutdown in \(delay)s (app timer)", category: .security)
 
     let timer = DispatchSource.makeTimerSource(queue: shutdownQueue)
@@ -442,7 +442,7 @@ public class MacSystemActions: SystemActionsProtocol {
   /// Executes a shell script at the specified path
   /// - Parameter path: Path to the script file
   /// - Throws: SystemActionError if script doesn't exist, is invalid, or execution fails
-  public func executeScript(at path: String) throws {
+  public func executeScript(at path: String, timeLimit: TimeInterval? = nil) throws {
     // Validate script path and get canonical path
     let canonicalPath = try validateScriptPath(path)
 
@@ -459,7 +459,7 @@ public class MacSystemActions: SystemActionsProtocol {
     }
 
     // Execute the validated script
-    try executeValidatedScript(canonicalPath)
+    try executeValidatedScript(canonicalPath, timeout: timeLimit ?? 30.0)
   }
 
   private func validateScriptPath(_ path: String) throws -> String {
@@ -626,7 +626,7 @@ public class MacSystemActions: SystemActionsProtocol {
     }
   }
 
-  private func executeValidatedScript(_ canonicalPath: String) throws {
+  private func executeValidatedScript(_ canonicalPath: String, timeout: TimeInterval) throws {
     // Execute with restricted environment and timeout
     let task = Process()
     task.launchPath = systemPaths.bashPath
@@ -644,12 +644,8 @@ public class MacSystemActions: SystemActionsProtocol {
     Log.info("Executing security script: \(canonicalPath)", category: .security)
 
     do {
-      // Set up timeout
-      let timeout: TimeInterval = 30.0 // 30 second timeout
-
       try task.run()
 
-      // Use a dispatch work item for timeout handling
       let timeoutWorkItem = DispatchWorkItem {
         if task.isRunning {
           task.terminate()

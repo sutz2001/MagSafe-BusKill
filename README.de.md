@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.4` (Build `13`) |
+| **Version** | `0.5.5` (Build `14`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -201,6 +201,7 @@ task release:clean
 | Erledigt | **0.5.2** | Optionale farbige Menüleisten-Icons (Standard: monochrom) |
 | Erledigt | **0.5.3** | Grace-Zuverlässigkeit, Alarm-Einstellungen, diskreter Menüleisten-Puls |
 | Erledigt | **0.5.4** | Shutdown nach Bildschirmsperre (Timer + Reihenfolge) |
+| Erledigt | **0.5.5** | Trigger-Pipeline: Hygiene-Phase, Skript-Budget, Logout + sofort Shutdown |
 | Als Nächstes | **0.6.0** | Paranoid-Modus — Datenvernichtung (Setup nötig) |
 | Stabil | **1.0.0** | Notarisierte Developer-ID-Verteilung |
 

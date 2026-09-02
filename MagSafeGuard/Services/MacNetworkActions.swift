@@ -21,7 +21,7 @@ public final class MacNetworkActions: NetworkActionsProtocol {
     self.processRunner = processRunner
   }
 
-  public func postWebhook(url: URL, event: String, token: String?) throws {
+  public func postWebhook(url: URL, event: String, token: String?, timeout: TimeInterval = 60) throws {
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -34,6 +34,7 @@ public final class MacNetworkActions: NetworkActionsProtocol {
       "timestamp": ISO8601DateFormatter().string(from: Date())
     ]
     request.httpBody = try JSONSerialization.data(withJSONObject: body)
+    request.timeoutInterval = timeout
 
     let semaphore = DispatchSemaphore(value: 0)
     var statusCode = 0
@@ -48,7 +49,12 @@ public final class MacNetworkActions: NetworkActionsProtocol {
       statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
     }
     task.resume()
-    semaphore.wait()
+    let waitResult = semaphore.wait(timeout: .now() + timeout)
+
+    if waitResult == .timedOut {
+      task.cancel()
+      throw NetworkActionError.commandFailed(action: .webhook, message: "Timed out after \(timeout)s")
+    }
 
     if let requestError {
       throw NetworkActionError.commandFailed(action: .webhook, message: requestError.localizedDescription)

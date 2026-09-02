@@ -125,6 +125,10 @@
 
 /* Advanced */
 "settings.advanced.customScripts" = "Eigene Skripte";
+"settings.advanced.scriptBudget.min" = "0 s";
+"settings.advanced.scriptBudget.max" = "30 s";
+"settings.advanced.scriptBudget.skip" = "Skripte beim Trigger überspringen (0 s)";
+"settings.advanced.scriptBudget.value" = "Skripte bis zu %d s vor Logout/Shutdown ausführen";
 "settings.advanced.noScripts" = "Keine eigenen Skripte konfiguriert";
 "settings.advanced.addScript" = "Skript hinzufügen…";
 "settings.advanced.debug" = "Debug";

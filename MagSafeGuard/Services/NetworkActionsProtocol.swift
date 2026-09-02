@@ -7,7 +7,7 @@ import Foundation
 import MagSafeGuardCore
 
 public protocol NetworkActionsProtocol: Sendable {
-  func postWebhook(url: URL, event: String, token: String?) throws
+  func postWebhook(url: URL, event: String, token: String?, timeout: TimeInterval) throws
   func disconnectVPN() throws
   func clearSSHAgent() throws
   func clearClipboard() throws

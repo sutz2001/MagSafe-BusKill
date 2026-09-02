@@ -34,21 +34,49 @@ final class NetworkActionsServiceTests: XCTestCase {
     XCTAssertEqual(mockActions.lastEvent, "test_event")
     XCTAssertTrue(mockActions.clearSSHAgentCalled)
   }
+
+  func testHygienePhaseRunsClipboardBeforeSSH() {
+    UserDefaultsManager.shared.updateSetting(
+      \.enabledNetworkActions,
+      value: [.clearSSHAgent, .clearClipboard, .webhook]
+    )
+    mockActions.executionOrder = []
+
+    _ = sut.executeHygienePhase(event: "hygiene_test")
+
+    XCTAssertEqual(mockActions.executionOrder, [.clearClipboard, .clearSSHAgent, .webhook])
+  }
 }
 
 private final class MockNetworkActions: NetworkActionsProtocol {
   var webhookCalled = false
   var lastEvent = ""
   var clearSSHAgentCalled = false
+  var clearClipboardCalled = false
+  var executionOrder: [NetworkActionType] = []
 
-  func postWebhook(url: URL, event: String, token: String?) throws {
+  func postWebhook(url: URL, event: String, token: String?, timeout: TimeInterval) throws {
     webhookCalled = true
     lastEvent = event
+    executionOrder.append(.webhook)
     XCTAssertEqual(token, "secret")
   }
 
-  func disconnectVPN() throws {}
-  func clearSSHAgent() throws { clearSSHAgentCalled = true }
-  func clearClipboard() throws {}
-  func disableWiFi() throws {}
+  func disconnectVPN() throws {
+    executionOrder.append(.disconnectVPN)
+  }
+
+  func clearSSHAgent() throws {
+    clearSSHAgentCalled = true
+    executionOrder.append(.clearSSHAgent)
+  }
+
+  func clearClipboard() throws {
+    clearClipboardCalled = true
+    executionOrder.append(.clearClipboard)
+  }
+
+  func disableWiFi() throws {
+    executionOrder.append(.disableWiFi)
+  }
 }

@@ -25,6 +25,7 @@ final class SettingsModelTests: XCTestCase {
     XCTAssertEqual(settings.alarmVolume, 1.0)
     XCTAssertTrue(settings.boostSystemVolumeForAlarm)
     XCTAssertEqual(settings.alarmDurationSeconds, 15.0)
+    XCTAssertEqual(settings.scriptTimeBudgetSeconds, 3.0)
     XCTAssertFalse(settings.autoArmEnabled)
     XCTAssertTrue(settings.showStatusNotifications)
     XCTAssertTrue(settings.showSecurityAlerts)
