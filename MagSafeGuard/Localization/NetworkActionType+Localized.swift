@@ -13,6 +13,9 @@ extension NetworkActionType {
     case .disconnectVPN: return L10n.tr("networkAction.disconnectVPN.name")
     case .clearSSHAgent: return L10n.tr("networkAction.clearSSHAgent.name")
     case .clearClipboard: return L10n.tr("networkAction.clearClipboard.name")
+    case .ejectRemovableVolumes: return L10n.tr("networkAction.ejectRemovableVolumes.name")
+    case .unmountCryptomatorVolumes: return L10n.tr("networkAction.unmountCryptomatorVolumes.name")
+    case .disableBluetooth: return L10n.tr("networkAction.disableBluetooth.name")
     case .disableWiFi: return L10n.tr("networkAction.disableWiFi.name")
     }
   }
@@ -27,6 +30,9 @@ extension NetworkActionType {
     case .disconnectVPN: return L10n.tr("networkAction.disconnectVPN.riskCaption")
     case .clearSSHAgent: return L10n.tr("networkAction.clearSSHAgent.riskCaption")
     case .clearClipboard: return L10n.tr("networkAction.clearClipboard.riskCaption")
+    case .ejectRemovableVolumes: return L10n.tr("networkAction.ejectRemovableVolumes.riskCaption")
+    case .unmountCryptomatorVolumes: return L10n.tr("networkAction.unmountCryptomatorVolumes.riskCaption")
+    case .disableBluetooth: return L10n.tr("networkAction.disableBluetooth.riskCaption")
     case .disableWiFi: return L10n.tr("networkAction.disableWiFi.riskCaption")
     }
   }

@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.7` (build `16`) |
+| **Version** | `0.5.9` (build `19`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -115,7 +115,7 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 Configure in **Settings → Security** (network section). **Panic** operation preset enables VPN, SSH agent, and clipboard clear (not Wi‑Fi off — keeps Find My).
 
 **Custom script paths:** `~/.magsafe/scripts/` · `/usr/local/magsafe-scripts/`  
-**Example scripts:** [docs/examples/scripts/](docs/examples/scripts/) (browser quit, browsing data best-effort)  
+**Trigger scripts (bundled):** [`MagSafeGuard/Resources/TriggerScripts/`](MagSafeGuard/Resources/TriggerScripts/) — ship inside the app; see README there for install to `~/.magsafe/scripts/`  
 Security actions: **Settings → Security** (+ / − / drag to reorder).
 
 ---
@@ -264,7 +264,7 @@ Optional upstream reference (manual only): `git fetch upstream && git merge upst
 | [README.de.md](README.de.md) | German version of this file |
 | [docs/features/user-guide.md](docs/features/user-guide.md) | **User guide** — operation profiles, discreet, panic · [DE](docs/features/user-guide.de.md) |
 | [docs/features/operating-modes.md](docs/features/operating-modes.md) | State machine & technical flows |
-| [docs/examples/scripts/README.md](docs/examples/scripts/README.md) | Example custom scripts |
+| [`MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md`](MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md) | Bundled trigger scripts (also in .app) |
 | [docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md) | Feature roadmap & legal notes |
 | [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md) | Fork release history |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Detailed build guide |

@@ -304,4 +304,4 @@ public protocol SettingsMigrator {
 ///
 /// This version is incremented when breaking changes are made to the
 /// Settings structure that require migration logic.
-public let currentSettingsVersion = 11
+public let currentSettingsVersion = 13

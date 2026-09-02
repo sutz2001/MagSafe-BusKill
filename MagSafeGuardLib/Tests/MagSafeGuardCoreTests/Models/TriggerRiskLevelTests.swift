@@ -16,6 +16,15 @@ final class TriggerRiskLevelTests: XCTestCase {
     XCTAssertEqual(SecurityActionType.customScript.triggerRiskLevel, .severe)
   }
 
+  func testEjectRemovableVolumesRiskIsSevere() {
+    XCTAssertEqual(NetworkActionType.ejectRemovableVolumes.triggerRiskLevel, .severe)
+    XCTAssertEqual(NetworkActionType.unmountCryptomatorVolumes.triggerRiskLevel, .severe)
+  }
+
+  func testDisableBluetoothRiskIsModerate() {
+    XCTAssertEqual(NetworkActionType.disableBluetooth.triggerRiskLevel, .moderate)
+  }
+
   func testMaxConfiguredRiskBeginnerProfile() {
     var settings = Settings()
     OperationProfilePresets.apply(.beginner, to: &settings)

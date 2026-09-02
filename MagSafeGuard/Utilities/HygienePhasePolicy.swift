@@ -14,9 +14,12 @@ enum HygienePhasePolicy {
   /// Execution order for phase A (only actions enabled in settings run).
   static let orderedActions: [NetworkActionType] = [
     .clearClipboard,
+    .ejectRemovableVolumes,
+    .unmountCryptomatorVolumes,
     .clearSSHAgent,
     .webhook,
     .disconnectVPN,
+    .disableBluetooth,
     .disableWiFi
   ]
 }

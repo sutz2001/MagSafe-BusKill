@@ -62,6 +62,9 @@ final class OperationProfilePresetsTests: XCTestCase {
       OperationProfilePresets.panicNetworkActions.sorted { $0.rawValue < $1.rawValue }
     )
     XCTAssertTrue(settings.enabledNetworkActions.contains(.clearClipboard))
+    XCTAssertTrue(settings.enabledNetworkActions.contains(.ejectRemovableVolumes))
+    XCTAssertTrue(settings.enabledNetworkActions.contains(.unmountCryptomatorVolumes))
+    XCTAssertTrue(settings.enabledNetworkActions.contains(.disableBluetooth))
     XCTAssertFalse(settings.showInDock)
     XCTAssertEqual(OperationProfilePresets.detect(from: settings), .panic)
   }

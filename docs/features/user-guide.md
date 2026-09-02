@@ -87,7 +87,7 @@ Wi‑Fi off is **not** enabled by any preset (keeps Find My). Webhooks stay user
 ### Custom scripts (optional)
 
 **Settings → Advanced → Custom Scripts** — add paths under `~/.magsafe/scripts/` or `/usr/local/magsafe-scripts/`.  
-Examples: [docs/examples/scripts/README.md](../examples/scripts/README.md) (browser quit, browsing data best-effort).
+Examples: [docs/examples/scripts/README.md](../examples/scripts/README.md) (browser quit, Cryptomator/VeraCrypt unmount, eject externals, browsing data best-effort).
 
 Enable **Custom Script** in Security actions when a path is configured.
 

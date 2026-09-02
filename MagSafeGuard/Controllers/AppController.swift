@@ -59,6 +59,10 @@ public enum AppEvent: String {
   case networkActionExecuted
   /// A network action failed
   case networkActionFailed
+  /// A custom script completed successfully
+  case customScriptExecuted
+  /// A custom script failed
+  case customScriptFailed
 }
 
 /// Event log entry containing timestamped application events.
@@ -615,9 +619,10 @@ public class AppController: ObservableObject {
     triggerPipeline.execute(
       context: .theftTrigger,
       event: "security_trigger"
-    ) { [weak self] networkResult, result in
+    ) { [weak self] networkResult, scriptResult, result in
       guard let self else { return }
       self.logNetworkActionResults(networkResult)
+      self.logScriptPhaseResults(scriptResult)
 
       if result.allSucceeded {
         self.logEventInternal(
@@ -646,8 +651,10 @@ public class AppController: ObservableObject {
     cancelGracePeriod()
     logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.panicTriggered"))
 
-    panicExecutor.execute { [weak self] in
+    panicExecutor.execute { [weak self] networkResult, scriptResult, _ in
       guard let self else { return }
+      self.logNetworkActionResults(networkResult)
+      self.logScriptPhaseResults(scriptResult)
       if self.currentState == .triggered {
         self.transitionToState(.armed)
       }
@@ -670,6 +677,22 @@ public class AppController: ObservableObject {
 
     DispatchQueue.main.async { [weak self] in
       self?.onStateChange?(oldState, newState)
+    }
+  }
+
+  private func logScriptPhaseResults(_ result: SecurityActionsService.ScriptPhaseResult) {
+    for path in result.executedPaths {
+      logEventInternal(
+        .customScriptExecuted,
+        details: L10n.tr("logDetail.customScriptSucceeded", path))
+    }
+    for failure in result.failedPaths {
+      logEventInternal(
+        .customScriptFailed,
+        details: L10n.tr(
+          "logDetail.customScriptFailed",
+          failure.path,
+          failure.errorMessage))
     }
   }
 

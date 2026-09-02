@@ -17,11 +17,13 @@ MagSafe Guard is a **menu bar dead-man's switch**: when **armed**, unplugging ex
 |--------|----------------|
 | **Mode / state** | One of four `AppState` values (disarmed, armed, grace period, triggered) |
 | **Security action** | Lock screen, alarm, logout, shutdown, or custom script |
-| **Network action** | Webhook, VPN disconnect, SSH agent clear, clipboard clear, Wi‑Fi off (v0.4.0+) |
+| **Network action** | Webhook, VPN disconnect, SSH agent clear, clipboard clear, eject externals, Cryptomator unmount, Bluetooth off, Wi‑Fi off |
 | **Auto-arm** | Optional automatic *attempt* to arm when location/network rules fire |
 | **Remote trigger** | Optional `magsafeguard://` URL to arm or fire actions from Shortcuts |
 | **Panic mode** | Optional high-assurance profile: **0 grace**, protection-first actions, immediate shutdown on cable pull (see [§10 Panic mode](#10-panic--paranoid-modes)) |
 | **Operation profile** | Settings preset (**Normal** / **Discreet** / **Panic**) — grace, actions, notifications, network defaults for **normal** armed use (see [§1b](#1b-operation-profiles-v05x)) |
+
+**Single instance:** Only one MagSafe Guard process may run. `LSMultipleInstancesProhibited` blocks launching the same `.app` twice; on startup the app also terminates any other running copy with the same bundle ID (e.g. an older `/Applications` build when you open a new debug build).
 
 ---
 
@@ -33,7 +35,7 @@ User-facing presets in **Settings → Security** (`OperationProfile` in `Operati
 |---------|-------|--------------|------------------|---------------|------|-----------------|
 | **Normal** | 30 s | Yes | Lock + alarm | All on | Unchanged | None |
 | **Discreet** | 20 s | Yes | Lock only | All off | Hidden | None |
-| **Panic** (preset) | 5 s | No | Lock + force logout | All off | Hidden | VPN off, SSH clear, clipboard clear |
+| **Panic** (preset) | 5 s | No | Lock + force logout | All off | Hidden | VPN, SSH, clipboard, eject, Cryptomator, Bluetooth |
 
 **Not the same as panic protection mode:** `ProtectionMode.panic` (menu **Arm Panic Mode…**) forces **0 s grace** and `PanicModeExecutor` regardless of the profile grace slider. The **Panic** profile only configures settings for everyday armed use.
 
@@ -226,7 +228,7 @@ flowchart LR
 - Second `executeActions` call while running is **ignored**.
 
 Allowed script paths (README): `~/.magsafe/scripts/`, `/usr/local/magsafe-scripts/`.  
-Example scripts (browser quit, clipboard, best-effort history): [examples/scripts/README.md](../examples/scripts/README.md).
+Bundled trigger scripts: [MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md](../../MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md) (copy to `~/.magsafe/scripts/`).
 
 ---
 
@@ -235,10 +237,13 @@ Example scripts (browser quit, clipboard, best-effort history): [examples/script
 Configured in **Settings → Security** (network section). On cable/panic triggers they run in **phase A (hygiene)** before security actions — fixed priority, **2 s** total budget:
 
 1. Clear clipboard  
-2. Clear SSH agent  
-3. Webhook (≤ 1.5 s timeout)  
-4. Disconnect VPN (only if time remains)  
-5. Disable Wi‑Fi (only if time remains)
+2. **Eject removable volumes** (hard eject external physical disks)  
+3. **Unmount Cryptomator** (auto-detect macFUSE / WebDAV :42427)  
+4. Clear SSH agent  
+5. Webhook (≤ 1.5 s timeout)  
+6. Disconnect VPN (only if time remains)  
+7. **Disable Bluetooth** (requires `blueutil`; only if time remains)  
+8. Disable Wi‑Fi (only if time remains)
 
 Legacy `executeActions` (settings list order) remains for non-pipeline callers.
 
@@ -256,6 +261,9 @@ Phase C — hard stop             → lock → logout → immediate shutdown
 | **Disconnect VPN** | Stop active VPN | AppleScript + `scutil --nc stop` |
 | **Clear SSH agent** | Remove loaded keys | `/usr/bin/ssh-add -D` |
 | **Clear clipboard** | Empty the system pasteboard | `NSPasteboard.general.clearContents()` |
+| **Eject removable volumes** | Hard-eject external physical disks (USB/SD/portable SSD) | `diskutil list external physical` → `diskutil eject` per device |
+| **Unmount Cryptomator** | Quit app; force-unmount Cryptomator volumes | `/sbin/mount` parse → `diskutil unmount force` |
+| **Disable Bluetooth** | Turn Bluetooth radio off | `blueutil -p 0` (Homebrew; not in macOS by default) |
 | **Disable Wi‑Fi** | Turn off Wi‑Fi interface | `networksetup -setairportpower off` |
 
 ```mermaid
@@ -266,6 +274,7 @@ flowchart TD
     W --> VPN[disconnect VPN]
     W --> SSH[ssh-add -D]
     W --> CLIP[clear clipboard]
+    W --> EJECT[eject externals]
     W --> WIFI[Wi-Fi off]
     WH --> SA[SecurityActionsService]
     VPN --> SA

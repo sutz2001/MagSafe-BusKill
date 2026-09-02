@@ -120,7 +120,7 @@ Design: [docs/features/panic-modes.md](features/panic-modes.md) · Anleitung: [u
 - [x] `OperationProfile` + `OperationProfilePresets` (Grace, Aktionen, Mitteilungen, Dock, Netzwerk)
 - [x] Settings → Security: segmentierter Picker, Karenz, Link zu Mitteilungen, Reset-Link
 - [x] **Zwischenablage leeren** als Netzwerk-Aktion; Panic-/Paranoid-Baseline
-- [x] Beispiel-Skripte unter `docs/examples/scripts/`
+- [x] Trigger-Skripte unter `MagSafeGuard/Resources/TriggerScripts/` (mit App gebündelt)
 - [x] Kurzanleitung + README EN/DE aktualisiert
 
 ---
@@ -142,8 +142,61 @@ Checkliste: **[maintainers/stabilization-checklist.md](maintainers/stabilization
 
 ---
 
+## Phase 2d — Paranoid-Modus (0.6.0) 🔄
+
 **Ziel:** **Paranoid** — schnellste mögliche Datenvernichtung + sofortiger Shutdown.  
 **Voraussetzung:** Nutzer hat vorgehärtet (FileVault an, Wipe-Pfade/Volumes konfiguriert). Setup-Modus, kein Plug-and-play.
+
+Design: [panic-modes.md](features/panic-modes.md) · GitHub-Milestone: **v0.6-paranoid**
+
+### Abhängigkeiten
+
+```text
+M1 Config + Settings → M2 DestructionPipeline → M3 ParanoidModeExecutor
+M1 → M4 Setup-Wizard → M5 Arming + Legal
+M3 + M5 → M6 Routing + Trigger → M7 Docs + Legal-Gate
+```
+
+### Milestones
+
+| # | Milestone | Ziel-Tag | Aufwand |
+|---|-----------|----------|---------|
+| M1 | Datenmodell & Settings-UI | 0.6.0-alpha | S |
+| M2 | `DestructionPipeline` (Mock + Mac) | 0.6.0-alpha | M |
+| M3 | `ParanoidModeExecutor` | 0.6.0-beta | M |
+| M4 | Setup-Wizard (FileVault + Ziele) | 0.6.0-beta | M |
+| M5 | Arming, Codewort, Legal UI | 0.6.0-beta | M |
+| M6 | Routing, Icon, Hotkey, `paranoid` URL | 0.6.0-rc | M |
+| M7 | Docs, i18n, Legal-Gate | 0.6.0 | S |
+
+### PR-Schnitte (Issues auf GitHub)
+
+| PR | Issue | Milestone |
+|----|-------|-----------|
+| 1 | [#5 ParanoidConfiguration + migration v14](https://github.com/sutz2001/MagSafe-BusKill/issues/5) | M1 |
+| 2 | [#6 Settings UI wipe targets](https://github.com/sutz2001/MagSafe-BusKill/issues/6) | M1 |
+| 3 | [#7 DestructionPipeline + Mock](https://github.com/sutz2001/MagSafe-BusKill/issues/7) | M2 |
+| 4 | [#8 MacDestructionPipeline](https://github.com/sutz2001/MagSafe-BusKill/issues/8) | M2 |
+| 5 | [#9 ParanoidModeExecutor](https://github.com/sutz2001/MagSafe-BusKill/issues/9) | M3 |
+| 6 | [#10 Setup wizard](https://github.com/sutz2001/MagSafe-BusKill/issues/10) | M4 |
+| 7 | [#11 Legal + codeword](https://github.com/sutz2001/MagSafe-BusKill/issues/11) | M5 |
+| 8 | [#12 armParanoid + menu + icon](https://github.com/sutz2001/MagSafe-BusKill/issues/12) | M5–M6 |
+| 9 | [#13 Trigger routing](https://github.com/sutz2001/MagSafe-BusKill/issues/13) | M6 |
+| 10 | [#14 magsafeguard://paranoid](https://github.com/sutz2001/MagSafe-BusKill/issues/14) | M6 |
+| 11 | [#15 Docs + version 0.6.0](https://github.com/sutz2001/MagSafe-BusKill/issues/15) | M7 |
+| 12 | [#16 Legal review gate](https://github.com/sutz2001/MagSafe-BusKill/issues/16) | M7 |
+
+Milestone: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
+
+**Erster manueller Test:** nach PR-5 mit Mock-Pipeline. **Erster echter Wipe:** nach PR-4 nur auf Spare-Mac / dediziertem Test-Volume.
+
+### Bewusst nicht in v0.6.0
+
+- Keychain-Massenlöschung (hohes Fehlerrisiko → ggf. v0.6.1)
+- Eingebauter Browser-Kill (Skripte + Panic-Baseline reichen)
+- LUKS-Header am Boot-Volume (macOS-Limit)
+- E2E-Wipe in CI (verboten — nur Mocks)
+- LAN-Web-Trigger → [future-ideas.md](features/future-ideas.md)
 
 ### Verhalten (Paranoid)
 

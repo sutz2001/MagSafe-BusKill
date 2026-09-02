@@ -87,7 +87,7 @@ WLAN aus ist in **keinem Preset** aktiv (Find My). Webhooks bleiben individuell.
 ### Eigene Skripte (optional)
 
 **Einstellungen → Erweitert → Eigene Skripte** — Pfade unter `~/.magsafe/scripts/` oder `/usr/local/magsafe-scripts/`.  
-Beispiele: [docs/examples/scripts/README.md](../examples/scripts/README.md) (Browser beenden, Verlauf best-effort).
+Beispiele: [docs/examples/scripts/README.md](../examples/scripts/README.md) (Browser beenden, Cryptomator/VeraCrypt trennen, externe Laufwerke, Verlauf best-effort).
 
 **Eigenes Skript** unter Security aktivieren, wenn ein Pfad gesetzt ist.
 

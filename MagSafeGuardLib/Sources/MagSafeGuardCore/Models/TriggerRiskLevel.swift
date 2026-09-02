@@ -40,6 +40,10 @@ extension NetworkActionType {
     switch self {
     case .webhook, .disconnectVPN, .clearSSHAgent, .clearClipboard, .disableWiFi:
       return .moderate
+    case .ejectRemovableVolumes, .unmountCryptomatorVolumes:
+      return .severe
+    case .disableBluetooth:
+      return .moderate
     }
   }
 }

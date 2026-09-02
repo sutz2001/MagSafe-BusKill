@@ -40,7 +40,8 @@ public enum OperationProfilePresets {
 
   /// Network actions for panic and paranoid (no Wi‑Fi off — keeps Find My; webhook is user-specific).
   public static let highAssuranceNetworkActions: [NetworkActionType] = [
-    .disconnectVPN, .clearSSHAgent, .clearClipboard,
+    .disconnectVPN, .clearSSHAgent, .clearClipboard, .ejectRemovableVolumes,
+    .unmountCryptomatorVolumes, .disableBluetooth,
   ]
 
   /// Network actions enabled by the Panic operation preset.

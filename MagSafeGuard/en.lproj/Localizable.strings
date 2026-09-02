@@ -48,7 +48,7 @@
 "risk.legend.moderate" = "Logout, shutdown, or network hygiene may interrupt work or disconnect you.";
 "risk.legend.severe" = "Custom scripts or menu Panic mode (zero grace, immediate shutdown). Review carefully.";
 "risk.panicMenu.caption" = "Menu → Arm Panic Mode uses zero grace on cable pull: lock, your actions, and immediate shutdown. Unsaved work may be lost. This is separate from the Panic preset above.";
-"risk.customScripts.caption" = "Scripts run with your user permissions before logout/shutdown. They can delete data or change system state — review every path. See docs/examples/scripts/.";
+"risk.customScripts.caption" = "Scripts run with your user permissions before logout/shutdown. They can delete data or change system state — review every path. Bundled examples: MagSafeGuard/Resources/TriggerScripts/ (also inside the .app).";
 
 "securityAction.lockScreen.riskCaption" = "Locks the screen; no file loss.";
 "securityAction.soundAlarm.riskCaption" = "Plays a loud sound; may be disruptive in public.";
@@ -60,6 +60,9 @@
 "networkAction.disconnectVPN.riskCaption" = "Disconnects VPN; may expose traffic on untrusted networks.";
 "networkAction.clearSSHAgent.riskCaption" = "Clears SSH keys from the agent; active sessions may break.";
 "networkAction.clearClipboard.riskCaption" = "Clears the clipboard; copied passwords or text are lost.";
+"networkAction.ejectRemovableVolumes.riskCaption" = "Hard-ejects external physical disks; unsaved data on USB/SD may be lost or corrupted.";
+"networkAction.unmountCryptomatorVolumes.riskCaption" = "Force-unmounts Cryptomator volumes (macFUSE/WebDAV); decrypted view ends; vault files on disk remain.";
+"networkAction.disableBluetooth.riskCaption" = "Turns Bluetooth off; keyboards, mice, and audio may disconnect.";
 "networkAction.disableWiFi.riskCaption" = "Turns Wi‑Fi off; also affects Find My on this Mac.";
 
 "advisory.firstArm.title" = "Before you rely on protection";
@@ -112,6 +115,8 @@
 "settings.network.remote.armExample" = "Arm remotely: %@";
 "settings.network.remote.panicExample" = "Panic trigger (panic-armed only): %@";
 "settings.network.disableWiFi.warning" = "Disabling Wi‑Fi blocks Find My remote lock, erase, and location until Wi‑Fi is back on (Ethernet unaffected).";
+"settings.network.ejectRemovableVolumes.warning" = "Hard eject does not wait for apps to finish writing. Unsaved work on USB sticks, SD cards, or portable SSDs may be lost or corrupted. Internal disk is not affected.";
+"settings.network.disableBluetooth.warning" = "Requires blueutil (brew install blueutil). Bluetooth turns off immediately; paired devices disconnect.";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
@@ -165,6 +170,10 @@
 "settings.advanced.scriptBudget.value" = "Run scripts for up to %d s before logout/shutdown";
 "settings.advanced.noScripts" = "No custom scripts configured";
 "settings.advanced.addScript" = "Add Custom Script...";
+"settings.advanced.installBundledScripts" = "Install Bundled Scripts…";
+"settings.advanced.installBundledScripts.success.title" = "Scripts installed";
+"settings.advanced.installBundledScripts.success.message" = "Copied %d scripts to %@. Added to your script list (%d total). “Custom Script” security action was enabled if it was off.";
+"settings.advanced.installBundledScripts.failure.title" = "Could not install scripts";
 "settings.advanced.debug" = "Debug";
 "settings.advanced.debugLogging.title" = "Enable Debug Logging";
 "settings.advanced.debugLogging.caption" = "Log detailed information for troubleshooting";
@@ -417,6 +426,8 @@
 "event.autoArmTriggered" = "Auto-Arm Triggered";
 "event.networkActionExecuted" = "Network Action Executed";
 "event.networkActionFailed" = "Network Action Failed";
+"event.customScriptExecuted" = "Custom Script Executed";
+"event.customScriptFailed" = "Custom Script Failed";
 
 /* Event log details */
 "logDetail.userCancelled" = "User cancelled";
@@ -441,12 +452,17 @@
 "logDetail.panicHotkey" = "Panic hotkey pressed";
 "logDetail.networkActionSucceeded" = "%@ succeeded";
 "logDetail.networkActionFailed" = "%@ failed: %@";
+"logDetail.customScriptSucceeded" = "%@ succeeded";
+"logDetail.customScriptFailed" = "%@ failed: %@";
 
 /* Network actions */
 "networkAction.webhook.name" = "HTTP Webhook";
 "networkAction.disconnectVPN.name" = "Disconnect VPN";
 "networkAction.clearSSHAgent.name" = "Clear SSH Agent";
 "networkAction.clearClipboard.name" = "Clear Clipboard";
+"networkAction.ejectRemovableVolumes.name" = "Eject Removable Volumes";
+"networkAction.unmountCryptomatorVolumes.name" = "Unmount Cryptomator";
+"networkAction.disableBluetooth.name" = "Disable Bluetooth";
 "networkAction.disableWiFi.name" = "Disable Wi-Fi";
 
 /* App states */
@@ -464,6 +480,16 @@
 "onboarding.arm.daily.title" = "Everyday profiles";
 "onboarding.arm.daily.body" = "Choose a preset under Settings → Security. Arm from the menu bar before you leave.";
 "onboarding.arm.daily.modes.title" = "Everyday operation profiles";
+"onboarding.panic.title" = "Panic mode";
+"onboarding.panic.body" = "Stronger than everyday profiles. Unsaved work may be lost — use only when you need a fast response on cable pull.";
+"onboarding.panic.preset" = "Panic preset (Settings) — lock + logout, short grace, network hygiene when normally armed.";
+"onboarding.panic.menu" = "Arm Panic Mode (menu) — separate armed state with 0 s grace and immediate shutdown on cable pull.";
+"onboarding.panic.footnote" = "Panic preset and menu panic are different: the preset configures normal armed behavior; menu panic skips grace entirely.";
+"onboarding.paranoid.title" = "Paranoid mode (planned)";
+"onboarding.paranoid.body" = "One step beyond panic: guided data destruction before shutdown. Opt-in only — for users who accept irreversible loss.";
+"onboarding.paranoid.feature" = "Paranoid protection (v0.6) — wipe configured paths, optional APFS volume erase, then hard shutdown.";
+"onboarding.paranoid.scripts" = "Built-in: eject externals, Cryptomator unmount, Bluetooth off. More scripts ship in the app (TriggerScripts/) — browsers, password managers, VeraCrypt, FileVault recovery key backup.";
+"onboarding.paranoid.footnote" = "Paranoid is not available yet. Do not enable destructive scripts until you have tested them on a spare machine.";
 "onboarding.highAssurance.title" = "Panic & maximum protection";
 "onboarding.highAssurance.body" = "Stronger presets and a separate panic-armed mode for zero grace on cable pull. Use only when you accept possible data loss.";
 "onboarding.highAssurance.modes.title" = "High-assurance options";

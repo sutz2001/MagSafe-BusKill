@@ -30,6 +30,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   func applicationWillFinishLaunching(_ notification: Notification) {
     guard !isTestEnvironment else { return }
 
+    SingleInstanceEnforcer.terminateOtherInstances()
+
     // Activation policy must be set before the menu bar item is created.
     SettingsRuntimeApplier.markApplicationReady()
     SettingsRuntimeApplier.currentProtectionMode = core.appController.protectionMode

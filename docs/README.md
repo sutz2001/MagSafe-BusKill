@@ -107,7 +107,7 @@ Archived upstream-only: [SSDLC case study](archive/ssdlc-case-study.md) · [Secu
 - [User guide (mini)](features/user-guide.md) · [DE](features/user-guide.de.md)
 - [Operating modes](features/operating-modes.md)
 - [Panic & Paranoid modes](features/panic-modes.md)
-- [Example custom scripts](examples/scripts/README.md) — browser quit, clipboard, browsing data (copy to `~/.magsafe/scripts/`)
+- [Example / bundled trigger scripts](examples/scripts/README.md) → [`MagSafeGuard/Resources/TriggerScripts/`](../MagSafeGuard/Resources/TriggerScripts/)
 - [Feature Flags](features/flags.md) - Runtime configuration options
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 

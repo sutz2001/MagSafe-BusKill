@@ -160,6 +160,12 @@ public final class NetworkActionsService {
       try networkActions.clearSSHAgent()
     case .clearClipboard:
       try networkActions.clearClipboard()
+    case .ejectRemovableVolumes:
+      try networkActions.ejectRemovableVolumes()
+    case .unmountCryptomatorVolumes:
+      try networkActions.unmountCryptomatorVolumes()
+    case .disableBluetooth:
+      try networkActions.disableBluetooth()
     case .disableWiFi:
       try networkActions.disableWiFi()
     }

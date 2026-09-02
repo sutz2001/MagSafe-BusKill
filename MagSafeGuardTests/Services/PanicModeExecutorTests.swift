@@ -36,7 +36,7 @@ final class PanicModeExecutorTests: XCTestCase {
   func testExecuteRunsProtectionFirstActionsAndImmediateShutdown() {
     let expectation = expectation(description: "panic pipeline completes")
 
-    sut.execute {
+    sut.execute { _, _, _ in
       expectation.fulfill()
     }
 

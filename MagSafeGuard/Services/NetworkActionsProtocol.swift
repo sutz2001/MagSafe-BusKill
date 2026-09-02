@@ -11,6 +11,9 @@ public protocol NetworkActionsProtocol: Sendable {
   func disconnectVPN() throws
   func clearSSHAgent() throws
   func clearClipboard() throws
+  func ejectRemovableVolumes() throws
+  func unmountCryptomatorVolumes() throws
+  func disableBluetooth() throws
   func disableWiFi() throws
 }
 

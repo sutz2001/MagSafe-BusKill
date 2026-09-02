@@ -29,7 +29,11 @@ public final class SecurityTriggerPipeline {
   public func execute(
     context: SecurityActionExecutionContext,
     event: String,
-    completion: @escaping (NetworkActionResult, SecurityActionsService.ExecutionResult) -> Void
+    completion: @escaping (
+      NetworkActionResult,
+      SecurityActionsService.ScriptPhaseResult,
+      SecurityActionsService.ExecutionResult
+    ) -> Void
   ) {
     DispatchQueue.global(qos: .userInitiated).async { [weak self] in
       guard let self else { return }
@@ -37,12 +41,17 @@ public final class SecurityTriggerPipeline {
       let settings = self.settingsManager.settings
       let networkResult = self.networkActions.executeHygienePhase(event: event)
 
+      let scriptResult: SecurityActionsService.ScriptPhaseResult
       if context == .theftTrigger || context == .panic {
-        _ = self.securityActions.executeScriptsPhase(timeBudget: settings.scriptTimeBudgetSeconds)
+        scriptResult = self.securityActions.executeScriptsPhase(
+          timeBudget: settings.scriptTimeBudgetSeconds
+        )
+      } else {
+        scriptResult = .empty
       }
 
       self.securityActions.executeActions(context: context) { securityResult in
-        completion(networkResult, securityResult)
+        completion(networkResult, scriptResult, securityResult)
       }
     }
   }

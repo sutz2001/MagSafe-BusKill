@@ -176,10 +176,6 @@ public class SecurityActionsService {
     }
   }
 
-  /// Result of executing security actions.
-  ///
-  /// Contains detailed information about which actions succeeded or failed,
-  /// enabling proper error handling and user feedback.
   public struct ExecutionResult {
     /// Actions that executed successfully
     let executedActions: [SecurityAction]
@@ -194,6 +190,22 @@ public class SecurityActionsService {
     /// success/failure determination.
     var allSucceeded: Bool {
       return failedActions.isEmpty
+    }
+  }
+
+  /// Result of phase-B custom script execution (one entry per script path).
+  public struct ScriptPhaseResult: Sendable {
+    public let executedPaths: [String]
+    public let failedPaths: [(path: String, errorMessage: String)]
+
+    public static let empty = ScriptPhaseResult(executedPaths: [], failedPaths: [])
+
+    public var isEmpty: Bool {
+      executedPaths.isEmpty && failedPaths.isEmpty
+    }
+
+    public var allSucceeded: Bool {
+      failedPaths.isEmpty
     }
   }
 
@@ -564,13 +576,13 @@ public class SecurityActionsService {
 
   /// Phase B: run custom scripts within a time budget before logout/shutdown.
   @discardableResult
-  public func executeScriptsPhase(timeBudget: TimeInterval) -> ExecutionResult {
+  public func executeScriptsPhase(timeBudget: TimeInterval) -> ScriptPhaseResult {
     guard timeBudget > 0 else {
-      return ExecutionResult(executedActions: [], failedActions: [], timestamp: Date())
+      return .empty
     }
 
     guard configuration.enabledActions.contains(.customScript) else {
-      return ExecutionResult(executedActions: [], failedActions: [], timestamp: Date())
+      return .empty
     }
 
     let paths =
@@ -579,31 +591,31 @@ public class SecurityActionsService {
       : configuration.customScriptPaths
 
     guard !paths.isEmpty else {
-      return ExecutionResult(executedActions: [], failedActions: [], timestamp: Date())
+      return .empty
     }
 
     let deadline = Date().addingTimeInterval(timeBudget)
-    var executed: [SecurityAction] = []
-    var failed: [(SecurityAction, Error)] = []
+    var executedPaths: [String] = []
+    var failedPaths: [(path: String, errorMessage: String)] = []
 
     for path in paths {
       let remaining = deadline.timeIntervalSinceNow
       guard remaining > 0 else {
-        failed.append((.customScript, SystemActionError.scriptExecutionTimeout))
+        failedPaths.append((path, SystemActionError.scriptExecutionTimeout.localizedDescription))
         Log.warning("Script phase budget exhausted — skipping remaining scripts", category: .security)
         break
       }
 
       do {
         try systemActions.executeScript(at: path, timeLimit: remaining)
-        executed.append(.customScript)
+        executedPaths.append(path)
       } catch {
-        failed.append((.customScript, error))
+        failedPaths.append((path, error.localizedDescription))
         Log.error("Failed to execute custom script", error: error, category: .security)
       }
     }
 
-    return ExecutionResult(executedActions: executed, failedActions: failed, timestamp: Date())
+    return ScriptPhaseResult(executedPaths: executedPaths, failedPaths: failedPaths)
   }
 
   private func runProtectionAction(

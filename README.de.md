@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.7` (Build `16`) |
+| **Version** | `0.5.9` (Build `19`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -115,7 +115,7 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 **Einstellungen → Security** (Abschnitt Network). **Panic**-Preset aktiviert VPN, SSH-Agent und Zwischenablage (kein WLAN aus — Find My bleibt).
 
 **Skript-Pfade:** `~/.magsafe/scripts/` · `/usr/local/magsafe-scripts/`  
-**Beispielskripte:** [docs/examples/scripts/](docs/examples/scripts/) (Browser beenden, Verlauf best-effort)  
+**Trigger-Skripte (mitgeliefert):** [`MagSafeGuard/Resources/TriggerScripts/`](MagSafeGuard/Resources/TriggerScripts/) — in der App enthalten; README dort für Installation nach `~/.magsafe/scripts/`  
 Sicherheitsaktionen: **Einstellungen → Security** — **+** / **−** / Drag & Drop.
 
 ---
@@ -264,7 +264,7 @@ Optionaler Upstream-Vergleich (nur manuell): `git fetch upstream && git merge up
 | [README.md](README.md) | Englische Version |
 | [docs/features/user-guide.de.md](docs/features/user-guide.de.md) | **Kurzanleitung** — Betriebsmodi, diskret, Panic · [EN](docs/features/user-guide.md) |
 | [docs/features/operating-modes.md](docs/features/operating-modes.md) | Zustandsmaschine & technische Abläufe |
-| [docs/examples/scripts/README.md](docs/examples/scripts/README.md) | Beispiel-Skripte |
+| [`MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md`](MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md) | Mitgelieferte Trigger-Skripte (auch in .app) |
 | [docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md) | Roadmap & Rechtliches |
 | [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md) | Fork-Release-Historie |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Ausführliche Build-Anleitung |

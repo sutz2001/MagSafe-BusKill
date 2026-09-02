@@ -11,6 +11,9 @@ public enum NetworkActionType: String, CaseIterable, Codable, Sendable, Equatabl
   case disconnectVPN = "disconnect_vpn"
   case clearSSHAgent = "clear_ssh_agent"
   case clearClipboard = "clear_clipboard"
+  case ejectRemovableVolumes = "eject_removable_volumes"
+  case unmountCryptomatorVolumes = "unmount_cryptomator_volumes"
+  case disableBluetooth = "disable_bluetooth"
   case disableWiFi = "disable_wifi"
 
   public var displayName: String {
@@ -19,6 +22,9 @@ public enum NetworkActionType: String, CaseIterable, Codable, Sendable, Equatabl
     case .disconnectVPN: return "Disconnect VPN"
     case .clearSSHAgent: return "Clear SSH Agent"
     case .clearClipboard: return "Clear Clipboard"
+    case .ejectRemovableVolumes: return "Eject Removable Volumes"
+    case .unmountCryptomatorVolumes: return "Unmount Cryptomator"
+    case .disableBluetooth: return "Disable Bluetooth"
     case .disableWiFi: return "Disable Wi-Fi"
     }
   }
@@ -29,6 +35,9 @@ public enum NetworkActionType: String, CaseIterable, Codable, Sendable, Equatabl
     case .disconnectVPN: return "network.slash"
     case .clearSSHAgent: return "key.slash"
     case .clearClipboard: return "clipboard"
+    case .ejectRemovableVolumes: return "externaldrive.badge.xmark"
+    case .unmountCryptomatorVolumes: return "lock.rectangle.stack"
+    case .disableBluetooth: return "bluetooth.slash"
     case .disableWiFi: return "wifi.slash"
     }
   }

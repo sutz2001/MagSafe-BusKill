@@ -33,7 +33,7 @@ Execute **in parallel** (fire-and-forget, circuit breaker **off**):
 
 1. Lock screen
 2. Force logout (all users)
-3. Network actions (if enabled): webhook `panic`, VPN off, SSH agent clear, clipboard clear, Wi‑Fi off
+3. Network actions (if enabled): webhook `panic`, VPN off, SSH agent clear, clipboard clear, eject externals, Cryptomator unmount, Bluetooth off, Wi‑Fi off
 4. **Immediate hard shutdown** — no dialog, no 1-minute delay, no auth cancel
 
 Shutdown is the terminal action; do not rely on “quit all apps” alone (macOS may still delay).
@@ -90,13 +90,27 @@ User must confirm before paranoid can be armed:
 | `rm -rf` on configured paths | parallel | user-defined only |
 | APFS volume erase | parallel | dedicated volume ID only |
 | Delete local recovery key backup | if configured | only if path known |
-| Custom wipe script | parallel | from allowed paths only |
+| Custom wipe script | parallel | bundled `TriggerScripts/` in app + user paths — see [panic-modes § LUKS vs macOS](#linux-luks-header-shredder-vs-macos) |
 
 **Phase 2 — terminal (immediate, do not wait for Phase 1):**
 
 - Hard shutdown / halt (same path as Panic)
 
 **Design rule:** Speed beats completeness — power off quickly; destruction runs until power is gone.
+
+### Linux LUKS header shredder vs macOS
+
+BusKill’s [LUKS self-destruct](https://www.buskill.in/luks-self-destruct/) (Linux) does **not** delete files inside the volume. It **destroys the LUKS header** (and may suspend keys in RAM) so the encrypted block device becomes **unreadable without the passphrase** — even if the disk is imaged.
+
+| | **Linux LUKS shredder** | **macOS (MagSafe Guard)** |
+|--|-------------------------|---------------------------|
+| Target | LUKS header on block device | No equivalent for the **boot** APFS/FileVault volume (would brick the Mac) |
+| RAM keys | `cryptsetup luksSuspend` | Lock + logout + shutdown (session ends; FileVault uses sealed volume keys) |
+| Removable crypto | Often full-disk LUKS | Unmount Cryptomator / VeraCrypt; eject externals (built-in + bundled scripts) |
+| Irreversible loss | Header shredded → volume permanently locked | **Paranoid v0.6 (planned):** wipe configured paths, **erase dedicated APFS volume**, delete **local FileVault recovery key backup** |
+| Available today | Community / [buskill-linux](https://github.com/BusKill/buskill-linux) | Script: `delete-filevault-recovery-key-backup-best-effort.sh` (user-configured path) |
+
+**Honest limit:** macOS has no supported “shred FileVault header” API. Paranoid targets **user-chosen** secrets — not the system boot volume.
 
 ### Triggers
 

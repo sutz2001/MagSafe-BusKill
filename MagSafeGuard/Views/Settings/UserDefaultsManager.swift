@@ -349,6 +349,21 @@ public class UserDefaultsManager: ObservableObject {
       // Existing users: skip the first-arm advisory; new installs see it on first manual arm.
       migrated.hasSeenFirstArmAdvisory = migrated.hasCompletedOnboarding
     }
+    if version < 12 {
+      if migrated.operationProfile == .panic,
+        !migrated.enabledNetworkActions.contains(.ejectRemovableVolumes) {
+        migrated.enabledNetworkActions.append(.ejectRemovableVolumes)
+      }
+    }
+    if version < 13 {
+      if migrated.operationProfile == .panic {
+        for action: NetworkActionType in [.unmountCryptomatorVolumes, .disableBluetooth] {
+          if !migrated.enabledNetworkActions.contains(action) {
+            migrated.enabledNetworkActions.append(action)
+          }
+        }
+      }
+    }
     return migrated
   }
 

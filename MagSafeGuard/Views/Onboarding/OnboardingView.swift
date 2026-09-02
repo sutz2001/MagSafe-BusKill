@@ -7,13 +7,21 @@ import AppKit
 import MagSafeGuardCore
 import SwiftUI
 
+private enum OnboardingTypography {
+  static let title = Font.title2.weight(.semibold)
+  static let body = Font.body
+  static let sectionHeader = Font.body.weight(.semibold)
+  static let heroIconSize: CGFloat = 40
+  static let rowIconSize: CGFloat = 15
+}
+
 struct OnboardingView: View {
   @EnvironmentObject var settingsManager: UserDefaultsManager
   @Binding var isPresented: Bool
   @State private var page = 0
 
-  private let pageCount = 5
-  private let windowSize = CGSize(width: 440, height: 400)
+  private let pageCount = 6
+  private let windowSize = CGSize(width: 460, height: 430)
   private let markCompleteOnDismiss: Bool
 
   init(isPresented: Binding<Bool>, markCompleteOnDismiss: Bool = true) {
@@ -22,7 +30,7 @@ struct OnboardingView: View {
   }
 
   var body: some View {
-    VStack(spacing: 14) {
+    VStack(spacing: 16) {
       pageIndicator
 
       Group {
@@ -32,14 +40,16 @@ struct OnboardingView: View {
         case 1:
           dailyModesOnboardingPage
         case 2:
-          highAssuranceOnboardingPage
+          panicOnboardingPage
         case 3:
+          paranoidOnboardingPage
+        case 4:
           onboardingPage(
             titleKey: "onboarding.grace.title",
             bodyKey: "onboarding.grace.body",
             symbol: "timer"
           )
-        case 4:
+        case 5:
           onboardingPage(
             titleKey: "onboarding.permissions.title",
             bodyKey: "onboarding.permissions.body",
@@ -73,7 +83,7 @@ struct OnboardingView: View {
         }
       }
     }
-    .padding(20)
+    .padding(22)
     .frame(width: windowSize.width, height: windowSize.height)
   }
 
@@ -98,43 +108,16 @@ struct OnboardingView: View {
   }
 
   private var welcomeOnboardingPage: some View {
-    VStack(spacing: 10) {
-      Image(systemName: "shield.lefthalf.filled")
-        .font(.system(size: 36))
-        .foregroundColor(.accentColor)
+    VStack(spacing: 12) {
+      pageHero(symbol: "shield.lefthalf.filled")
 
-      Text(L10n.tr("onboarding.welcome.title"))
-        .font(.title3)
-        .fontWeight(.semibold)
-        .multilineTextAlignment(.center)
-
-      Text(L10n.tr("onboarding.welcome.body"))
-        .font(.callout)
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.center)
-        .fixedSize(horizontal: false, vertical: true)
+      onboardingTitle("onboarding.welcome.title")
+      onboardingBody("onboarding.welcome.body", alignment: .center)
 
       calloutBox {
-        VStack(alignment: .leading, spacing: 6) {
-          Label {
-            Text(L10n.tr("onboarding.welcome.fileVaultTip"))
-              .font(.caption)
-              .foregroundColor(.primary)
-              .fixedSize(horizontal: false, vertical: true)
-          } icon: {
-            Image(systemName: "lock.fill")
-              .foregroundColor(.accentColor)
-          }
-
-          Label {
-            Text(L10n.tr("onboarding.welcome.cliTip"))
-              .font(.caption)
-              .foregroundColor(.primary)
-              .fixedSize(horizontal: false, vertical: true)
-          } icon: {
-            Image(systemName: "terminal")
-              .foregroundColor(.accentColor)
-          }
+        VStack(alignment: .leading, spacing: 10) {
+          iconLabelRow(symbol: "lock.fill", textKey: "onboarding.welcome.fileVaultTip")
+          iconLabelRow(symbol: "terminal", textKey: "onboarding.welcome.cliTip")
         }
       }
     }
@@ -142,106 +125,127 @@ struct OnboardingView: View {
   }
 
   private var dailyModesOnboardingPage: some View {
-    VStack(spacing: 10) {
-      onboardingPage(
-        titleKey: "onboarding.arm.daily.title",
-        bodyKey: "onboarding.arm.daily.body",
-        symbol: "lock.shield"
-      )
+    VStack(spacing: 12) {
+      pageHero(symbol: "lock.shield")
+      onboardingTitle("onboarding.arm.daily.title")
+      onboardingBody("onboarding.arm.daily.body", alignment: .center)
 
       calloutBox {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(L10n.tr("onboarding.arm.daily.modes.title"))
-            .font(.caption)
-            .fontWeight(.semibold)
-            .foregroundColor(.secondary)
-
+        VStack(alignment: .leading, spacing: 10) {
+          sectionHeader("onboarding.arm.daily.modes.title")
           modeSummaryRow(symbol: "graduationcap", key: "onboarding.arm.modes.beginner")
           modeSummaryRow(symbol: "shield.checkered", key: "onboarding.arm.modes.normal")
           modeSummaryRow(symbol: "eye.slash", key: "onboarding.arm.modes.discreet")
         }
       }
 
-      Text(L10n.tr("onboarding.arm.beginnerTip"))
-        .font(.caption)
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.leading)
-        .fixedSize(horizontal: false, vertical: true)
-        .frame(maxWidth: .infinity, alignment: .leading)
+      footnote("onboarding.arm.beginnerTip")
     }
   }
 
-  private var highAssuranceOnboardingPage: some View {
-    VStack(spacing: 10) {
-      onboardingPage(
-        titleKey: "onboarding.highAssurance.title",
-        bodyKey: "onboarding.highAssurance.body",
-        symbol: "bolt.shield"
-      )
+  private var panicOnboardingPage: some View {
+    VStack(spacing: 12) {
+      pageHero(symbol: "bolt.shield")
+      onboardingTitle("onboarding.panic.title")
+      onboardingBody("onboarding.panic.body", alignment: .center)
 
       calloutBox {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(L10n.tr("onboarding.highAssurance.modes.title"))
-            .font(.caption)
-            .fontWeight(.semibold)
-            .foregroundColor(.secondary)
-
-          modeSummaryRow(symbol: "flame", key: "onboarding.arm.modes.panicPreset")
-          modeSummaryRow(symbol: "bolt.circle", key: "onboarding.arm.modes.panicMenu")
-          modeSummaryRow(symbol: "exclamationmark.shield", key: "onboarding.arm.modes.paranoid")
+        VStack(alignment: .leading, spacing: 12) {
+          iconLabelRow(symbol: "flame", textKey: "onboarding.panic.preset")
+          iconLabelRow(symbol: "bolt.circle", textKey: "onboarding.panic.menu")
         }
       }
 
-      Text(L10n.tr("onboarding.highAssurance.scriptsTip"))
-        .font(.caption)
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.leading)
+      footnote("onboarding.panic.footnote")
+    }
+  }
+
+  private var paranoidOnboardingPage: some View {
+    VStack(spacing: 12) {
+      pageHero(symbol: "exclamationmark.shield")
+      onboardingTitle("onboarding.paranoid.title")
+      onboardingBody("onboarding.paranoid.body", alignment: .center)
+
+      calloutBox {
+        VStack(alignment: .leading, spacing: 12) {
+          iconLabelRow(symbol: "externaldrive.badge.xmark", textKey: "onboarding.paranoid.feature")
+          iconLabelRow(symbol: "doc.text", textKey: "onboarding.paranoid.scripts")
+        }
+      }
+
+      footnote("onboarding.paranoid.footnote")
+    }
+  }
+
+  private func onboardingPage(titleKey: String, bodyKey: String, symbol: String) -> some View {
+    VStack(spacing: 12) {
+      pageHero(symbol: symbol)
+      onboardingTitle(titleKey)
+      onboardingBody(bodyKey, alignment: .center)
+    }
+    .padding(.horizontal, 4)
+  }
+
+  private func pageHero(symbol: String) -> some View {
+    Image(systemName: symbol)
+      .font(.system(size: OnboardingTypography.heroIconSize))
+      .foregroundColor(.accentColor)
+  }
+
+  private func onboardingTitle(_ key: String) -> some View {
+    Text(L10n.tr(key))
+      .font(OnboardingTypography.title)
+      .multilineTextAlignment(.center)
+  }
+
+  private func onboardingBody(_ key: String, alignment: TextAlignment) -> some View {
+    Text(L10n.tr(key))
+      .font(OnboardingTypography.body)
+      .foregroundColor(.secondary)
+      .multilineTextAlignment(alignment)
+      .fixedSize(horizontal: false, vertical: true)
+  }
+
+  private func sectionHeader(_ key: String) -> some View {
+    Text(L10n.tr(key))
+      .font(OnboardingTypography.sectionHeader)
+      .foregroundColor(.secondary)
+  }
+
+  private func footnote(_ key: String) -> some View {
+    Text(L10n.tr(key))
+      .font(OnboardingTypography.body)
+      .foregroundColor(.secondary)
+      .multilineTextAlignment(.leading)
+      .fixedSize(horizontal: false, vertical: true)
+      .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private func iconLabelRow(symbol: String, textKey: String) -> some View {
+    HStack(alignment: .top, spacing: 10) {
+      Image(systemName: symbol)
+        .font(.system(size: OnboardingTypography.rowIconSize, weight: .semibold))
+        .foregroundColor(.accentColor)
+        .frame(width: 18, alignment: .center)
+        .padding(.top, 2)
+
+      Text(L10n.tr(textKey))
+        .font(OnboardingTypography.body)
+        .foregroundColor(.primary)
         .fixedSize(horizontal: false, vertical: true)
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 
   private func calloutBox<Content: View>(@ViewBuilder content: () -> Content) -> some View {
     content()
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(10)
+      .padding(12)
       .background(Color.secondary.opacity(0.08))
       .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
   }
 
   private func modeSummaryRow(symbol: String, key: String) -> some View {
-    HStack(alignment: .top, spacing: 8) {
-      Image(systemName: symbol)
-        .font(.caption)
-        .foregroundColor(.accentColor)
-        .frame(width: 14, alignment: .center)
-        .padding(.top, 1)
-
-      Text(L10n.tr(key))
-        .font(.caption)
-        .foregroundColor(.primary)
-        .fixedSize(horizontal: false, vertical: true)
-    }
-  }
-
-  private func onboardingPage(titleKey: String, bodyKey: String, symbol: String) -> some View {
-    VStack(spacing: 10) {
-      Image(systemName: symbol)
-        .font(.system(size: 36))
-        .foregroundColor(.accentColor)
-
-      Text(L10n.tr(titleKey))
-        .font(.title3)
-        .fontWeight(.semibold)
-        .multilineTextAlignment(.center)
-
-      Text(L10n.tr(bodyKey))
-        .font(.callout)
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.center)
-        .fixedSize(horizontal: false, vertical: true)
-    }
-    .padding(.horizontal, 4)
+    iconLabelRow(symbol: symbol, textKey: key)
   }
 
   private func completeOnboarding() {
@@ -253,7 +257,7 @@ struct OnboardingView: View {
 }
 
 enum OnboardingPresenter {
-  private static let windowSize = CGSize(width: 440, height: 400)
+  private static let windowSize = CGSize(width: 460, height: 430)
   private static var onboardingWindow: NSWindow?
 
   @MainActor

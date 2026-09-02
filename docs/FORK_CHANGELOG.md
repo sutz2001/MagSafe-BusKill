@@ -3,6 +3,31 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.9] — 2026-09-02
+
+### Added
+
+- **Unmount Cryptomator** — built-in hygiene (auto-detect macFUSE / WebDAV :42427); Panic preset default
+- **Disable Bluetooth** — built-in hygiene via `blueutil` (Settings warning if not installed)
+- **Bundled trigger scripts** in `MagSafeGuard/Resources/TriggerScripts/` (shipped in .app): browsers, PM quit, VeraCrypt, FileVault recovery key backup, etc.
+- **Install bundled scripts** — Settings → Advanced copies to `~/.magsafe/scripts/`, auto-adds paths, enables Custom Script action
+- **Per-script event log** entries on trigger (`customScriptExecuted` / `customScriptFailed`)
+- **Single-instance enforcement** — new launch terminates other MagSafe Guard processes; `LSMultipleInstancesProhibited`
+- **LUKS vs macOS** section in [panic-modes.md](features/panic-modes.md)
+- **v0.6 Paranoid milestone** — Phase 2d in [FORK_ROADMAP.md](FORK_ROADMAP.md); GitHub issues [#5–#16](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
+
+### Changed
+
+- Superseded scripts (clipboard, eject, Cryptomator, Bluetooth) moved to `TriggerScripts/outdated/` — not installed by the app (use built-in network actions)
+- Example scripts under `docs/examples/scripts/` are pointers only (canonical copies in app bundle)
+
+## [0.5.8] — 2026-09-02
+
+### Added
+
+- **Eject removable volumes** — built-in network/hygiene action (hard eject via `diskutil`); enabled by default in Panic preset; severe risk badge + orange data-loss warning in Settings
+- **Example scripts (BusKill-style, macOS):** `cryptomator-umount-best-effort.sh`, `eject-removable-volumes.sh`, `veracrypt-dismount-best-effort.sh` — see [examples/scripts/](examples/scripts/)
+
 ## [0.5.7] — 2026-09-02
 
 ### Changed

@@ -46,6 +46,21 @@ final class NetworkActionsServiceTests: XCTestCase {
 
     XCTAssertEqual(mockActions.executionOrder, [.clearClipboard, .clearSSHAgent, .webhook])
   }
+
+  func testHygienePhaseRunsEjectAfterClipboard() {
+    UserDefaultsManager.shared.updateSetting(
+      \.enabledNetworkActions,
+      value: [.clearSSHAgent, .ejectRemovableVolumes, .clearClipboard]
+    )
+    mockActions.executionOrder = []
+
+    _ = sut.executeHygienePhase(event: "hygiene_eject")
+
+    XCTAssertEqual(
+      mockActions.executionOrder,
+      [.clearClipboard, .ejectRemovableVolumes, .clearSSHAgent]
+    )
+  }
 }
 
 private final class MockNetworkActions: NetworkActionsProtocol {
@@ -74,6 +89,18 @@ private final class MockNetworkActions: NetworkActionsProtocol {
   func clearClipboard() throws {
     clearClipboardCalled = true
     executionOrder.append(.clearClipboard)
+  }
+
+  func ejectRemovableVolumes() throws {
+    executionOrder.append(.ejectRemovableVolumes)
+  }
+
+  func unmountCryptomatorVolumes() throws {
+    executionOrder.append(.unmountCryptomatorVolumes)
+  }
+
+  func disableBluetooth() throws {
+    executionOrder.append(.disableBluetooth)
   }
 
   func disableWiFi() throws {

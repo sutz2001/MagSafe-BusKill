@@ -7,7 +7,7 @@ Capture rough ideas before they become specs. Remove or promote to [FORK_ROADMAP
 
 ## Cryptomator unmount & volume eject (BusKill-style scripts)
 
-**Captured:** 2026-09-02 (Marc)
+**Shipped:** bundled in `MagSafeGuard/Resources/TriggerScripts/` (inside .app). Docs pointer: [examples/scripts/README.md](../examples/scripts/README.md).
 
 ### Idea
 
@@ -15,20 +15,29 @@ On trigger, optionally:
 
 - **Unmount Cryptomator** volumes (inspired by [BusKill/trigger_cryptomator_umount](https://github.com/BusKill/trigger_cryptomator_umount))
 - **Eject** external disks / DMGs (`diskutil eject`)
+- **Dismount VeraCrypt** (`veracrypt -d` on macOS)
 
-Today this fits **custom scripts** in phase B of the trigger pipeline — not a built-in toggle (paths and volume names are machine-specific).
+Delivered as **custom scripts** in phase B of the trigger pipeline — not built-in toggles (paths and volume names are machine-specific).
 
-### Rough directions
+### Shipped examples
 
-- Ship **example scripts** in `docs/examples/scripts/` (`cryptomator-umount-best-effort.sh`, `eject-removable-volumes.sh`)
-- Document in user guide + onboarding (done as pointer to examples)
-- Optional built-in network/hygiene action later only if we can do it safely without false promises
+| Script | Notes |
+|--------|--------|
+| `cryptomator-umount-best-effort.sh` | Edit `CRYPTO_VOLUME_NAMES` |
+| `eject-removable-volumes.sh` | `diskutil list external physical` |
+| `veracrypt-dismount-best-effort.sh` | Homebrew or `/Applications` VeraCrypt |
+
+Documented in [examples/scripts/README.md](../examples/scripts/README.md), user guide, onboarding (paranoid page).
+
+### Still open (v0.6 paranoid)
+
+- Built-in `DestructionPipeline` for configured wipe paths / APFS (not script-only)
+- Optional built-in hygiene action only if we can do it without false promises
 
 ### Open questions
 
-- Script validation rules vs. `diskutil` / Cryptomator CLI paths
-- Full Disk Access for some eject paths
-- Order: before or after lock (hygiene phase vs. script budget)
+- Full Disk Access for some eject / history paths
+- Order: hygiene scripts vs. script budget vs. future built-in destruction
 
 ---
 

@@ -48,7 +48,7 @@
 "risk.legend.moderate" = "Logout, Shutdown oder Netz-Hygiene können Arbeit unterbrechen oder trennen.";
 "risk.legend.severe" = "Eigene Skripte oder Panic-Modus im Menü (0 s Karenz, sofort Shutdown). Sorgfältig prüfen.";
 "risk.panicMenu.caption" = "Menü → Panic-Modus scharf: bei Kabeltrennung 0 s Karenz — Sperre, deine Aktionen, sofort Shutdown. Ungespeicherte Arbeit kann verloren gehen. Unabhängig vom Panic-Preset oben.";
-"risk.customScripts.caption" = "Skripte laufen mit deinen Benutzerrechten vor Logout/Shutdown. Sie können Daten löschen oder das System ändern — jeden Pfad prüfen. Siehe docs/examples/scripts/.";
+"risk.customScripts.caption" = "Skripte laufen mit deinen Benutzerrechten vor Logout/Shutdown. Sie können Daten löschen oder das System ändern — jeden Pfad prüfen. Mitgeliefert: MagSafeGuard/Resources/TriggerScripts/ (auch in der .app).";
 
 "securityAction.lockScreen.riskCaption" = "Sperrt den Bildschirm; keine Dateiverluste.";
 "securityAction.soundAlarm.riskCaption" = "Spielt einen lauten Alarm; in der Öffentlichkeit auffällig.";
@@ -60,6 +60,9 @@
 "networkAction.disconnectVPN.riskCaption" = "Trennt VPN; Traffic kann auf unsicheren Netzen sichtbar werden.";
 "networkAction.clearSSHAgent.riskCaption" = "Löscht SSH-Schlüssel im Agent; aktive Sessions können abbrechen.";
 "networkAction.clearClipboard.riskCaption" = "Leert die Zwischenablage; kopierte Texte/Passwörter sind weg.";
+"networkAction.ejectRemovableVolumes.riskCaption" = "Wirft externe physische Laufwerke hart aus; ungespeicherte Daten auf USB/SD können verloren gehen oder beschädigt werden.";
+"networkAction.unmountCryptomatorVolumes.riskCaption" = "Trennt Cryptomator-Volumes (macFUSE/WebDAV); entschlüsselte Ansicht weg; Vault-Dateien bleiben auf der Platte.";
+"networkAction.disableBluetooth.riskCaption" = "Schaltet Bluetooth aus; Tastatur, Maus und Audio können trennen.";
 "networkAction.disableWiFi.riskCaption" = "Schaltet WLAN aus; betrifft auch „Wo ist?“ auf diesem Mac.";
 
 "advisory.firstArm.title" = "Bevor du dich auf den Schutz verlässt";
@@ -112,6 +115,8 @@
 "settings.network.remote.armExample" = "Fern scharfschalten: %@";
 "settings.network.remote.panicExample" = "Panic-Auslösung (nur im Panic-Modus): %@";
 "settings.network.disableWiFi.warning" = "WLAN aus blockiert Find-My-Fernsperre, -löschung und -ortung, bis WLAN wieder an ist (Ethernet unberührt).";
+"settings.network.ejectRemovableVolumes.warning" = "Hard Eject wartet nicht, bis Apps fertig schreiben. Ungespeicherte Daten auf USB-Sticks, SD-Karten oder externen SSDs können verloren gehen oder beschädigt werden. Interne Festplatte bleibt unberührt.";
+"settings.network.disableBluetooth.warning" = "Benötigt blueutil (brew install blueutil). Bluetooth wird sofort ausgeschaltet; gekoppelte Geräte trennen.";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Bildschirm sperren";
@@ -165,6 +170,10 @@
 "settings.advanced.scriptBudget.value" = "Skripte bis zu %d s vor Logout/Shutdown ausführen";
 "settings.advanced.noScripts" = "Keine eigenen Skripte konfiguriert";
 "settings.advanced.addScript" = "Skript hinzufügen…";
+"settings.advanced.installBundledScripts" = "Mitgelieferte Skripte installieren…";
+"settings.advanced.installBundledScripts.success.title" = "Skripte installiert";
+"settings.advanced.installBundledScripts.success.message" = "%d Skripte nach %@ kopiert und zur Liste hinzugefügt (%d gesamt). Sicherheitsaktion „Eigenes Skript“ wurde ggf. aktiviert.";
+"settings.advanced.installBundledScripts.failure.title" = "Skripte konnten nicht installiert werden";
 "settings.advanced.debug" = "Debug";
 "settings.advanced.debugLogging.title" = "Debug-Protokollierung aktivieren";
 "settings.advanced.debugLogging.caption" = "Detaillierte Informationen zur Fehlerbehebung protokollieren";
@@ -417,6 +426,8 @@
 "event.autoArmTriggered" = "Auto-Scharfschalten ausgelöst";
 "event.networkActionExecuted" = "Netzwerk-Aktion ausgeführt";
 "event.networkActionFailed" = "Netzwerk-Aktion fehlgeschlagen";
+"event.customScriptExecuted" = "Eigenes Skript ausgeführt";
+"event.customScriptFailed" = "Eigenes Skript fehlgeschlagen";
 
 /* Event log details */
 "logDetail.userCancelled" = "Vom Benutzer abgebrochen";
@@ -441,12 +452,17 @@
 "logDetail.panicHotkey" = "Panic-Tastenkürzel gedrückt";
 "logDetail.networkActionSucceeded" = "%@ erfolgreich";
 "logDetail.networkActionFailed" = "%@ fehlgeschlagen: %@";
+"logDetail.customScriptSucceeded" = "%@ erfolgreich";
+"logDetail.customScriptFailed" = "%@ fehlgeschlagen: %@";
 
 /* Network actions */
 "networkAction.webhook.name" = "HTTP-Webhook";
 "networkAction.disconnectVPN.name" = "VPN trennen";
 "networkAction.clearSSHAgent.name" = "SSH-Agent leeren";
 "networkAction.clearClipboard.name" = "Zwischenablage leeren";
+"networkAction.ejectRemovableVolumes.name" = "Wechselmedien auswerfen";
+"networkAction.unmountCryptomatorVolumes.name" = "Cryptomator trennen";
+"networkAction.disableBluetooth.name" = "Bluetooth deaktivieren";
 "networkAction.disableWiFi.name" = "WLAN deaktivieren";
 
 /* App states */
@@ -464,6 +480,16 @@
 "onboarding.arm.daily.title" = "Alltags-Profile";
 "onboarding.arm.daily.body" = "Preset unter Einstellungen → Sicherheit wählen. Vor dem Verlassen in der Menüleiste scharfschalten.";
 "onboarding.arm.daily.modes.title" = "Alltags-Betriebsmodi";
+"onboarding.panic.title" = "Panic-Modus";
+"onboarding.panic.body" = "Stärker als Alltags-Profile. Ungespeicherte Arbeit kann verloren gehen — nur nutzen, wenn bei Kabeltrennung schnell reagiert werden soll.";
+"onboarding.panic.preset" = "Panic-Preset (Einstellungen) — Sperre + Abmelden, kurze Karenz, Netz-Hygiene im normal scharfen Modus.";
+"onboarding.panic.menu" = "Panic-Modus (Menü) — eigener Schutz mit 0 s Karenz und sofortigem Shutdown bei Kabeltrennung.";
+"onboarding.panic.footnote" = "Panic-Preset und Menü-Panic sind verschieden: das Preset gilt für normal scharf; Menü-Panic überspringt die Karenz komplett.";
+"onboarding.paranoid.title" = "Paranoid-Modus (geplant)";
+"onboarding.paranoid.body" = "Eine Stufe über Panic: geführte Datenvernichtung vor dem Shutdown. Nur opt-in — für Nutzer, die irreversiblen Verlust akzeptieren.";
+"onboarding.paranoid.feature" = "Paranoid-Schutz (v0.6) — konfigurierte Pfade löschen, optional APFS-Volume, dann Hard-Shutdown.";
+"onboarding.paranoid.scripts" = "Eingebaut: Wechselmedien auswerfen, Cryptomator trennen, Bluetooth aus. Weitere Skripte in der App (TriggerScripts/) — Browser, Passwortmanager, VeraCrypt, FileVault-Recovery-Key-Backup.";
+"onboarding.paranoid.footnote" = "Paranoid ist noch nicht verfügbar. Destruktive Skripte erst testen, wenn du sie auf einem Testrechner geprüft hast.";
 "onboarding.highAssurance.title" = "Panic & maximaler Schutz";
 "onboarding.highAssurance.body" = "Stärkere Presets und ein separater Panic-Schutz mit 0 s Karenz bei Kabeltrennung. Nur nutzen, wenn Datenverlust möglich ist.";
 "onboarding.highAssurance.modes.title" = "High-Assurance-Optionen";

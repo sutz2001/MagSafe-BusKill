@@ -530,6 +530,18 @@ struct SecuritySettingsView: View {
               .font(.caption)
               .foregroundColor(.orange)
           }
+          if action == .ejectRemovableVolumes,
+            settingsManager.settings.enabledNetworkActions.contains(.ejectRemovableVolumes) {
+            Text(l10n: "settings.network.ejectRemovableVolumes.warning")
+              .font(.caption)
+              .foregroundColor(.orange)
+          }
+          if action == .disableBluetooth,
+            settingsManager.settings.enabledNetworkActions.contains(.disableBluetooth) {
+            Text(l10n: "settings.network.disableBluetooth.warning")
+              .font(.caption)
+              .foregroundColor(.orange)
+          }
         }
       }
 
@@ -1319,6 +1331,12 @@ struct AdvancedSettingsView: View {
 
       scriptTimeBudgetSection
 
+      if !BundledTriggerScripts.bundledScriptURLs().isEmpty {
+        Button(L10n.tr("settings.advanced.installBundledScripts")) {
+          installBundledScripts()
+        }
+      }
+
       Button(L10n.tr("settings.advanced.addScript")) {
         addCustomScript()
       }
@@ -1415,8 +1433,31 @@ struct AdvancedSettingsView: View {
     }
   }
 
+  private func installBundledScripts() {
+    do {
+      let result = try BundledTriggerScripts.installToUserScriptsDirectory()
+      BundledTriggerScripts.registerInstalledPathsInSettings(result.installedPaths)
+      let alert = NSAlert()
+      alert.messageText = L10n.tr("settings.advanced.installBundledScripts.success.title")
+      alert.informativeText = L10n.tr(
+        "settings.advanced.installBundledScripts.success.message",
+        result.copiedCount,
+        result.destinationDirectory,
+        settingsManager.settings.customScripts.count
+      )
+      alert.alertStyle = .informational
+      alert.runModal()
+    } catch {
+      let alert = NSAlert()
+      alert.messageText = L10n.tr("settings.advanced.installBundledScripts.failure.title")
+      alert.informativeText = error.localizedDescription
+      alert.alertStyle = .warning
+      alert.runModal()
+    }
+  }
+
   private func addCustomScript() {
-    let scriptsDir = URL(fileURLWithPath: NSHomeDirectory() + "/.magsafe/scripts", isDirectory: true)
+    let scriptsDir = BundledTriggerScripts.userScriptsDirectoryURL()
     try? FileManager.default.createDirectory(at: scriptsDir, withIntermediateDirectories: true)
 
     let panel = NSOpenPanel()

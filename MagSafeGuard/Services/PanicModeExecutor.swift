@@ -16,9 +16,17 @@ public final class PanicModeExecutor {
   }
 
   /// Run panic pipeline on a background queue.
-  public func execute(completion: @escaping () -> Void) {
-    pipeline.execute(context: .panic, event: "panic") { _, _ in
-      DispatchQueue.main.async { completion() }
+  public func execute(
+    completion: @escaping (
+      NetworkActionResult,
+      SecurityActionsService.ScriptPhaseResult,
+      SecurityActionsService.ExecutionResult
+    ) -> Void
+  ) {
+    pipeline.execute(context: .panic, event: "panic") { network, scripts, security in
+      DispatchQueue.main.async {
+        completion(network, scripts, security)
+      }
     }
   }
 }

@@ -85,6 +85,95 @@ public final class MacNetworkActions: NetworkActionsProtocol {
     NSPasteboard.general.clearContents()
   }
 
+  public func ejectRemovableVolumes() throws {
+    let output: String
+    do {
+      output = try captureShell("/usr/sbin/diskutil", args: ["list", "external", "physical"])
+    } catch {
+      throw NetworkActionError.commandFailed(
+        action: .ejectRemovableVolumes,
+        message: "diskutil list failed"
+      )
+    }
+
+    let devices = Self.parseExternalPhysicalDiskDevices(from: output)
+    try Self.hardEjectExternalDevices(devices) { device in
+      try runShell("/usr/sbin/diskutil", args: ["eject", device])
+    }
+  }
+
+  /// Best-effort hard eject for each device; throws only when every eject fails.
+  static func hardEjectExternalDevices(
+    _ devices: [String],
+    eject: (String) throws -> Void
+  ) throws {
+    guard !devices.isEmpty else { return }
+
+    var failures: [String] = []
+    for device in devices {
+      do {
+        try eject(device)
+      } catch {
+        failures.append(device)
+        Log.warning("Hard eject failed for \(device)", category: .security)
+      }
+    }
+
+    if failures.count == devices.count {
+      throw NetworkActionError.commandFailed(
+        action: .ejectRemovableVolumes,
+        message: "Could not eject: \(failures.joined(separator: ", "))"
+      )
+    }
+  }
+
+  /// Parses `/dev/diskN` identifiers from `diskutil list external physical` output.
+  static func parseExternalPhysicalDiskDevices(from output: String) -> [String] {
+    output.split(separator: "\n").compactMap { line in
+      let trimmed = String(line).trimmingCharacters(in: .whitespaces)
+      guard trimmed.hasPrefix("/dev/disk") else { return nil }
+      return trimmed.split(separator: " ", maxSplits: 1).first.map(String.init)
+    }
+  }
+
+  public func unmountCryptomatorVolumes() throws {
+    try runShell("/usr/bin/osascript", args: ["-e", "tell application \"Cryptomator\" to quit"])
+    try? runShell("/usr/bin/killall", args: ["Cryptomator"])
+
+    let mountOutput: String
+    do {
+      mountOutput = try captureShell("/sbin/mount", args: [])
+    } catch {
+      throw NetworkActionError.commandFailed(
+        action: .unmountCryptomatorVolumes,
+        message: "mount listing failed"
+      )
+    }
+
+    let mountPoints = CryptomatorMountParser.parseMountPoints(from: mountOutput)
+    try Self.hardEjectExternalDevices(mountPoints) { mountPoint in
+      try runShell("/usr/sbin/diskutil", args: ["unmount", "force", mountPoint])
+    }
+  }
+
+  public func disableBluetooth() throws {
+    guard let blueutil = Self.blueutilExecutablePath() else {
+      throw NetworkActionError.commandFailed(
+        action: .disableBluetooth,
+        message: "blueutil not found — install with: brew install blueutil"
+      )
+    }
+    try runShell(blueutil, args: ["-p", "0"])
+  }
+
+  static func blueutilExecutablePath() -> String? {
+    let candidates = ["/opt/homebrew/bin/blueutil", "/usr/local/bin/blueutil"]
+    for path in candidates where FileManager.default.isExecutableFile(atPath: path) {
+      return path
+    }
+    return nil
+  }
+
   public func disableWiFi() throws {
     let interface = try wifiInterfaceName()
     try runShell("/usr/sbin/networksetup", args: ["-setairportpower", interface, "off"])
