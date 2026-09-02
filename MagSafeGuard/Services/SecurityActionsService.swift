@@ -537,6 +537,21 @@ public class SecurityActionsService {
     let tier2: Set<SecurityAction> = [.forceLogout, .soundAlarm]
     let tier3: Set<SecurityAction> = [.shutdown, .customScript]
 
+    // Start shutdown before lock — AppleScript shutdown fails once the session is locked.
+    if enabled.contains(.shutdown) {
+      do {
+        if context == .panic {
+          try systemActions.executeImmediateShutdown()
+        } else {
+          try executeAction(.shutdown)
+        }
+        executed.append(.shutdown)
+      } catch {
+        failed.append((.shutdown, error))
+        Log.error("Failed to schedule shutdown", error: error, category: .security)
+      }
+    }
+
     if enabled.contains(.lockScreen) {
       do {
         try executeAction(.lockScreen)
@@ -567,23 +582,14 @@ public class SecurityActionsService {
       group.wait()
     }
 
-    let deferredActions = enabled.filter { tier3.contains($0) }
+    let deferredActions = enabled.filter { tier3.contains($0) && $0 != .shutdown }
     for action in deferredActions {
-      if action == .shutdown, context == .panic {
-        do {
-          try systemActions.executeImmediateShutdown()
-          executed.append(.shutdown)
-        } catch {
-          failed.append((.shutdown, error))
-        }
-      } else {
-        do {
-          try executeAction(action)
-          executed.append(action)
-        } catch {
-          failed.append((action, error))
-          Log.error("Failed to execute \(action)", error: error, category: .security)
-        }
+      do {
+        try executeAction(action)
+        executed.append(action)
+      } catch {
+        failed.append((action, error))
+        Log.error("Failed to execute \(action)", error: error, category: .security)
       }
     }
 
@@ -706,11 +712,12 @@ public class SecurityActionsService {
   /// Stop any ongoing actions that may continue after execution.
   ///
   /// Terminates persistent actions like alarm sounds that may continue
-  /// playing after the initial execution. Does not affect completed
-  /// actions like screen locking.
+  /// playing after the initial execution. Cancels a pending shutdown timer.
+  /// Does not affect completed actions like screen locking.
   public func stopOngoingActions() {
     queue.async { [weak self] in
       self?.systemActions.stopAlarm()
+      self?.systemActions.cancelScheduledShutdown()
     }
   }
 

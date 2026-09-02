@@ -2,7 +2,7 @@
 
 **Audience:** Users, contributors, and maintainers who need to know what the app *actually does* at runtime (not what the UI implies).
 
-**Version:** documents behavior as of fork **0.5.3** (build 12).  
+**Version:** documents behavior as of fork **0.5.4** (build 13).  
 **Primary code:** `MagSafeGuard/Controllers/AppController.swift`, services under `MagSafeGuard/Services/`.
 
 **Related:** [Behavior gaps & fix backlog](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) (planned features) · [README](../../README.md)
@@ -187,7 +187,7 @@ Runtime executor: `SecurityActionsService` in `MagSafeGuard/Services/SecurityAct
 | Lock screen | `CGSession` / screen lock | Enabled | Enabled |
 | Sound alarm | Looping alarm audio | Enabled | Disabled |
 | Force logout | Log out all users | Off | Off |
-| System shutdown | Schedule shutdown (30 s delay in service config) | Off | Off |
+| System shutdown | App timer + AppleScript (default **30 s** after trigger); scheduled **before** screen lock | Off | Off |
 | Custom script | Run `.sh` / `.zsh` / `.bash` from allowed paths | Off | Off (needs path in service config) |
 
 ### When actions run

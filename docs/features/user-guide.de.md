@@ -1,7 +1,7 @@
 # MagSafe Guard — Kurzanleitung
 
 **Sprache:** [English (user-guide.md)](user-guide.md) · Deutsch  
-**Version:** Fork **0.5.3** (Build 12) · September 2026
+**Version:** Fork **0.5.4** (Build 13) · September 2026
 
 Kurze Praxis-Anleitung für den Alltag. Technische Details: [operating-modes.md](operating-modes.md) (EN) · Panic-Design: [panic-modes.md](panic-modes.md)
 

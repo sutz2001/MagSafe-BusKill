@@ -2,7 +2,7 @@
 
 **Goal:** Bring MagSafe Guard to a **reliable daily-driver** state on your Mac — without new features (no Paranoid, no LAN web trigger, no companion app).
 
-**Current version:** 0.5.3 (build 12)  
+**Current version:** 0.5.4 (build 13)  
 **Companion docs:** [acceptance-tests.md](acceptance-tests.md) · [testing-guide.md](testing-guide.md) · [behavior-gaps.md](../features/behavior-gaps.md)
 
 ---

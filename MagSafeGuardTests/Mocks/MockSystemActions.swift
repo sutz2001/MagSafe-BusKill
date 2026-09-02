@@ -134,6 +134,12 @@ class MockSystemActions: SystemActionsProtocol {
     }
   }
 
+  var cancelScheduledShutdownCalled = false
+
+  func cancelScheduledShutdown() {
+    cancelScheduledShutdownCalled = true
+  }
+
   var executeImmediateShutdownCalled = false
 
   func executeImmediateShutdown() throws {

@@ -90,7 +90,19 @@ cmd_build() {
 
   mkdir -p "$DIST_DIR"
 
-  # Extended attributes (e.g. from Finder) break Release codesign on some machines.
+  # Extended attributes (e.g. com.apple.provenance on bundled assets) break Release codesign.
+  strip_bundled_resource_xattrs() {
+    local resources="$ROOT/MagSafeGuard/Resources"
+    [ -d "$resources" ] || return 0
+    while IFS= read -r -d '' file; do
+      if xattr -l "$file" 2>/dev/null | grep -q .; then
+        local tmp="${file}.xattrstrip"
+        ditto --norsrc "$file" "$tmp"
+        mv "$tmp" "$file"
+      fi
+    done < <(find "$resources" -type f -print0)
+  }
+  strip_bundled_resource_xattrs
   xattr -cr "$ROOT/MagSafeGuard" "$ROOT/MagSafeGuardTests" 2>/dev/null || true
 
   log "📦 Release build — MagSafe Guard ${MARKETING} (build ${BUILD_NUM})"

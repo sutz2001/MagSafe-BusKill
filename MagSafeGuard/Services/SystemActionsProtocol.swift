@@ -72,6 +72,9 @@ public protocol SystemActionsProtocol {
   /// - Throws: `SystemActionError.shutdownFailed` if shutdown cannot be scheduled
   func scheduleShutdown(afterSeconds: TimeInterval) throws
 
+  /// Cancel a shutdown timer started by `scheduleShutdown`.
+  func cancelScheduledShutdown()
+
   /// Shut down the system immediately without confirmation dialogs.
   ///
   /// Used by panic mode. Prefer `scheduleShutdown` for normal armed triggers.

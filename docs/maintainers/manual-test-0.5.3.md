@@ -1,7 +1,7 @@
 # Manuelle Testliste v0.5.3
 
 **Ziel:** Release **0.5.3** (Build 12) als Daily Driver verifizieren.  
-**App:** `/Applications/MagSafeGuard-0.5.3.app` (Release-Build; Spotlight: „MagSafe Guard“)  
+**App:** `/Applications/MagSafeGuard-0.5.4.app` (Release-Build; Spotlight: „MagSafe Guard“)  
 **Datum gestartet:** ___________ · **Tester:** Marc
 
 > Häkchen in Cursor/VS Code oder GitHub setzen (`- [x]`). Bereits in der Dev-Session verifizierte Punkte sind vorausgefüllt.
@@ -34,7 +34,8 @@
 - [ ] **Reconnect** während Grace → Grace abgebrochen, bleibt armed
 - [ ] Erneut ziehen → Grace startet wieder
 - [ ] **Cancel Grace** (wenn erlaubt) → Auth nötig
-- [x] Nach Ablauf: **Security Actions** laufen (mind. Lock) *(Logout getestet, Dev-Session)*
+- [ ] Nach Ablauf: **Security Actions** laufen (mind. Lock) *(Logout getestet, Dev-Session)*
+- [ ] **Shutdown:** ca. **30 s** nach Trigger (Standard-Verzögerung), auch wenn Bildschirm gesperrt — ggf. **Systemeinstellungen → Datenschutz → Automation** → MagSafe Guard darf **System Events** steuern
 - [ ] **Event Log** zeigt Disconnect + Grace / Actions
 
 ---
@@ -109,7 +110,7 @@ Nur wenn du diese Features nutzt:
 - [ ] **Tag 4–7:** Weiter armed, keine P0/P1-Bugs
 - [ ] Notizen zu Auffälligkeiten:
 
-```
+```text
 _____________________________________________
 _____________________________________________
 _____________________________________________

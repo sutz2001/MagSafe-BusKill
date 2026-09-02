@@ -1,7 +1,7 @@
 # MagSafe Guard — User Guide (mini)
 
 **Language:** English · [Deutsch (user-guide.de.md)](user-guide.de.md)  
-**Version:** fork **0.5.3** (build 12) · September 2026
+**Version:** fork **0.5.4** (build 13) · September 2026
 
 Short, practical guide for everyday use. Technical details: [operating-modes.md](operating-modes.md) · Panic design: [panic-modes.md](panic-modes.md)
 

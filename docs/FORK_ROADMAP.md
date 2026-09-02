@@ -1,7 +1,7 @@
 # Fork-Roadmap (sutz2001)
 
 Planung für [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
-Stand: nach **0.5.3** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
+Stand: nach **0.5.4** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
 
 **Kurzanleitung:** [user-guide.de.md](features/user-guide.de.md) · [user-guide.md](features/user-guide.md) (EN)
 

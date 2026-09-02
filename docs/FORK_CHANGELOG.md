@@ -3,6 +3,13 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.4] — 2026-09-02
+
+### Fixed
+
+- **System shutdown** after cable trigger: schedules shutdown **before** screen lock; uses in-app timer (default 30 s) so shutdown still fires when the session is locked
+- Pending shutdown cancelled on disarm or grace cancel
+
 ## [0.5.3] — 2026-09-01
 
 ### Fixed

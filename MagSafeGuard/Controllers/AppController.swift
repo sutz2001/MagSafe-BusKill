@@ -358,6 +358,7 @@ public class AppController: ObservableObject {
       case .success:
         self.logEventInternal(.authenticationSucceeded, details: L10n.tr("logDetail.disarmingSystem"))
         self.protectionMode = .normal
+        self.securityActions.stopOngoingActions()
         self.transitionToState(.disarmed)
         self.onNotification?(
           L10n.tr("notification.disarmed.title"), L10n.tr("notification.disarmed.message"))
@@ -584,6 +585,7 @@ public class AppController: ObservableObject {
     gracePeriodRemaining = 0
     gracePeriodStartTime = nil
     GracePeriodAlertPresenter.dismiss()
+    securityActions.stopOngoingActions()
 
     logEventInternal(.gracePeriodCancelled, details: L10n.tr("logDetail.gracePeriodCancelled"))
   }

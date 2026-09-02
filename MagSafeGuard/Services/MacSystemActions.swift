@@ -19,6 +19,8 @@ public class MacSystemActions: SystemActionsProtocol {
   private var alarmPlayer: AVAudioPlayer?
   private var savedSystemOutputVolume: Int?
   private var alarmStopTimer: DispatchSourceTimer?
+  private var shutdownTimer: DispatchSourceTimer?
+  private let shutdownQueue = DispatchQueue(label: "com.magsafeguard.shutdown", qos: .userInitiated)
 
   /// Check if running in test mode to prevent actual system actions
   private var isTestMode: Bool {
@@ -337,91 +339,38 @@ public class MacSystemActions: SystemActionsProtocol {
   /// - Parameter afterSeconds: Delay before shutdown in seconds (0-3600 max)
   /// - Throws: SystemActionError if scheduling fails or delay is invalid
   public func scheduleShutdown(afterSeconds: TimeInterval) throws {
-    // Validate input range (0-3600 seconds = 1 hour max)
     guard afterSeconds >= 0 && afterSeconds <= 3600 else {
       Log.error("Invalid shutdown delay: \(afterSeconds) seconds", category: .security)
       throw SystemActionError.invalidShutdownDelay
     }
 
-    // Convert to minutes with minimum of 1 minute
-    let minutes = max(1, Int(afterSeconds / 60))
-
-    // Ensure minutes is a valid integer to prevent injection
-    guard minutes >= 1 && minutes <= 60 else {
-      Log.error("Invalid shutdown delay after conversion: \(minutes) minutes", category: .security)
-      throw SystemActionError.invalidShutdownDelay
-    }
-
-    // In test mode, simulate the action without actually scheduling shutdown
     if isTestMode {
-      Log.warning("TEST MODE: Simulating shutdown schedule for \(minutes) minutes (no actual shutdown scheduled)", category: .security)
-
-      // Show a notification instead of scheduling shutdown
-      #if os(macOS)
-      Task { @MainActor in
-        let content = UNMutableNotificationContent()
-        content.title = "MagSafe Guard Test Mode"
-        content.body = "Would schedule shutdown in \(minutes) minutes (TEST MODE - no actual shutdown)"
-        content.sound = UNNotificationSound.default
-
-        let request = UNNotificationRequest(
-          identifier: UUID().uuidString,
-          content: content,
-          trigger: nil
-        )
-
-        try? await UNUserNotificationCenter.current().add(request)
-      }
-      #endif
-
+      Log.warning(
+        "TEST MODE: Simulating shutdown schedule for \(afterSeconds)s (no actual shutdown scheduled)",
+        category: .security)
+      showTestModeShutdownNotification(delaySeconds: afterSeconds)
       return
     }
 
-    Log.info("Scheduling system shutdown in \(minutes) minutes", category: .security)
+    cancelScheduledShutdown()
 
-    // Use AppleScript for shutdown without requiring sudo privileges
-    // This provides a safer approach that respects system security
-    let task = Process()
-    task.launchPath = systemPaths.osascriptPath
+    // In-app timer keeps running after the screen is locked.
+    let delay = afterSeconds == 0 ? 2 : afterSeconds
+    Log.info("Scheduling system shutdown in \(delay)s (app timer)", category: .security)
 
-    // Create AppleScript to schedule shutdown with delay
-    // Using string interpolation with validated integer to prevent injection
-    let appleScript: String
-    if minutes == 1 {
-      // Immediate shutdown (1 minute minimum)
-      appleScript = "tell application \"System Events\" to shut down"
-    } else {
-      // Delayed shutdown using a more user-friendly approach
-      // This will show a system dialog allowing the user to cancel
-      // Sanitized minutes value used in string interpolation
-      let sanitizedMinutes = String(minutes)
-      let sanitizedSeconds = String(minutes * 60)
-      appleScript = """
-        tell application "Finder"
-          display dialog "System will shut down in \(sanitizedMinutes) minutes" ¬
-            buttons {"Cancel", "Shut Down Now"} ¬
-            default button "Shut Down Now" ¬
-            with icon caution ¬
-            giving up after \(sanitizedSeconds)
-        end tell
-        tell application "System Events" to shut down
-        """
-    }
-
-    task.arguments = ["-e", appleScript]
-
-    do {
-      try task.run()
-      task.waitUntilExit()
-
-      if task.terminationStatus != 0 {
-        Log.error("Shutdown scheduling failed with exit code: \(task.terminationStatus)", category: .security)
-        throw SystemActionError.shutdownFailed
+    let timer = DispatchSource.makeTimerSource(queue: shutdownQueue)
+    timer.schedule(deadline: .now() + delay)
+    timer.setEventHandler { [weak self] in
+      guard let self else { return }
+      self.shutdownTimer = nil
+      do {
+        try self.performShutdown()
+      } catch {
+        Log.error("Scheduled shutdown failed", error: error, category: .security)
       }
-    } catch {
-      Log.error("Shutdown failed", error: error, category: .security)
-      throw SystemActionError.shutdownFailed
     }
+    shutdownTimer = timer
+    timer.resume()
   }
 
   /// Immediate shutdown for panic mode (no dialog, no minimum delay).
@@ -431,19 +380,63 @@ public class MacSystemActions: SystemActionsProtocol {
       return
     }
 
+    cancelScheduledShutdown()
     Log.info("Executing immediate system shutdown", category: .security)
+    try performShutdown()
+  }
 
-    let task = Process()
-    task.launchPath = systemPaths.osascriptPath
-    task.arguments = ["-e", "tell application \"System Events\" to shut down"]
+  /// Cancels a pending shutdown scheduled via `scheduleShutdown`.
+  public func cancelScheduledShutdown() {
+    shutdownTimer?.cancel()
+    shutdownTimer = nil
+  }
 
-    do {
-      try task.run()
-      // Do not wait — shutdown is asynchronous; panic path must not block.
-    } catch {
-      Log.error("Immediate shutdown failed", error: error, category: .security)
-      throw SystemActionError.shutdownFailed
+  private func performShutdown() throws {
+    let scripts = [
+      "tell application \"System Events\" to shut down",
+      "tell application \"Finder\" to shut down"
+    ]
+
+    var lastError: Error?
+    for script in scripts {
+      let task = Process()
+      task.launchPath = systemPaths.osascriptPath
+      task.arguments = ["-e", script]
+
+      do {
+        try task.run()
+        Log.info("Shutdown initiated via AppleScript", category: .security)
+        return
+      } catch {
+        lastError = error
+        Log.warning("Shutdown attempt failed, trying fallback", category: .security)
+      }
     }
+
+    if let lastError {
+      Log.error("All shutdown attempts failed", error: lastError, category: .security)
+    }
+    throw SystemActionError.shutdownFailed
+  }
+
+  private func showTestModeShutdownNotification(delaySeconds: TimeInterval) {
+    #if os(macOS)
+    Task { @MainActor in
+      let content = UNMutableNotificationContent()
+      content.title = "MagSafe Guard Test Mode"
+      content.body =
+        "Would shut down in \(Int(delaySeconds))s (TEST MODE - no actual shutdown)"
+      content.sound = UNNotificationSound.default
+
+      let request = UNNotificationRequest(
+        identifier: UUID().uuidString,
+        content: content,
+        trigger: nil
+      )
+
+      try? await UNUserNotificationCenter.current().add(request)
+    }
+    #endif
   }
 
   /// Executes a shell script at the specified path
