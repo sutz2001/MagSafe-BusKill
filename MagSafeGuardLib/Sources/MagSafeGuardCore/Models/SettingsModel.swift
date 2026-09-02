@@ -166,6 +166,9 @@ public struct Settings: Codable {
   /// Whether the first-run onboarding wizard has been completed.
   public var hasCompletedOnboarding: Bool = false
 
+  /// One-time advisory shown after the first manual arm (risk / beginner tip).
+  public var hasSeenFirstArmAdvisory: Bool = false
+
   // MARK: - Network Actions (v0.4.0)
 
   /// Network actions executed when security triggers fire.
@@ -301,4 +304,4 @@ public protocol SettingsMigrator {
 ///
 /// This version is incremented when breaking changes are made to the
 /// Settings structure that require migration logic.
-public let currentSettingsVersion = 10
+public let currentSettingsVersion = 11

@@ -17,6 +17,10 @@ let package = Package(
             name: "MagSafeGuardCore",
             targets: ["MagSafeGuardCore"]
         ),
+        .executable(
+            name: "MagSafeGuardCLI",
+            targets: ["MagSafeGuardCLI"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/getsentry/sentry-cocoa", from: "8.0.0")
@@ -37,6 +41,12 @@ let package = Package(
                 .product(name: "Sentry", package: "sentry-cocoa")
             ],
             path: "Sources/MagSafeGuardCore"
+        ),
+
+        .executableTarget(
+            name: "MagSafeGuardCLI",
+            dependencies: ["MagSafeGuardCore"],
+            path: "Sources/MagSafeGuardCLI"
         ),
         
         // Test Infrastructure Target

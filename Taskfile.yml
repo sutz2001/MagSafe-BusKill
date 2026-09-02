@@ -357,6 +357,13 @@ tasks:
     cmds:
       - task: release:publish
 
+  cli:build:
+    desc: Build MagSafeGuardCLI for scripts/magsafeguard-cli
+    silent: true
+    dir: MagSafeGuardLib
+    cmds:
+      - swift build -c release --product MagSafeGuardCLI
+
   # Testing and quality assurance
   test:
     desc: Run Clean Architecture tests using SPM

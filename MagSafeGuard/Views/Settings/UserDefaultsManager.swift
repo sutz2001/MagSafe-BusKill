@@ -345,12 +345,16 @@ public class UserDefaultsManager: ObservableObject {
     if version < 10 {
       migrated.scriptTimeBudgetSeconds = 3.0
     }
+    if version < 11 {
+      // Existing users: skip the first-arm advisory; new installs see it on first manual arm.
+      migrated.hasSeenFirstArmAdvisory = migrated.hasCompletedOnboarding
+    }
     return migrated
   }
 
   private func onFirstLaunch() {
     updateSettings { settings in
-      OperationProfilePresets.apply(.normal, to: &settings)
+      OperationProfilePresets.apply(.beginner, to: &settings)
       settings.showInDock = false
       settings.showStatusNotifications = true
       settings.playCriticalAlertSound = true

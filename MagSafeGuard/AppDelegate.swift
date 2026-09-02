@@ -86,6 +86,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     restoreArmedStateIfNeeded()
     registerRemoteTriggerHandler()
     registerPanicHotkey()
+    CLICommandService.shared.start(appController: core.appController)
+    publishCLIStatus()
 
     NotificationCenter.default.addObserver(
       forName: .appLanguageDidChange,
@@ -212,14 +214,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self?.updateStatusIcon()
         self?.setupMenu()
         self?.refreshDockVisibility()
+        self?.publishCLIStatus()
       }
     }
 
     core.appController.$protectionMode
       .receive(on: DispatchQueue.main)
-      .sink { mode in
+      .sink { [weak self] mode in
         SettingsRuntimeApplier.currentProtectionMode = mode
-        self.refreshDockVisibility()
+        self?.refreshDockVisibility()
+        self?.publishCLIStatus()
       }
       .store(in: &cancellables)
 
@@ -321,8 +325,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       core.appController.arm { [weak self] result in
         switch result {
         case .success:
-          // Notifications are handled by AppController callback
-          break
+          self?.showFirstArmAdvisoryIfNeeded()
         case .failure(let error):
           self?.showNotification(
             title: AppDelegate.appName,
@@ -597,6 +600,47 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     return .terminateNow
+  }
+
+  private func publishCLIStatus() {
+    Task { @MainActor in
+      CLICommandService.shared.publishStatus(
+        appController: core.appController,
+        marketingVersion: AppVersion.marketing
+      )
+    }
+  }
+
+  private func showFirstArmAdvisoryIfNeeded() {
+    guard !UserDefaultsManager.shared.settings.hasSeenFirstArmAdvisory else { return }
+
+    let settings = UserDefaultsManager.shared.settings
+    let risk = TriggerRiskAssessor.maxConfiguredRisk(in: settings)
+
+    let alert = NSAlert()
+    alert.messageText = L10n.tr("advisory.firstArm.title")
+    alert.alertStyle = .informational
+    alert.addButton(withTitle: L10n.tr("advisory.firstArm.ok"))
+
+    if settings.operationProfile.selectable != .beginner {
+      alert.addButton(withTitle: L10n.tr("advisory.firstArm.useBeginner"))
+    }
+
+    switch risk {
+    case .low:
+      alert.informativeText = L10n.tr("advisory.firstArm.body.low")
+    case .moderate:
+      alert.informativeText = L10n.tr("advisory.firstArm.body.moderate")
+    case .severe:
+      alert.informativeText = L10n.tr("advisory.firstArm.body.severe")
+    }
+
+    let response = alert.runModal()
+    if response == .alertSecondButtonReturn {
+      UserDefaultsManager.shared.applyOperationProfile(.beginner)
+    }
+
+    UserDefaultsManager.shared.updateSetting(\.hasSeenFirstArmAdvisory, value: true)
   }
 
   private func saveApplicationState() {

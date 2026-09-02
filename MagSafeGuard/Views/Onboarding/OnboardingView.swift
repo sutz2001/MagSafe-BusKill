@@ -136,6 +136,7 @@ struct OnboardingView: View {
           .fontWeight(.semibold)
           .foregroundColor(.secondary)
 
+        modeSummaryRow(symbol: "graduationcap", key: "onboarding.arm.modes.beginner")
         modeSummaryRow(symbol: "shield.checkered", key: "onboarding.arm.modes.normal")
         modeSummaryRow(symbol: "eye.slash", key: "onboarding.arm.modes.discreet")
         modeSummaryRow(symbol: "bolt.shield", key: "onboarding.arm.modes.panic")
@@ -144,6 +145,13 @@ struct OnboardingView: View {
       .padding(10)
       .background(Color.secondary.opacity(0.08))
       .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+      Text(L10n.tr("onboarding.arm.beginnerTip"))
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .multilineTextAlignment(.leading)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 

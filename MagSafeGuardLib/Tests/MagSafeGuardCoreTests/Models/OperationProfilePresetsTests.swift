@@ -10,6 +10,18 @@ import XCTest
 
 final class OperationProfilePresetsTests: XCTestCase {
 
+  func testApplyBeginnerPreset() {
+    var settings = Settings()
+    OperationProfilePresets.apply(.beginner, to: &settings)
+
+    XCTAssertEqual(settings.operationProfile, .beginner)
+    XCTAssertEqual(settings.gracePeriodDuration, 30)
+    XCTAssertTrue(settings.allowGracePeriodCancellation)
+    XCTAssertEqual(settings.securityActions, [.lockScreen])
+    XCTAssertTrue(settings.showStatusNotifications)
+    XCTAssertEqual(OperationProfilePresets.detect(from: settings), .beginner)
+  }
+
   func testApplyNormalPreset() {
     var settings = Settings()
     OperationProfilePresets.apply(.normal, to: &settings)

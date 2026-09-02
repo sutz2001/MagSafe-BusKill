@@ -65,7 +65,7 @@ Protocol-based testing and coverage targets: [docs/maintainers/testing-guide.md]
 | Item | Value |
 |------|--------|
 | Source | `version.json` (`marketingVersion`, `buildNumber`) |
-| **Current fork version** | **0.5.5** (build **14**) |
+| **Current fork version** | **0.5.6** (build **15**) |
 | Upstream (reference only) | `1.11.0` — fork semver is independent |
 | Sync | `task version:sync` → `AppVersion.swift` + Xcode `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` |
 | Show | `task version:show` |

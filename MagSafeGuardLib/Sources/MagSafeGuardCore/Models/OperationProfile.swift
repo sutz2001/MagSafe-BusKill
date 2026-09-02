@@ -8,19 +8,21 @@ import MagSafeGuardDomain
 
 /// User-facing operation presets (Normal, Discreet, Panic).
 public enum OperationProfile: String, Codable, CaseIterable, Sendable, Equatable {
+  /// Lock screen only, full grace — recommended for the first days.
+  case beginner
   case normal
   case discreet
   case panic
   /// Legacy persisted value — normalized to `.normal` on load.
   case custom
 
-  public static let selectableCases: [OperationProfile] = [.normal, .discreet, .panic]
+  public static let selectableCases: [OperationProfile] = [.beginner, .normal, .discreet, .panic]
 
   /// User-selectable profile; maps legacy `.custom` to `.normal`.
   public var selectable: OperationProfile {
     switch self {
     case .custom: return .normal
-    case .normal, .discreet, .panic: return self
+    case .beginner, .normal, .discreet, .panic: return self
     }
   }
 }
@@ -49,6 +51,14 @@ public enum OperationProfilePresets {
 
   public static func apply(_ profile: OperationProfile, to settings: inout Settings) {
     switch profile {
+    case .beginner:
+      settings.showStatusNotifications = true
+      settings.showSecurityAlerts = true
+      settings.playCriticalAlertSound = true
+      settings.gracePeriodDuration = 30
+      settings.allowGracePeriodCancellation = true
+      settings.securityActions = [.lockScreen]
+      settings.enabledNetworkActions = []
     case .normal:
       settings.showStatusNotifications = true
       settings.showSecurityAlerts = true
@@ -94,6 +104,7 @@ public enum OperationProfilePresets {
   public static func detect(from settings: Settings) -> OperationProfile {
     if matches(.panic, settings) { return .panic }
     if matches(.discreet, settings) { return .discreet }
+    if matches(.beginner, settings) { return .beginner }
     if matches(.normal, settings) { return .normal }
     return .custom
   }
@@ -105,7 +116,7 @@ public enum OperationProfilePresets {
     switch profile {
     case .discreet, .panic:
       return !settings.showInDock
-    case .normal, .custom:
+    case .beginner, .normal, .custom:
       return true
     }
   }

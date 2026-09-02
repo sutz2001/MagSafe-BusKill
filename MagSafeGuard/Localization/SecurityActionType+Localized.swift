@@ -29,4 +29,15 @@ extension SecurityActionType {
     case .customScript: return L10n.tr("securityAction.customScript.description")
     }
   }
+
+  /// One-line risk hint for the settings catalog.
+  var localizedRiskCaption: String {
+    switch self {
+    case .lockScreen: return L10n.tr("securityAction.lockScreen.riskCaption")
+    case .soundAlarm: return L10n.tr("securityAction.soundAlarm.riskCaption")
+    case .forceLogout: return L10n.tr("securityAction.forceLogout.riskCaption")
+    case .shutdown: return L10n.tr("securityAction.shutdown.riskCaption")
+    case .customScript: return L10n.tr("securityAction.customScript.riskCaption")
+    }
+  }
 }

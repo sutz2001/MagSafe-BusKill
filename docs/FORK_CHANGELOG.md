@@ -3,6 +3,20 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.5.6] — 2026-09-02
+
+### Added
+
+- **Beginner operation preset** — lock screen only, 30 s grace (default for new installs)
+- **Impact risk labels** in Settings (safe / data loss possible / high impact) for security actions, network actions, panic menu mode, and custom scripts
+- **First-arm advisory** — one-time tip after first manual arm; optional switch to Beginner preset
+- **`magsafeguard-cli`** — `status`, `arm`, `disarm`, `apply-profile` (`task cli:build` + `scripts/magsafeguard-cli`)
+
+### Changed
+
+- Operation profile picker uses menu style (Beginner, Normal, Discreet, Panic)
+- Settings schema v11 (`hasSeenFirstArmAdvisory`)
+
 ## [0.5.5] — 2026-09-02
 
 ### Added

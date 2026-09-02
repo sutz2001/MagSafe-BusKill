@@ -19,4 +19,15 @@ extension NetworkActionType {
 
   /// Short name for event log entries.
   var localizedLogName: String { localizedName }
+
+  /// Risk hint shown under the toggle in Settings.
+  var localizedRiskCaption: String {
+    switch self {
+    case .webhook: return L10n.tr("networkAction.webhook.riskCaption")
+    case .disconnectVPN: return L10n.tr("networkAction.disconnectVPN.riskCaption")
+    case .clearSSHAgent: return L10n.tr("networkAction.clearSSHAgent.riskCaption")
+    case .clearClipboard: return L10n.tr("networkAction.clearClipboard.riskCaption")
+    case .disableWiFi: return L10n.tr("networkAction.disableWiFi.riskCaption")
+    }
+  }
 }

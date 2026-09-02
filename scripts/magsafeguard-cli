@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Control a running MagSafe Guard instance from scripts or LaunchAgents.
+# Build the CLI once: task cli:build
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+CLI_BIN="${MAGSAFE_GUARD_CLI:-$ROOT/MagSafeGuardLib/.build/release/MagSafeGuardCLI}"
+
+if [[ ! -x "$CLI_BIN" ]]; then
+  echo "MagSafeGuardCLI not found at $CLI_BIN" >&2
+  echo "Run: task cli:build" >&2
+  exit 1
+fi
+
+exec "$CLI_BIN" "$@"

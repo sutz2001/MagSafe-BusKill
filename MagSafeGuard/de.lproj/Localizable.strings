@@ -26,14 +26,48 @@
 "settings.general.menuBarIcons.monochrome" = "Monochrom";
 "settings.general.menuBarIcons.accent" = "Akzent";
 "settings.general.operationProfile.title" = "Betriebsmodus";
+"settings.general.operationProfile.beginner" = "Einsteiger";
 "settings.general.operationProfile.normal" = "Normal";
 "settings.general.operationProfile.discreet" = "Diskret";
 "settings.general.operationProfile.panic" = "Panic";
 "settings.general.operationProfile.custom" = "Individuell";
+"settings.general.operationProfile.beginner.caption" = "Empfohlen für die ersten Tage: nur Bildschirm sperren, 30 s Karenz, Abbruch möglich. Kein Logout oder Shutdown.";
 "settings.general.operationProfile.normal.caption" = "Bildschirm sperren und Alarm, 30 s Karenz, Mitteilungen an. Panic über das Menü scharf schalten.";
 "settings.general.operationProfile.discreet.caption" = "Wie Normal, aber nur Sperre — keine Töne oder Mitteilungen, 20 s Karenz. Dock aus.";
-"settings.general.operationProfile.panic.caption" = "Sperre, dann Abmeldung, 5 s Karenz, VPN, SSH-Agent und Zwischenablage leeren. Panic im Menü für sofortige Reaktion (0 s).";
+"settings.general.operationProfile.panic.caption" = "Sperre, dann Abmeldung, 5 s Karenz, VPN, SSH-Agent und Zwischenablage. Ungespeicherte Arbeit kann verloren gehen. Panic im Menü = 0 s Karenz.";
 "settings.general.operationProfile.reset" = "Auf %@-Standard zurücksetzen";
+
+"risk.level.low.short" = "Sicher";
+"risk.level.moderate.short" = "Datenverlust möglich";
+"risk.level.severe.short" = "Hohes Risiko";
+"risk.level.low.accessibility" = "Sicher — geringe Störung";
+"risk.level.moderate.accessibility" = "Datenverlust möglich — ungespeicherte Arbeit oder Sitzungsabbruch";
+"risk.level.severe.accessibility" = "Hohes Risiko — sofortiger Shutdown oder eigene Skripte";
+"risk.legend.title" = "Auswirkungs-Stufen (nur Hinweis)";
+"risk.legend.low" = "Nur Bildschirmsperre oder Alarm. Nach Fehlauslösung leicht wiederherstellbar.";
+"risk.legend.moderate" = "Logout, Shutdown oder Netz-Hygiene können Arbeit unterbrechen oder trennen.";
+"risk.legend.severe" = "Eigene Skripte oder Panic-Modus im Menü (0 s Karenz, sofort Shutdown). Sorgfältig prüfen.";
+"risk.panicMenu.caption" = "Menü → Panic-Modus scharf: bei Kabeltrennung 0 s Karenz — Sperre, deine Aktionen, sofort Shutdown. Ungespeicherte Arbeit kann verloren gehen. Unabhängig vom Panic-Preset oben.";
+"risk.customScripts.caption" = "Skripte laufen mit deinen Benutzerrechten vor Logout/Shutdown. Sie können Daten löschen oder das System ändern — jeden Pfad prüfen. Siehe docs/examples/scripts/.";
+
+"securityAction.lockScreen.riskCaption" = "Sperrt den Bildschirm; keine Dateiverluste.";
+"securityAction.soundAlarm.riskCaption" = "Spielt einen lauten Alarm; in der Öffentlichkeit auffällig.";
+"securityAction.forceLogout.riskCaption" = "Beendet die Sitzung; ungespeicherte Arbeit kann verloren gehen.";
+"securityAction.shutdown.riskCaption" = "Fährt den Mac herunter; ungespeicherte Arbeit kann verloren gehen.";
+"securityAction.customScript.riskCaption" = "Führt dein Skript aus — Auswirkung hängt von der Konfiguration ab.";
+
+"networkAction.webhook.riskCaption" = "Ruft deine URL auf; kann externe Aktionen auslösen.";
+"networkAction.disconnectVPN.riskCaption" = "Trennt VPN; Traffic kann auf unsicheren Netzen sichtbar werden.";
+"networkAction.clearSSHAgent.riskCaption" = "Löscht SSH-Schlüssel im Agent; aktive Sessions können abbrechen.";
+"networkAction.clearClipboard.riskCaption" = "Leert die Zwischenablage; kopierte Texte/Passwörter sind weg.";
+"networkAction.disableWiFi.riskCaption" = "Schaltet WLAN aus; betrifft auch „Wo ist?“ auf diesem Mac.";
+
+"advisory.firstArm.title" = "Bevor du dich auf den Schutz verlässt";
+"advisory.firstArm.body.low" = "Du bist mit wenig invasiven Aktionen scharf. Viele Nutzer starten mit nur Bildschirmsperre und voller Karenz — Einsteiger-Preset unter Einstellungen → Sicherheit.";
+"advisory.firstArm.body.moderate" = "Dein Setup kann bei Kabeltrennung abmelden, herunterfahren oder Netz-Aktionen ausführen. Ungespeicherte Arbeit kann verloren gehen. Einsteiger-Preset (nur Sperre) nutzen, bis Abriegeln zur Routine gehört.";
+"advisory.firstArm.body.severe" = "Dein Setup enthält wirkungsstarke Aktionen (z. B. Shutdown, Skripte, kurze/keine Karenz). Fehlauslösung kann Arbeit oder Daten kosten. Einstellungen → Sicherheit und Erweitert prüfen.";
+"advisory.firstArm.ok" = "Verstanden";
+"advisory.firstArm.useBeginner" = "Einsteiger-Preset wählen";
 "settings.security.notifications.title" = "Mitteilungen";
 "settings.security.notifications.summary.on" = "Status, Sicherheitswarnungen und Töne sind an (siehe Tab Mitteilungen).";
 "settings.security.notifications.summary.off" = "Alle Mitteilungskanäle aus — nur Menüleisten-Icon.";
@@ -429,9 +463,11 @@
 "onboarding.arm.title" = "Vor dem Verlassen scharfschalten";
 "onboarding.arm.body" = "Schutz über die Menüleiste aktivieren. Beim Trennen des Adapters startet die Karenzzeit, danach laufen Sicherheitsaktionen.";
 "onboarding.arm.modes.title" = "Schutz-Modi";
+"onboarding.arm.modes.beginner" = "Einsteiger — nur Sperre, 30 s Karenz (empfohlen für die ersten Tage)";
 "onboarding.arm.modes.normal" = "Normal — Sperre, Alarm, 30 s Karenz, Mitteilungen";
 "onboarding.arm.modes.discreet" = "Diskret — nur Sperre, 20 s Karenz, keine Töne oder Mitteilungen";
 "onboarding.arm.modes.panic" = "Panic — Sperre + Abmeldung, Netz trennen; Panic im Menü für sofortige Reaktion";
+"onboarding.arm.beginnerTip" = "Tipp: Starte mit dem Einsteiger-Preset (Einstellungen → Sicherheit), bis Abriegeln vor Pausen zur Gewohnheit wird.";
 "onboarding.grace.title" = "Karenzzeit";
 "onboarding.grace.body" = "Sie können mit Touch ID oder Passwort abbrechen. Standard-Karenzzeit: 30 Sekunden.";
 "onboarding.permissions.title" = "Berechtigungen";

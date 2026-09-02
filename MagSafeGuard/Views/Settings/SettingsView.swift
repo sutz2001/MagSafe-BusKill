@@ -334,14 +334,18 @@ struct ProtectionModeSettingsSections: View {
           Text(operationProfileTitle(profile)).tag(profile)
         }
       } label: {
-        EmptyView()
+        Text(l10n: "settings.general.operationProfile.title")
       }
-      .labelsHidden()
-      .pickerStyle(.segmented)
+      .pickerStyle(.menu)
 
-      Text(operationProfileCaption)
-        .font(.caption)
-        .foregroundColor(.secondary)
+      HStack(alignment: .top, spacing: 8) {
+        TriggerRiskBadge(level: settingsManager.settings.operationProfile.selectable.presetRiskLevel, compact: true)
+        Text(operationProfileCaption)
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+
+      panicRuntimeRiskNotice
 
       if !profileUsesDefaults {
         Button(L10n.tr(
@@ -370,8 +374,24 @@ struct ProtectionModeSettingsSections: View {
     )
   }
 
+  private var panicRuntimeRiskNotice: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      HStack(alignment: .top, spacing: 8) {
+        TriggerRiskBadge(level: .severe, compact: true)
+        Text(l10n: "risk.panicMenu.caption")
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+    }
+    .padding(10)
+    .background(Color.red.opacity(0.06))
+    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+  }
+
   private func operationProfileTitle(_ profile: OperationProfile) -> String {
     switch profile {
+    case .beginner: return L10n.tr("settings.general.operationProfile.beginner")
     case .normal: return L10n.tr("settings.general.operationProfile.normal")
     case .discreet: return L10n.tr("settings.general.operationProfile.discreet")
     case .panic: return L10n.tr("settings.general.operationProfile.panic")
@@ -382,6 +402,7 @@ struct ProtectionModeSettingsSections: View {
   private var operationProfileCaption: String {
     let key: String
     switch settingsManager.settings.operationProfile.selectable {
+    case .beginner: key = "settings.general.operationProfile.beginner.caption"
     case .normal: key = "settings.general.operationProfile.normal.caption"
     case .discreet: key = "settings.general.operationProfile.discreet.caption"
     case .panic: key = "settings.general.operationProfile.panic.caption"
@@ -462,6 +483,7 @@ struct SecuritySettingsView: View {
       }
 
       Section(header: securityActionsHeaderText) {
+        TriggerRiskLegendView()
         enabledActionsSection
       }
 
@@ -494,8 +516,15 @@ struct SecuritySettingsView: View {
       ForEach(NetworkActionType.allCases, id: \.self) { action in
         VStack(alignment: .leading, spacing: 4) {
           Toggle(isOn: networkActionBinding(action)) {
-            Label(action.localizedName, systemImage: action.symbolName)
+            HStack(spacing: 8) {
+              Label(action.localizedName, systemImage: action.symbolName)
+              Spacer(minLength: 4)
+              TriggerRiskBadge(level: action.triggerRiskLevel, compact: true)
+            }
           }
+          Text(networkActionRiskCaption(action))
+            .font(.caption)
+            .foregroundColor(.secondary)
           if action == .disableWiFi, settingsManager.settings.enabledNetworkActions.contains(.disableWiFi) {
             Text(l10n: "settings.network.disableWiFi.warning")
               .font(.caption)
@@ -554,6 +583,10 @@ struct SecuritySettingsView: View {
     let token = settingsManager.settings.remoteTrigger.token.isEmpty
       ? "YOUR_TOKEN" : settingsManager.settings.remoteTrigger.token
     return "magsafeguard://panic?token=\(token)"
+  }
+
+  private func networkActionRiskCaption(_ action: NetworkActionType) -> String {
+    action.localizedRiskCaption
   }
 
   private func networkActionBinding(_ action: NetworkActionType) -> Binding<Bool> {
@@ -800,12 +833,19 @@ struct SecurityActionRow: View {
         .frame(width: 24)
 
       VStack(alignment: .leading, spacing: 2) {
-        Text(action.localizedName)
-          .font(.body)
-          .foregroundColor(isEnabled ? .primary : .secondary)
+        HStack(spacing: 8) {
+          Text(action.localizedName)
+            .font(.body)
+            .foregroundColor(isEnabled ? .primary : .secondary)
+          TriggerRiskBadge(level: action.triggerRiskLevel, compact: true)
+        }
 
         Text(action.localizedDescription)
           .font(.caption)
+          .foregroundColor(.secondary)
+
+        Text(action.localizedRiskCaption)
+          .font(.caption2)
           .foregroundColor(.secondary)
       }
 
@@ -1267,6 +1307,14 @@ struct AdvancedSettingsView: View {
 
   private var customScriptsSection: some View {
     Section(header: Text(l10n: "settings.advanced.customScripts")) {
+      HStack(alignment: .top, spacing: 8) {
+        TriggerRiskBadge(level: .severe, compact: true)
+        Text(l10n: "risk.customScripts.caption")
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+
       customScriptsContent
 
       scriptTimeBudgetSection
