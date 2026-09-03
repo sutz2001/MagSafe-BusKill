@@ -118,6 +118,26 @@
 "settings.network.ejectRemovableVolumes.warning" = "Hard eject does not wait for apps to finish writing. Unsaved work on USB sticks, SD cards, or portable SSDs may be lost or corrupted. Internal disk is not affected.";
 "settings.network.disableBluetooth.warning" = "Requires blueutil (brew install blueutil). Bluetooth turns off immediately; paired devices disconnect.";
 
+/* Paranoid (v0.6 — configuration only; arming not shipped) */
+"settings.paranoid.title" = "Paranoid (preview)";
+"settings.paranoid.caption" = "Configure wipe targets for the upcoming Paranoid mode. These paths are stored now; nothing is deleted until Paranoid arming ships.";
+"settings.paranoid.notArmedYet" = "Paranoid cannot be armed yet. Setup wizard, codeword, and destruction pipeline come in later v0.6 updates.";
+"settings.paranoid.limits" = "APFS does not guarantee secure overwrite (TRIM/snapshots may retain data). Never target the boot volume. Shutdown may occur before a wipe finishes.";
+"settings.paranoid.wipePaths" = "Wipe paths";
+"settings.paranoid.wipePaths.empty" = "No folders or files selected.";
+"settings.paranoid.addPath" = "Add Folder or File…";
+"settings.paranoid.removePath" = "Remove path";
+"settings.paranoid.pathPicker.message" = "Choose folders or files to wipe when Paranoid triggers. Do not select the system disk.";
+"settings.paranoid.volumes" = "APFS volumes (optional)";
+"settings.paranoid.volumes.caption" = "Volume UUIDs only — never the Macintosh HD / boot volume. Finder → Get Info, or `diskutil info`.";
+"settings.paranoid.volumes.placeholder" = "Volume UUID";
+"settings.paranoid.addVolume" = "Add";
+"settings.paranoid.recoveryKey" = "FileVault recovery key backup (optional)";
+"settings.paranoid.recoveryKey.caption" = "If you keep a local copy of the recovery key, Paranoid can delete that file on trigger.";
+"settings.paranoid.chooseRecoveryKey" = "Choose Recovery Key File…";
+"settings.paranoid.clearRecoveryKey" = "Clear";
+"settings.paranoid.recoveryKeyPicker.message" = "Select the local FileVault recovery key backup file.";
+
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
 "securityAction.lockScreen.description" = "Immediately lock the screen requiring authentication";

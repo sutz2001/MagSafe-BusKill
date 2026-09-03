@@ -364,6 +364,12 @@ public class UserDefaultsManager: ObservableObject {
         }
       }
     }
+    if version < 14 {
+      // v0.6: paranoid configuration defaults; existing users start with empty (not ready to arm).
+      if migrated.paranoid.setupCompleted && !migrated.paranoid.hasWipeTarget {
+        migrated.paranoid.setupCompleted = false
+      }
+    }
     return migrated
   }
 

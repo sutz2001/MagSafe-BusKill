@@ -503,6 +503,8 @@ struct SecuritySettingsView: View {
 
       networkActionsSection
       remoteTriggerSection
+      ParanoidSettingsSection()
+        .environmentObject(settingsManager)
     }
     .formStyle(.grouped)
   }

@@ -35,6 +35,8 @@ final class SettingsModelTests: XCTestCase {
     XCTAssertFalse(settings.showInDock)
     XCTAssertEqual(settings.menuBarIconAppearance, .monochrome)
     XCTAssertFalse(settings.debugLoggingEnabled)
+    XCTAssertFalse(settings.paranoid.isReadyToArm)
+    XCTAssertTrue(settings.paranoid.wipePaths.isEmpty)
   }
 
   func testDiscreetOperationWhenAllAlertsDisabled() {

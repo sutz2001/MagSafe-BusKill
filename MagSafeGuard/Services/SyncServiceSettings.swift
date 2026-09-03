@@ -56,6 +56,10 @@ final class SyncServiceSettings {
     record["showSecurityAlerts"] = settings.showSecurityAlerts ? 1 : 0
     record["playCriticalAlertSound"] = settings.playCriticalAlertSound ? 1 : 0
     record["panicLegalNoticeAccepted"] = settings.panicLegalNoticeAccepted ? 1 : 0
+    if let paranoidData = try? JSONEncoder().encode(settings.paranoid),
+      let paranoidJSON = String(data: paranoidData, encoding: .utf8) {
+      record["paranoid"] = paranoidJSON
+    }
 
     // General settings
     record["launchAtLogin"] = settings.launchAtLogin ? 1 : 0
@@ -231,6 +235,12 @@ final class SyncServiceSettings {
     if let appearanceRaw = record["menuBarIconAppearance"] as? String,
       let appearance = MenuBarIconAppearance(rawValue: appearanceRaw) {
       manager.updateSetting(\.menuBarIconAppearance, value: appearance)
+    }
+
+    if let paranoidString = record["paranoid"] as? String,
+      let data = paranoidString.data(using: .utf8),
+      let paranoid = try? JSONDecoder().decode(ParanoidConfiguration.self, from: data) {
+      manager.updateSetting(\.paranoid, value: paranoid)
     }
   }
 }

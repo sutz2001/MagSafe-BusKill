@@ -135,6 +135,9 @@ public struct Settings: Codable {
   /// User accepted the panic-mode impact notice (required before arming panic).
   public var panicLegalNoticeAccepted: Bool = false
 
+  /// Paranoid-mode destruction targets and setup flags (v0.6; arming not shipped yet).
+  public var paranoid: ParanoidConfiguration = ParanoidConfiguration()
+
   /// Enable audio alerts for critical security events.
   ///
   /// When enabled, critical alerts (power disconnection, grace period warnings)
@@ -268,6 +271,8 @@ public struct Settings: Codable {
 
     validated.scriptTimeBudgetSeconds = max(0, min(30.0, scriptTimeBudgetSeconds))
 
+    validated.paranoid = paranoid.validated()
+
     return validated
   }
 
@@ -304,4 +309,4 @@ public protocol SettingsMigrator {
 ///
 /// This version is incremented when breaking changes are made to the
 /// Settings structure that require migration logic.
-public let currentSettingsVersion = 13
+public let currentSettingsVersion = 14

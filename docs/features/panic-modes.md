@@ -71,8 +71,8 @@ Maximum speed data destruction for users who accept irreversible loss. Targets o
 User must confirm before paranoid can be armed:
 
 - [ ] **FileVault enabled** (verified via `fdesetup status`)
-- [ ] At least one **wipe target** configured: folder paths and/or dedicated APFS volume
-- [ ] Optional: local FileVault recovery key backup path (if present, delete on trigger)
+- [x] At least one **wipe target** configurable in Settings → Security → Paranoid (paths / APFS UUID / recovery-key file) — wizard + FileVault check still required before arming
+- [x] Optional: local FileVault recovery key backup path (stored; delete-on-trigger not shipped)
 - [ ] Full paranoid onboarding (EN + DE) with explicit consent
 
 ### On cable disconnect (0 s grace)

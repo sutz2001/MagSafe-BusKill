@@ -118,6 +118,26 @@
 "settings.network.ejectRemovableVolumes.warning" = "Hard Eject wartet nicht, bis Apps fertig schreiben. Ungespeicherte Daten auf USB-Sticks, SD-Karten oder externen SSDs können verloren gehen oder beschädigt werden. Interne Festplatte bleibt unberührt.";
 "settings.network.disableBluetooth.warning" = "Benötigt blueutil (brew install blueutil). Bluetooth wird sofort ausgeschaltet; gekoppelte Geräte trennen.";
 
+/* Paranoid (v0.6 — nur Konfiguration; Scharfschalten folgt) */
+"settings.paranoid.title" = "Paranoid (Vorschau)";
+"settings.paranoid.caption" = "Wipe-Ziele für den kommenden Paranoid-Modus festlegen. Die Pfade werden gespeichert; gelöscht wird erst, wenn das Scharfschalten in v0.6 fertig ist.";
+"settings.paranoid.notArmedYet" = "Paranoid kann noch nicht scharfgeschaltet werden. Setup-Wizard, Codewort und Destruction-Pipeline folgen.";
+"settings.paranoid.limits" = "APFS garantiert kein sicheres Überschreiben (TRIM/Snapshots). Nie das Boot-Volume wählen. Der Shutdown kann vor Abschluss des Wipes erfolgen.";
+"settings.paranoid.wipePaths" = "Wipe-Pfade";
+"settings.paranoid.wipePaths.empty" = "Keine Ordner oder Dateien ausgewählt.";
+"settings.paranoid.addPath" = "Ordner oder Datei hinzufügen…";
+"settings.paranoid.removePath" = "Pfad entfernen";
+"settings.paranoid.pathPicker.message" = "Ordner oder Dateien wählen, die Paranoid löschen soll. Nicht die Systemplatte.";
+"settings.paranoid.volumes" = "APFS-Volumes (optional)";
+"settings.paranoid.volumes.caption" = "Nur Volume-UUIDs — niemals Macintosh HD / Boot-Volume. Finder → Informationen oder `diskutil info`.";
+"settings.paranoid.volumes.placeholder" = "Volume-UUID";
+"settings.paranoid.addVolume" = "Hinzufügen";
+"settings.paranoid.recoveryKey" = "FileVault-Wiederherstellungsschlüssel-Backup (optional)";
+"settings.paranoid.recoveryKey.caption" = "Falls du eine lokale Kopie des Recovery Keys hast, kann Paranoid diese Datei beim Trigger löschen.";
+"settings.paranoid.chooseRecoveryKey" = "Recovery-Key-Datei wählen…";
+"settings.paranoid.clearRecoveryKey" = "Entfernen";
+"settings.paranoid.recoveryKeyPicker.message" = "Lokale Backup-Datei des FileVault-Wiederherstellungsschlüssels wählen.";
+
 /* Security actions */
 "securityAction.lockScreen.name" = "Bildschirm sperren";
 "securityAction.lockScreen.description" = "Bildschirm sofort sperren und Authentifizierung verlangen";
