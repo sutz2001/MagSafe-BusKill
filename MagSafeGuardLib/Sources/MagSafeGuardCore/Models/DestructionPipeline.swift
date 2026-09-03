@@ -66,11 +66,14 @@ public final class MockDestructionPipeline: DestructionPipeline, @unchecked Send
   public private(set) var lastConfig: ParanoidConfiguration?
   public var resultToReturn: DestructionResult = .empty
 
+  public var onExecute: ((ParanoidConfiguration) -> Void)?
+
   public init() {}
 
   public func execute(_ config: ParanoidConfiguration) -> DestructionResult {
     executeCallCount += 1
     lastConfig = config
+    onExecute?(config)
     return resultToReturn
   }
 
@@ -78,6 +81,7 @@ public final class MockDestructionPipeline: DestructionPipeline, @unchecked Send
     executeCallCount = 0
     lastConfig = nil
     resultToReturn = .empty
+    onExecute = nil
   }
 }
 

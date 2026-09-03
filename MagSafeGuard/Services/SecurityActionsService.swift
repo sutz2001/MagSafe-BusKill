@@ -513,7 +513,7 @@ public class SecurityActionsService {
     switch context {
     case .standard:
       (executedActions, failedActions) = executeEnabledActions()
-    case .theftTrigger, .panic:
+    case .theftTrigger, .panic, .paranoid:
       (executedActions, failedActions) = executeProtectionFirstActions(context: context)
     }
 
@@ -561,7 +561,7 @@ public class SecurityActionsService {
       try self.executeAction(.forceLogout)
     }
 
-    if context == .panic || enabled.contains(.shutdown) {
+    if context.forcesImmediateShutdown || enabled.contains(.shutdown) {
       do {
         try systemActions.executeImmediateShutdown()
         executed.append(.shutdown)

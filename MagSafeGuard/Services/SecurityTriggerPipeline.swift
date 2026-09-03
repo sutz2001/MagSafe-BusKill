@@ -42,7 +42,7 @@ public final class SecurityTriggerPipeline {
       let networkResult = self.networkActions.executeHygienePhase(event: event)
 
       let scriptResult: SecurityActionsService.ScriptPhaseResult
-      if context == .theftTrigger || context == .panic {
+      if context.runsTriggerScripts {
         scriptResult = self.securityActions.executeScriptsPhase(
           timeBudget: settings.scriptTimeBudgetSeconds
         )

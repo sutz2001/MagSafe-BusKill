@@ -186,9 +186,10 @@ PanicModeExecutor
   - executeImmediateShutdown()
   - parallel: lock, logout, network, shutdown
 
-ParanoidModeExecutor (M3 — not wired)
-  - DestructionPipeline.execute(config)  // fire-and-forget
-  - then immediate shutdown
+ParanoidModeExecutor (M3 — not wired to AppController)
+  - DestructionPipeline.execute(config) on a background queue (fire-and-forget)
+  - SecurityTriggerPipeline context `.paranoid` (scripts + protection-first + immediate shutdown)
+  - shutdown does not wait for wipe
 
 DestructionPipeline (M2 — shipped in code, unused at runtime)
   - MockDestructionPipeline — CI / unit tests, no IO
@@ -249,7 +250,7 @@ Do not conflate `trigger` with panic or paranoid.
 ### v0.6.0 — Paranoid
 
 - [ ] Setup wizard (FileVault check, wipe targets)
-- [ ] `ParanoidModeExecutor` + `DestructionPipeline` (pipeline types exist; executor not wired)
+- [ ] `ParanoidModeExecutor` + `DestructionPipeline` (executor exists; AppController not wired)
 - [ ] Double confirm + codeword + full legal UI
 - [ ] `magsafeguard://paranoid`
 - [ ] Legal review DE/EU before public beta
