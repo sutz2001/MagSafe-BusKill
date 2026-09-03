@@ -173,10 +173,10 @@ M3 + M5 → M6 Routing + Trigger → M7 Docs + Legal-Gate
 
 | PR | Issue | Milestone |
 |----|-------|-----------|
-| 1 | [#5 ParanoidConfiguration + migration v14](https://github.com/sutz2001/MagSafe-BusKill/issues/5) | M1 — in progress |
-| 2 | [#6 Settings UI wipe targets](https://github.com/sutz2001/MagSafe-BusKill/issues/6) | M1 — in progress |
-| 3 | [#7 DestructionPipeline + Mock](https://github.com/sutz2001/MagSafe-BusKill/issues/7) | M2 |
-| 4 | [#8 MacDestructionPipeline](https://github.com/sutz2001/MagSafe-BusKill/issues/8) | M2 |
+| 1 | [#5 ParanoidConfiguration + migration v14](https://github.com/sutz2001/MagSafe-BusKill/issues/5) | M1 — done |
+| 2 | [#6 Settings UI wipe targets](https://github.com/sutz2001/MagSafe-BusKill/issues/6) | M1 — done |
+| 3 | [#7 DestructionPipeline + Mock](https://github.com/sutz2001/MagSafe-BusKill/issues/7) | M2 — in progress |
+| 4 | [#8 MacDestructionPipeline](https://github.com/sutz2001/MagSafe-BusKill/issues/8) | M2 — in progress |
 | 5 | [#9 ParanoidModeExecutor](https://github.com/sutz2001/MagSafe-BusKill/issues/9) | M3 |
 | 6 | [#10 Setup wizard](https://github.com/sutz2001/MagSafe-BusKill/issues/10) | M4 |
 | 7 | [#11 Legal + codeword](https://github.com/sutz2001/MagSafe-BusKill/issues/11) | M5 |

@@ -448,6 +448,12 @@
 "event.networkActionFailed" = "Netzwerk-Aktion fehlgeschlagen";
 "event.customScriptExecuted" = "Eigenes Skript ausgeführt";
 "event.customScriptFailed" = "Eigenes Skript fehlgeschlagen";
+"event.destructionPathWiped" = "Pfad gelöscht";
+"event.destructionPathFailed" = "Pfad-Löschung fehlgeschlagen";
+"event.destructionVolumeErased" = "Volume gelöscht";
+"event.destructionVolumeFailed" = "Volume-Löschung fehlgeschlagen";
+"event.destructionRecoveryKeyDeleted" = "Recovery-Key-Backup gelöscht";
+"event.destructionSkipped" = "Vernichtung übersprungen";
 
 /* Event log details */
 "logDetail.userCancelled" = "Vom Benutzer abgebrochen";
@@ -474,6 +480,12 @@
 "logDetail.networkActionFailed" = "%@ fehlgeschlagen: %@";
 "logDetail.customScriptSucceeded" = "%@ erfolgreich";
 "logDetail.customScriptFailed" = "%@ fehlgeschlagen: %@";
+"logDetail.destructionPathWiped" = "%@ gelöscht";
+"logDetail.destructionPathFailed" = "%@ fehlgeschlagen: %@";
+"logDetail.destructionVolumeErased" = "Volume %@ gelöscht";
+"logDetail.destructionVolumeFailed" = "Volume %@ fehlgeschlagen: %@";
+"logDetail.destructionRecoveryKeyDeleted" = "Recovery-Key-Backup gelöscht";
+"logDetail.destructionSkipped" = "Vernichtung übersprungen: %@";
 
 /* Network actions */
 "networkAction.webhook.name" = "HTTP-Webhook";

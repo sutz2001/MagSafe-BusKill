@@ -450,7 +450,7 @@ All three off → `isDiscreetOperation`. Grace period and state changes still ru
 
 ## 10. Panic & Paranoid modes
 
-**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** configuration (wipe paths, APFS UUIDs, recovery-key file) can be stored in **Settings → Security → Paranoid**; arming and destruction are not shipped. Design: [panic-modes.md](panic-modes.md) · Issues: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
+**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** wipe targets in Settings; `DestructionPipeline` exists (mock + Mac, CI/XCTest no-op, boot volume refused) but is **not** invoked at runtime yet. Design: [panic-modes.md](panic-modes.md) · Issues: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
 
 ### Panic mode (shipped v0.5.0)
 

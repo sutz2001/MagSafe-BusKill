@@ -179,27 +179,31 @@ Only one high-assurance mode armed at a time. Normal **armed** and **panic/paran
 
 ---
 
-## Architecture (planned)
+## Architecture (v0.6 in progress)
 
 ```text
 PanicModeExecutor
-  - executeImmediateShutdown()   // new: no 1-min AppleScript dialog
+  - executeImmediateShutdown()
   - parallel: lock, logout, network, shutdown
 
-ParanoidModeExecutor : PanicModeExecutor
-  - DestructionPipeline (protocol)
-  - MockDestructionPipeline (CI / unit tests only)
+ParanoidModeExecutor (M3 — not wired)
+  - DestructionPipeline.execute(config)  // fire-and-forget
+  - then immediate shutdown
 
-AppController
-  - route disconnect to normal | panic | paranoid path
-  - skip grace, skip circuit breaker, skip auth cancel
+DestructionPipeline (M2 — shipped in code, unused at runtime)
+  - MockDestructionPipeline — CI / unit tests, no IO
+  - MacDestructionPipeline — path wipe, APFS eraseVolume, recovery-key file
+      CI/XCTest: no-op unless tests inject DestructionSafetyPolicy
+      always refuse boot volume UUID / whole boot disk
 ```
+
+`ParanoidConfiguration` and Settings UI exist (M1). Pipeline is **not** called from `AppController` yet.
 
 ### New types (sketch)
 
 - `ProtectionMode`: `.normal` | `.panic` | `.paranoid`
 - `ParanoidConfiguration`: wipe paths, volume UUID, recovery key path, keychain targets
-- `DestructionPipeline` protocol with `MockDestructionPipeline`
+- `DestructionPipeline` protocol with `MockDestructionPipeline` and `MacDestructionPipeline`
 
 ### Shutdown implementation note
 
@@ -245,7 +249,7 @@ Do not conflate `trigger` with panic or paranoid.
 ### v0.6.0 — Paranoid
 
 - [ ] Setup wizard (FileVault check, wipe targets)
-- [ ] `ParanoidModeExecutor` + `DestructionPipeline`
+- [ ] `ParanoidModeExecutor` + `DestructionPipeline` (pipeline types exist; executor not wired)
 - [ ] Double confirm + codeword + full legal UI
 - [ ] `magsafeguard://paranoid`
 - [ ] Legal review DE/EU before public beta

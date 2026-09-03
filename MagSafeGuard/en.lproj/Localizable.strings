@@ -448,6 +448,12 @@
 "event.networkActionFailed" = "Network Action Failed";
 "event.customScriptExecuted" = "Custom Script Executed";
 "event.customScriptFailed" = "Custom Script Failed";
+"event.destructionPathWiped" = "Path Wiped";
+"event.destructionPathFailed" = "Path Wipe Failed";
+"event.destructionVolumeErased" = "Volume Erased";
+"event.destructionVolumeFailed" = "Volume Erase Failed";
+"event.destructionRecoveryKeyDeleted" = "Recovery Key Backup Deleted";
+"event.destructionSkipped" = "Destruction Skipped";
 
 /* Event log details */
 "logDetail.userCancelled" = "User cancelled";
@@ -474,6 +480,12 @@
 "logDetail.networkActionFailed" = "%@ failed: %@";
 "logDetail.customScriptSucceeded" = "%@ succeeded";
 "logDetail.customScriptFailed" = "%@ failed: %@";
+"logDetail.destructionPathWiped" = "%@ wiped";
+"logDetail.destructionPathFailed" = "%@ failed: %@";
+"logDetail.destructionVolumeErased" = "Volume %@ erased";
+"logDetail.destructionVolumeFailed" = "Volume %@ failed: %@";
+"logDetail.destructionRecoveryKeyDeleted" = "Recovery key backup deleted";
+"logDetail.destructionSkipped" = "Destruction skipped: %@";
 
 /* Network actions */
 "networkAction.webhook.name" = "HTTP Webhook";

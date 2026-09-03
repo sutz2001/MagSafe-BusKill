@@ -152,7 +152,7 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
   }
 
   /// Rejects wiping the root or core OS locations. User data paths remain allowed.
-  static func isForbiddenWipePath(_ path: String) -> Bool {
+  public static func isForbiddenWipePath(_ path: String) -> Bool {
     let standardized = (path as NSString).standardizingPath
     if standardized == "/" { return true }
     let forbidden = [

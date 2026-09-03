@@ -63,6 +63,18 @@ public enum AppEvent: String {
   case customScriptExecuted
   /// A custom script failed
   case customScriptFailed
+  /// Paranoid destruction wiped a configured path
+  case destructionPathWiped
+  /// Paranoid destruction failed to wipe a path
+  case destructionPathFailed
+  /// Paranoid destruction erased a dedicated APFS volume
+  case destructionVolumeErased
+  /// Paranoid destruction refused or failed a volume erase
+  case destructionVolumeFailed
+  /// Paranoid destruction deleted the recovery-key backup file
+  case destructionRecoveryKeyDeleted
+  /// Paranoid destruction skipped (CI/test) or failed recovery-key delete
+  case destructionSkipped
 }
 
 /// Event log entry containing timestamped application events.
