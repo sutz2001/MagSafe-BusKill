@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.9` (build `19`) |
+| **Version** | `0.6.0` (build `20`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -88,7 +88,7 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | Network actions + remote trigger | **Shipped** | v0.4.0 — webhook, VPN, SSH, clipboard, Wi‑Fi; `magsafeguard://` |
 | Discreet operation | **Shipped** | v0.4.3+ — **Discreet** profile or notification toggles · [guide](docs/features/user-guide.md#4-discreet-operation) |
 | Panic mode | **Shipped** | v0.5.0 — zero grace when panic-armed, **⌃⌘P** · [guide](docs/features/user-guide.md#5-panic-protection-mode-v050) |
-| Paranoid mode | **Planned** | v0.6.0 — destruction + shutdown (FileVault + setup required) |
+| Paranoid mode | **Shipped** | v0.6.0 — wipe + shutdown; FileVault + setup + codeword · [guide](docs/features/user-guide.md#6-paranoid-protection-mode-v060) |
 | Notarized DMG for others | **Later** | v1.0 · paid Apple Dev optional |
 | Mac App Store | **Out of scope** | App Sandbox incompatible |
 
@@ -204,21 +204,23 @@ task release:clean                   # remove dist/
 | Done | **0.5.5** | Trigger pipeline: hygiene phase, script budget, logout then immediate shutdown |
 | Done | **0.5.6** | Beginner preset, risk labels, first-arm advisory, `magsafeguard-cli` |
 | Done | **0.5.7** | Onboarding split (daily vs panic/paranoid), user guide CLI section |
-| Next | **0.6.0** | Paranoid mode — data destruction (setup required) |
+| Done | **0.5.8** | Eject removable volumes (built-in hygiene) |
+| Done | **0.5.9** | Cryptomator/Bluetooth hygiene, bundled trigger scripts |
+| Done | **0.6.0** | Paranoid mode — wipe paths, FileVault gate, codeword, **⌃⌘⇧P**, `magsafeguard://paranoid` |
 | Stable | **1.0.0** | Notarized Developer ID distribution |
 
 Full plan: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)** · **User guide:** [EN](docs/features/user-guide.md) · [DE](docs/features/user-guide.de.md)
 
-### Paranoid mode (v0.6.0 — not shipped)
+### Paranoid mode (v0.6.0 — shipped)
 
-> Design: **[docs/features/panic-modes.md](docs/features/panic-modes.md)**
+> Details: **[docs/features/panic-modes.md](docs/features/panic-modes.md)** · [user guide §6](docs/features/user-guide.md#6-paranoid-protection-mode-v060)
 
-- [ ] Full legal disclaimer (EN + DE): irreversible data loss, user responsibility, work-device warning
-- [ ] Double confirmation + mandatory codeword
-- [ ] Setup wizard (FileVault, wipe paths/volumes)
-- [ ] Legal review for DE/EU (not legal advice — consult a lawyer)
+- [x] Full legal disclaimer (EN + DE): irreversible data loss, user responsibility, work-device warning
+- [x] Double confirmation + mandatory codeword
+- [x] Setup wizard (FileVault, wipe paths/volumes)
+- [ ] Legal review for DE/EU before wide public beta — [gate checklist](docs/maintainers/legal-review-gate.md) (not legal advice — consult a lawyer)
 
-**Panic (v0.5.0)** is shipped — see [user guide §5](docs/features/user-guide.md#5-panic-protection-mode-v050).
+**Panic (v0.5.0)** and **Paranoid (v0.6.0)** are shipped — see [user guide](docs/features/user-guide.md).
 
 ---
 
@@ -233,6 +235,7 @@ The repository is **public** at [github.com/sutz2001/MagSafe-BusKill](https://gi
 | README — fork vs upstream, maintainer, license pointers | Done |
 | Binary releases include `LICENSE` + `NOTICE` | To do when publishing GitHub Releases |
 | Panic-mode legal UI | Shipped in v0.5.0 (short notice EN/DE at first arm) |
+| Paranoid-mode legal UI | Shipped in v0.6.0 (full notice EN/DE + codeword); DE/EU review gate open |
 
 The first three items were verified on `main` before the repository was made public (August 2026).
 

@@ -8,13 +8,14 @@ This documentation is organized by audience and role to help you find the inform
 
 ### For Users
 
-- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): **operation profiles** (Beginner / Normal / Discreet / Panic), impact labels, **`magsafeguard-cli`**, discreet use, **panic protection mode**, hotkey
+- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): **operation profiles** (Beginner / Normal / Discreet / Panic), impact labels, **`magsafeguard-cli`**, discreet use, **panic** + **paranoid** protection modes
 - [Operating Modes & Flows](features/operating-modes.md) - What each state/mode does (with diagrams)
 - [Behavior Gaps](features/behavior-gaps.md) - Known UI vs runtime mismatches
-- [Panic & Paranoid modes](features/panic-modes.md) - Panic shipped (v0.5); Paranoid planned (v0.6)
+- [Panic & Paranoid modes](features/panic-modes.md) - Panic (v0.5) + Paranoid (v0.6) shipped; [legal review gate](maintainers/legal-review-gate.md) open
 - [Future ideas (scratch pad)](features/future-ideas.md) - Uncommitted thought fragments (e.g. LAN trigger from phone)
 - [Building and Running](maintainers/building-and-running.md) - Get MagSafe Guard running on your Mac
 - [Troubleshooting](maintainers/troubleshooting.md) - Common issues and solutions
+- [Legal review gate (Paranoid / DE/EU)](maintainers/legal-review-gate.md) - Sign-off before wide public beta
 - [Feature Flags](features/flags.md) - Configure advanced features
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 

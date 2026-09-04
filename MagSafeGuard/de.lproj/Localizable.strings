@@ -114,12 +114,15 @@
 "settings.network.remote.triggerExample" = "Aktionen auslösen: %@";
 "settings.network.remote.armExample" = "Fern scharfschalten: %@";
 "settings.network.remote.panicExample" = "Panic-Auslösung (nur im Panic-Modus): %@";
+"settings.network.remote.paranoidToken" = "Paranoid-Token (optional)";
+"settings.network.remote.paranoidToken.hint" = "Leer = Haupt-Token für magsafeguard://paranoid. Eigenes Token trennt Paranoid von Panic/Trigger.";
+"settings.network.remote.paranoidExample" = "Paranoid-Auslösung (nur im Paranoid-Modus): %@";
 "settings.network.disableWiFi.warning" = "WLAN aus blockiert Find-My-Fernsperre, -löschung und -ortung, bis WLAN wieder an ist (Ethernet unberührt).";
 "settings.network.ejectRemovableVolumes.warning" = "Hard Eject wartet nicht, bis Apps fertig schreiben. Ungespeicherte Daten auf USB-Sticks, SD-Karten oder externen SSDs können verloren gehen oder beschädigt werden. Interne Festplatte bleibt unberührt.";
 "settings.network.disableBluetooth.warning" = "Benötigt blueutil (brew install blueutil). Bluetooth wird sofort ausgeschaltet; gekoppelte Geräte trennen.";
 
 /* Paranoid (v0.6 — configuration + arming gates) */
-"settings.paranoid.title" = "Paranoid (Vorschau)";
+"settings.paranoid.title" = "Paranoid";
 "settings.paranoid.caption" = "Wipe-Ziele festlegen, vollständigen Rechtstext akzeptieren und Codewort setzen. Scharfschalten über die Menüleiste, sobald die Checkliste fertig ist.";
 "settings.paranoid.notReady" = "Paranoid ist noch nicht scharfschaltbereit. Checkliste unten abschließen, dann im Menü „Paranoid aktivieren…“.";
 "settings.paranoid.readyToArm" = "Bereit — im Menü „Paranoid aktivieren…“ (Codewort + Touch ID / Passwort).";
@@ -360,9 +363,9 @@
 "menu.panicArmed" = "Panic-Modus aktiv";
 "menu.panicArmed.hint" = "%@ drücken oder Kabel trennen für sofortige Auslösung";
 "menu.armParanoid" = "Paranoid-Modus aktivieren…";
-"menu.armParanoid.hint" = "Keine Karenzzeit — konfigurierte Pfade wipen, dann Hard-Shutdown bei Kabeltrennung";
+"menu.armParanoid.hint" = "Keine Karenzzeit — konfigurierte Pfade wipen, dann Hard-Shutdown bei Kabeltrennung; Auslösung mit %@ wenn aktiv";
 "menu.paranoidArmed" = "Paranoid-Modus aktiv";
-"menu.paranoidArmed.hint" = "Kabeltrennung wischt konfigurierte Pfade und fährt herunter";
+"menu.paranoidArmed.hint" = "%@ drücken oder Kabel trennen zum Wipen und Herunterfahren";
 "menu.cancelAction" = "Sicherheitsaktion abbrechen";
 "menu.cancelAction.hint" = "Ausstehende Sicherheitsaktion während der Karenzzeit abbrechen";
 "menu.power.connected" = "Netzteil angeschlossen";
@@ -474,7 +477,7 @@
 "notification.panicArmed.title" = "Panic-Modus aktiv";
 "notification.panicArmed.message" = "Kabeltrennung sperrt und fährt den Mac sofort herunter";
 "notification.paranoidArmed.title" = "Paranoid-Modus aktiv";
-"notification.paranoidArmed.message" = "Kabeltrennung wischt konfigurierte Pfade und fährt herunter";
+"notification.paranoidArmed.message" = "Kabeltrennung oder ⌃⌘⇧P wischt konfigurierte Pfade und fährt herunter";
 "notification.disarmed.title" = "MagSafe Guard entschärft";
 "notification.disarmed.message" = "Schutz ist jetzt inaktiv";
 "notification.graceCancelled.title" = "Sicherheitsaktion abgebrochen";
@@ -502,6 +505,7 @@
 "panic.legal.message" = "Im Panic-Modus gibt es keine Karenzzeit. Beim Trennen des Kabels wird der Bildschirm gesperrt, Ihre Sicherheitsaktionen ausgeführt und der Mac sofort heruntergefahren. Nicht gespeicherte Arbeit kann verloren gehen. Während der Reaktion gibt es keinen Abbruch.";
 "panic.legal.accept" = "Verstanden — Panic aktivieren";
 "panic.hotkey.shortcut" = "⌃⌘P";
+"paranoid.hotkey.shortcut" = "⌃⌘⇧P";
 
 /* General settings */
 "settings.general.restoreArmed.title" = "Scharfen Zustand nach Neustart wiederherstellen";
@@ -567,11 +571,13 @@
 "logDetail.appTerminating" = "Anwendung wird beendet";
 "logDetail.remoteArm" = "Fern-Scharfschaltung per URL";
 "logDetail.remotePanic" = "Fern-Panic-Auslösung per URL";
+"logDetail.remoteParanoid" = "Fern-Paranoid-Auslösung per URL";
 "logDetail.armingPanic" = "Panic-Modus wird aktiviert";
 "logDetail.armingParanoid" = "Paranoid-Modus wird aktiviert";
 "logDetail.paranoidTriggered" = "Paranoid-Reaktion ausgelöst";
 "logDetail.panicTriggered" = "Panic-Reaktion ausgelöst";
 "logDetail.panicHotkey" = "Panic-Tastenkürzel gedrückt";
+"logDetail.paranoidHotkey" = "Paranoid-Tastenkürzel gedrückt";
 "logDetail.networkActionSucceeded" = "%@ erfolgreich";
 "logDetail.networkActionFailed" = "%@ fehlgeschlagen: %@";
 "logDetail.customScriptSucceeded" = "%@ erfolgreich";

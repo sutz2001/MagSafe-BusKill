@@ -100,6 +100,7 @@ Wenn aktiviert unter **Einstellungen → Security → Remote Trigger**:
 | `magsafeguard://arm?token=IHR_TOKEN` | Scharfschalten ohne interaktive Auth (wenn unscharf) |
 | `magsafeguard://trigger?token=IHR_TOKEN` | Aktionen im **normalen** Scharf-Modus |
 | `magsafeguard://panic?token=IHR_TOKEN` | Panic-Reaktion im **Panic-Schutz** (siehe §5) |
+| `magsafeguard://paranoid?token=IHR_TOKEN` | Paranoid-Reaktion im **Paranoid-Schutz** (siehe §6) |
 
 Aus **Shortcuts** auf iPhone/Mac. Token geheim halten.
 
@@ -202,30 +203,72 @@ Verlassen: Menü → **Schutz deaktivieren**.
 
 ---
 
-## 6. Kurzvergleich
+## 6. Paranoid-Schutzmodus (v0.6.0)
 
-| | Normal scharf | Diskret | Panic-Preset | Panic-**Schutz** |
-|---|---------------|---------|--------------|------------------|
-| Typische Karenz | 30 s | 20 s | 5 s | **0 s** |
-| Mitteilungen | An | Aus | Aus | Aus |
-| Shutdown bei Kabel | Verzögerung konfigurierbar | Konfigurierbar | Abmelden + Reihenfolge | **Sofort** |
-| Hotkey | — | — | — | **⌃⌘P** |
+**Anders als das Panic-Preset.** Paranoid ist ein eigener Scharf-Zustand, der **konfigurierte Daten vernichtet** und dann herunterfährt.
 
-**Paranoid-Modus** (Datenvernichtung) ist **nicht** implementiert — geplant v0.6.0 (gleiche Netzwerk-Basis inkl. Zwischenablage).
+| | Panic-**Schutz** | Paranoid-**Schutz** |
+|---|------------------|---------------------|
+| Datenvernichtung | Nein | **Ja** (konfigurierte Pfade/Volumes) |
+| Voraussetzungen | Kurzer Rechtshinweis | FileVault an, Wipe-Ziele, voller Rechtstext, Codewort |
+| Hotkey | **⌃⌘P** | **⌃⌘⇧P** |
+| Remote-URL | `…/panic?token=` | `…/paranoid?token=` (optional eigenes Token) |
+
+### Vorbereiten
+
+1. **Einstellungen → Sicherheit → Paranoid-Setup-Assistent…** (FileVault an + Wipe-Pfad oder APFS-Volume-UUID).
+2. **Vollständiger Rechtstext…** — scrollen, Checkbox, akzeptieren.
+3. **Codewort setzen…** (mind. 4 Zeichen; nur Hash gespeichert).
+4. Optional Wipe-Reihenfolge (↑/↓) und Zeitbudget.
+
+### Scharfschalten
+
+1. Menü → **Paranoid-Modus aktivieren…**
+2. Codewort + Bestätigungs-Checkbox.
+3. Touch ID / Passwort.
+4. Menüleiste zeigt **bolt.shield.fill** im Paranoid-Schutz.
+
+### Auslösen (wenn paranoid-scharf)
+
+| Auslöser | Wirkung |
+|----------|---------|
+| **Kabel trennen** | Wipe (Listenreihenfolge, Zeitbudget) + Sperre/Hygiene, dann Hard-Shutdown |
+| **⌃⌘⇧P** | Gleich |
+| `magsafeguard://paranoid?token=…` | Gleich (Fernauslösung an; Token muss passen) |
+
+### ⚠️ Warnungen
+
+- **Irreversibler Datenverlust** auf konfigurierten Zielen.
+- APFS garantiert **kein** sicheres Überschreiben (TRIM/Snapshots).
+- Nie das Boot-Volume wählen.
+- **Nicht** auf Dienst-/geteilten Macs ohne Berechtigung.
+- Nur mit Wegwerf-Pfaden auf Spare-Mac / Test-Volume testen.
+- DE/EU-Rechtsprüfung für breite öffentliche Beta: [legal-review-gate.md](../maintainers/legal-review-gate.md).
 
 ---
 
-## 7. Auto-Arm (optional)
+## 7. Kurzvergleich
+
+| | Normal scharf | Diskret | Panic-Preset | Panic-**Schutz** | Paranoid-**Schutz** |
+|---|---------------|---------|--------------|------------------|---------------------|
+| Typische Karenz | 30 s | 20 s | 5 s | **0 s** | **0 s** |
+| Daten-Wipe | Nein | Nein | Nein | Nein | **Ja** |
+| Hotkey | — | — | — | **⌃⌘P** | **⌃⌘⇧P** |
+
+---
+
+## 8. Auto-Arm (optional)
 
 In der App: **Einstellungen → Auto-Arm**.
 
 - Automatisch scharfschalten beim Verlassen eines vertrauenswürdigen Ortes oder in unbekanntem Netz.
 - Nutzt `armAutomatically()` — kein Touch-ID-Dialog beim Auto-Arm (Absicht).
 - Kann vorübergehend im Menü deaktiviert werden.
+- Auto-Arm nutzt den **normalen** Scharf-Modus (nicht Panic/Paranoid).
 
 ---
 
-## 8. Fehlerbehebung
+## 9. Fehlerbehebung
 
 | Problem | Prüfen |
 |---------|--------|
@@ -233,7 +276,9 @@ In der App: **Einstellungen → Auto-Arm**.
 | Kein Menüleisten-Icon | App läuft? Menüleisten-Überlauf (•••) |
 | App nicht findbar | Einstellungen → Allgemein → **Im Dock anzeigen**, oder Spotlight |
 | Hotkey ⌃⌘P ohne Wirkung | Muss **panic-scharf** sein; App muss laufen |
-| Fern-URL ignoriert | Token korrekt? Fernauslösung aktiv? |
+| Hotkey ⌃⌘⇧P ohne Wirkung | Muss **paranoid-scharf** sein; App muss laufen |
+| Fern-URL ignoriert | Token korrekt? Fernauslösung an? Richtiger Host (`panic` vs `paranoid`)? |
+| Paranoid lässt sich nicht scharfschalten | Checkliste Setup + Rechtstext + Codewort unter Einstellungen → Sicherheit |
 | CLI: „Status unavailable“ | Läuft die App? Einmal `status` nach Start ausführen, damit die Statusdatei geschrieben wird |
 | CLI `arm` läuft in Timeout | Touch ID / Passwort in der App bestätigen; bis 30 s warten |
 | Build nach ~7 Tagen abgelaufen | Personal Team — neu bauen mit `task release` oder Xcode |
@@ -242,7 +287,7 @@ Mehr: [maintainers/troubleshooting.md](../maintainers/troubleshooting.md)
 
 ---
 
-## 9. Weiterführend
+## 10. Weiterführend
 
 | Dokument | Zielgruppe |
 |----------|------------|

@@ -89,6 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     restoreArmedStateIfNeeded()
     registerRemoteTriggerHandler()
     registerPanicHotkey()
+    registerParanoidHotkey()
     CLICommandService.shared.start(appController: core.appController)
     publishCLIStatus()
 
@@ -124,6 +125,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   private func registerPanicHotkey() {
     PanicHotkeyService.shared.start { [weak self] in
       self?.core.appController.triggerPanicHotkeyResponse()
+    }
+  }
+
+  private func registerParanoidHotkey() {
+    ParanoidHotkeyService.shared.start { [weak self] in
+      self?.core.appController.triggerParanoidHotkeyResponse()
     }
   }
 
@@ -610,6 +617,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationWillTerminate(_ notification: Notification) {
     PanicHotkeyService.shared.stop()
+    ParanoidHotkeyService.shared.stop()
 
     // Log application termination
     core.appController.logEvent(.applicationTerminating, details: L10n.tr("logDetail.appTerminating"))

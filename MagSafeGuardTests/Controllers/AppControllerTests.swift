@@ -686,6 +686,94 @@ final class AppControllerTests: XCTestCase {
       sut.getEventLog().contains { $0.details == L10n.tr("logDetail.paranoidTriggered") })
   }
 
+  func testParanoidHotkeyTriggersWhenArmed() {
+    prepareParanoidConfig(legal: true, codeword: "secret42")
+    mockAuthService.shouldSucceed = true
+
+    let securityService = SecurityActionsService(systemActions: mockSecurityActions)
+    let pipeline = SecurityTriggerPipeline(
+      networkActions: NetworkActionsService(settingsManager: .shared),
+      securityActions: securityService,
+      settingsManager: .shared
+    )
+    let destruction = MockDestructionPipeline()
+    let paranoidExecutor = ParanoidModeExecutor(
+      pipeline: pipeline,
+      destruction: destruction,
+      settingsManager: .shared,
+      systemActions: mockSecurityActions
+    )
+    sut = AppController(
+      powerMonitor: PowerMonitorService.shared,
+      authService: mockAuthService.createConfiguredService(),
+      securityActions: securityService,
+      notificationService: NotificationService(deliveryMethod: mockNotificationService),
+      paranoidExecutor: paranoidExecutor,
+      triggerPipeline: pipeline
+    )
+
+    let armExpectation = expectation(description: "arm")
+    sut.armParanoid(codeword: "secret42", fileVaultChecker: Self.enabledFileVault) { _ in
+      armExpectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+
+    sut.triggerParanoidHotkeyResponse()
+
+    waitUntil("paranoid hotkey") {
+      self.mockSecurityActions.executeImmediateShutdownCalled
+    }
+    XCTAssertTrue(
+      sut.getEventLog().contains { $0.details == L10n.tr("logDetail.paranoidHotkey") })
+  }
+
+  func testParanoidHotkeyIgnoredWhenNotParanoidArmed() {
+    armSystem()
+    sut.triggerParanoidHotkeyResponse()
+    XCTAssertFalse(mockSecurityActions.executeImmediateShutdownCalled)
+  }
+
+  func testRemoteParanoidTriggersWhenArmed() {
+    prepareParanoidConfig(legal: true, codeword: "secret42")
+    mockAuthService.shouldSucceed = true
+
+    let securityService = SecurityActionsService(systemActions: mockSecurityActions)
+    let pipeline = SecurityTriggerPipeline(
+      networkActions: NetworkActionsService(settingsManager: .shared),
+      securityActions: securityService,
+      settingsManager: .shared
+    )
+    let destruction = MockDestructionPipeline()
+    let paranoidExecutor = ParanoidModeExecutor(
+      pipeline: pipeline,
+      destruction: destruction,
+      settingsManager: .shared,
+      systemActions: mockSecurityActions
+    )
+    sut = AppController(
+      powerMonitor: PowerMonitorService.shared,
+      authService: mockAuthService.createConfiguredService(),
+      securityActions: securityService,
+      notificationService: NotificationService(deliveryMethod: mockNotificationService),
+      paranoidExecutor: paranoidExecutor,
+      triggerPipeline: pipeline
+    )
+
+    let armExpectation = expectation(description: "arm")
+    sut.armParanoid(codeword: "secret42", fileVaultChecker: Self.enabledFileVault) { _ in
+      armExpectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+
+    sut.triggerRemoteParanoidResponse()
+
+    waitUntil("remote paranoid") {
+      self.mockSecurityActions.executeImmediateShutdownCalled
+    }
+    XCTAssertTrue(
+      sut.getEventLog().contains { $0.details == L10n.tr("logDetail.remoteParanoid") })
+  }
+
   func testEnterGracePeriodForTesting() {
     mockAuthService.shouldSucceed = true
     let armExpectation = expectation(description: "Arm")

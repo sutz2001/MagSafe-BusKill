@@ -41,7 +41,7 @@ User-facing presets in **Settings → Security** (`OperationProfile` in `Operati
 
 **Wi‑Fi off** is never preset-enabled (Find My). **Webhook** is user-specific.
 
-**Paranoid** (`ProtectionMode.paranoid`, v0.6 planned) will use `OperationProfilePresets.paranoidNetworkActions` — same network baseline as panic preset today.
+**Paranoid** (`ProtectionMode.paranoid`, v0.6) uses `OperationProfilePresets.paranoidNetworkActions` — same network baseline as panic preset.
 
 **User guide:** [user-guide.md §2](user-guide.md#2-operation-profiles-settings-presets) · [DE](user-guide.de.md#2-betriebsmodi-einstellungs-presets)
 
@@ -296,13 +296,17 @@ Registered in `Info.plist`. Handler: `RemoteTriggerService` + `AppDelegate.appli
 | URL host | Behavior | Preconditions |
 |----------|----------|---------------|
 | `trigger` | Immediate `triggerRemoteSecurityResponse()` → network + security actions | Remote trigger **enabled**, valid `?token=`, state **armed** or **gracePeriod** |
-| `arm` | `arm()` if disarmed | Enabled + token + user passes auth dialog |
+| `arm` | `armAutomatically()` if disarmed | Enabled + token |
+| `panic` | `triggerRemotePanicResponse()` | Enabled + token; **panic-armed** |
+| `paranoid` | `triggerRemoteParanoidResponse()` | Enabled + `effectiveParanoidToken`; **paranoid-armed** |
 | *(other)* | Logged warning, ignored | — |
 
 **Examples:**
 
 - Trigger actions: `magsafeguard://trigger?token=YOUR_SECRET`
 - Arm remotely: `magsafeguard://arm?token=YOUR_SECRET`
+- Panic: `magsafeguard://panic?token=YOUR_SECRET`
+- Paranoid: `magsafeguard://paranoid?token=YOUR_SECRET` (optional separate token in Settings)
 
 ```mermaid
 sequenceDiagram
@@ -450,7 +454,7 @@ All three off → `isDiscreetOperation`. Grace period and state changes still ru
 
 ## 10. Panic & Paranoid modes
 
-**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** Setup wizard + legal notice + codeword + **Arm Paranoid…** menu. Cable disconnect runs wipe then shutdown when paranoid-armed. Dedicated hotkey and `magsafeguard://paranoid` still open. Design: [panic-modes.md](panic-modes.md) · Issues: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
+**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** shipped — setup wizard, legal notice, codeword, **Arm Paranoid…**, cable / **⌃⌘⇧P** / `magsafeguard://paranoid`. Design: [panic-modes.md](panic-modes.md) · Legal gate: [legal-review-gate.md](../maintainers/legal-review-gate.md)
 
 ### Panic mode (shipped v0.5.0)
 
@@ -476,9 +480,15 @@ Arm via menu **Arm Panic Mode…** (legal notice on first use) or disarm with th
 
 Do not confuse `magsafeguard://trigger` with panic or paranoid.
 
-### Paranoid mode (arming shipped; hotkey/URL open)
+### Paranoid mode (shipped v0.6.0)
 
-Settings → Security: setup wizard (FileVault + wipe targets), **Full Legal Notice**, **Set Codeword**. When the checklist is ready, menu **Arm Paranoid Mode…** asks for codeword + intent checkbox, then Touch ID/password. Distinct menu-bar SF Symbol (`bolt.shield.fill`). Cable disconnect runs `ParanoidModeExecutor` (budgeted path wipe, then hard shutdown). Dedicated hotkey and `magsafeguard://paranoid` are M6.
+Settings → Security: setup wizard (FileVault + wipe targets), **Full Legal Notice**, **Set Codeword**. When the checklist is ready, menu **Arm Paranoid Mode…** asks for codeword + intent checkbox, then Touch ID/password. Distinct menu-bar SF Symbol (`bolt.shield.fill`). Triggers when paranoid-armed: cable disconnect, **⌃⌘⇧P**, or `magsafeguard://paranoid?token=…`.
+
+| Trigger | Behavior |
+|---------|----------|
+| Cable disconnect | `ParanoidModeExecutor` — budgeted path wipe, hygiene/lock, hard shutdown |
+| **⌃⌘⇧P** (global hotkey) | Same pipeline when paranoid-armed |
+| `magsafeguard://paranoid?token=…` | Same when already paranoid-armed (optional dedicated token) |
 
 ---
 
@@ -515,7 +525,8 @@ flowchart TD
 | Security actions | `MagSafeGuard/Services/SecurityActionsService.swift`, `MacSystemActions.swift` |
 | Network actions | `NetworkActionsService.swift`, `MacNetworkActions.swift` |
 | Remote URLs | `RemoteTriggerService.swift`, `AppDelegate.swift` |
-| Panic mode | `ProtectionMode.swift`, `PanicModeExecutor.swift`, `PanicHotkeyService.swift`, `AppController.armPanic()` |
+| Panic mode | `PanicModeExecutor.swift`, `PanicHotkeyService.swift`, `AppController.armPanic()` |
+| Paranoid mode | `ParanoidModeExecutor.swift`, `ParanoidHotkeyService.swift`, `MacDestructionPipeline.swift`, `AppController.armParanoid()` |
 | Auto-arm | `AutoArmManager.swift`, `LocationManager.swift`, `NetworkMonitor.swift` |
 | Settings model | `MagSafeGuardLib/.../SettingsModel.swift`, `OperationProfile.swift`, `SettingsView.swift` |
 | Event log UI | `MagSafeGuard/Views/EventLog/EventLogView.swift` |

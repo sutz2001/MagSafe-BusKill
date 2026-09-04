@@ -565,6 +565,14 @@ struct SecuritySettingsView: View {
 
       if settingsManager.settings.remoteTrigger.isEnabled {
         SecureField(L10n.tr("settings.network.remote.token"), text: remoteTokenBinding)
+        SecureField(
+          L10n.tr("settings.network.remote.paranoidToken"),
+          text: remoteParanoidTokenBinding
+        )
+        Text(l10n: "settings.network.remote.paranoidToken.hint")
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
         Text(L10n.tr("settings.network.remote.triggerExample", exampleRemoteURL))
           .font(.caption)
           .foregroundColor(.secondary)
@@ -574,6 +582,10 @@ struct SecuritySettingsView: View {
           .foregroundColor(.secondary)
           .textSelection(.enabled)
         Text(L10n.tr("settings.network.remote.panicExample", exampleRemotePanicURL))
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .textSelection(.enabled)
+        Text(L10n.tr("settings.network.remote.paranoidExample", exampleRemoteParanoidURL))
           .font(.caption)
           .foregroundColor(.secondary)
           .textSelection(.enabled)
@@ -597,6 +609,13 @@ struct SecuritySettingsView: View {
     let token = settingsManager.settings.remoteTrigger.token.isEmpty
       ? "YOUR_TOKEN" : settingsManager.settings.remoteTrigger.token
     return "magsafeguard://panic?token=\(token)"
+  }
+
+  private var exampleRemoteParanoidURL: String {
+    let remote = settingsManager.settings.remoteTrigger
+    let token = remote.effectiveParanoidToken.isEmpty
+      ? "YOUR_TOKEN" : remote.effectiveParanoidToken
+    return "magsafeguard://paranoid?token=\(token)"
   }
 
   private func networkActionRiskCaption(_ action: NetworkActionType) -> String {
@@ -649,6 +668,17 @@ struct SecuritySettingsView: View {
       set: { token in
         var remote = settingsManager.settings.remoteTrigger
         remote.token = token
+        settingsManager.updateSetting(\.remoteTrigger, value: remote)
+      }
+    )
+  }
+
+  private var remoteParanoidTokenBinding: Binding<String> {
+    Binding(
+      get: { settingsManager.settings.remoteTrigger.paranoidToken },
+      set: { token in
+        var remote = settingsManager.settings.remoteTrigger
+        remote.paranoidToken = token
         settingsManager.updateSetting(\.remoteTrigger, value: remote)
       }
     )

@@ -32,12 +32,23 @@ public final class RemoteTriggerService {
       return true
     }
 
-    guard validateToken(in: url, expected: settings.token) else {
+    let host = (url.host ?? "").lowercased()
+    let expectedToken: String
+    switch host {
+    case "paranoid":
+      expectedToken = settings.effectiveParanoidToken
+    case "trigger", "arm", "panic":
+      expectedToken = settings.token
+    default:
+      Log.warning("Unknown remote trigger host: \(host)", category: .security)
+      return true
+    }
+
+    guard validateToken(in: url, expected: expectedToken) else {
       Log.warning("Remote trigger rejected — invalid token", category: .security)
       return true
     }
 
-    let host = (url.host ?? "").lowercased()
     switch host {
     case "trigger":
       appController.triggerRemoteSecurityResponse()
@@ -48,8 +59,10 @@ public final class RemoteTriggerService {
     case "panic":
       appController.triggerRemotePanicResponse()
       return true
+    case "paranoid":
+      appController.triggerRemoteParanoidResponse()
+      return true
     default:
-      Log.warning("Unknown remote trigger host: \(host)", category: .security)
       return true
     }
   }

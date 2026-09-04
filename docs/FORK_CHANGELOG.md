@@ -3,6 +3,24 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.6.0] — 2026-09-04
+
+### Added
+
+- **Paranoid mode** — opt-in data destruction then hard shutdown when armed
+- Setup wizard (FileVault on + wipe targets), full legal notice (EN/DE), mandatory codeword
+- Menu **Arm Paranoid Mode…** (codeword + intent + Touch ID/password)
+- Sequential path wipe via `/bin/rm -rf` with list priority and time budget
+- Optional APFS volume erase (non-boot) and recovery-key backup delete
+- Hotkey **⌃⌘⇧P** and remote `magsafeguard://paranoid?token=…` (optional dedicated token)
+- Distinct menu-bar SF Symbol (`bolt.shield.fill`) while paranoid-armed
+- Maintainer **[legal review gate](maintainers/legal-review-gate.md)** checklist (sign-off still open for wide public beta)
+
+### Changed
+
+- Version **0.6.0** (build 20)
+- Docs: panic-modes, operating-modes, user guides, READMEs, roadmap milestone M1–M6
+
 ## [0.5.9] — 2026-09-02
 
 ### Added

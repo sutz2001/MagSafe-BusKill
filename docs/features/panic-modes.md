@@ -200,7 +200,7 @@ DestructionPipeline (M2 — shipped)
       always refuse boot volume UUID / whole boot disk
 ```
 
-`ParanoidConfiguration`, Settings UI, setup wizard, full legal notice, codeword, and `armParanoid` (menu) are in place. Remaining M6: dedicated hotkey + `magsafeguard://paranoid`.
+`ParanoidConfiguration`, Settings UI, setup wizard, full legal notice, codeword, `armParanoid` (menu), cable path, hotkey **⌃⌘⇧P**, and `magsafeguard://paranoid` are shipped in **0.6.0**. DE/EU legal review gate remains open for wide public beta.
 
 ### New types (sketch)
 
@@ -252,12 +252,12 @@ Do not conflate `trigger` with panic or paranoid.
 ### v0.6.0 — Paranoid
 
 - [x] Setup wizard (FileVault check, wipe targets)
-- [x] `ParanoidModeExecutor` + `DestructionPipeline` (wired on cable disconnect when paranoid-armed)
+- [x] `ParanoidModeExecutor` + `DestructionPipeline` (cable / hotkey / remote when paranoid-armed)
 - [x] Double confirm + codeword + full legal UI + `armParanoid` menu
-- [ ] Dedicated paranoid hotkey
-- [ ] `magsafeguard://paranoid`
-- [ ] Legal review DE/EU before public beta
-- [ ] README EN + DE updated (version 0.6.0)
+- [x] Dedicated paranoid hotkey (**⌃⌘⇧P**)
+- [x] `magsafeguard://paranoid`
+- [ ] Legal review DE/EU before wide public beta — [legal-review-gate.md](../maintainers/legal-review-gate.md)
+- [x] README EN + DE updated (version 0.6.0)
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "marketingVersion": "0.5.9",
-  "buildNumber": 19,
+  "marketingVersion": "0.6.0",
+  "buildNumber": 20,
   "notes": "Fork semver (independent from upstream 1.11.0). Bump patch for fixes, minor for features, major when reaching 1.0.0 stable."
 }

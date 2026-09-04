@@ -100,6 +100,7 @@ If enabled in **Settings → Security → Remote Trigger**:
 | `magsafeguard://arm?token=YOUR_TOKEN` | Arm without interactive auth (when disarmed) |
 | `magsafeguard://trigger?token=YOUR_TOKEN` | Run actions when **normally** armed |
 | `magsafeguard://panic?token=YOUR_TOKEN` | Panic response when **panic-armed** (see §5) |
+| `magsafeguard://paranoid?token=YOUR_TOKEN` | Paranoid response when **paranoid-armed** (see §6) |
 
 Use from **Shortcuts** on iPhone/Mac. Keep the token secret.
 
@@ -202,30 +203,72 @@ To leave: menu → **Disarm Protection** (normal disarm flow).
 
 ---
 
-## 6. Quick comparison
+## 6. Paranoid protection mode (v0.6.0)
 
-| | Normal armed | Discreet profile | Panic profile | Panic **protection** armed |
-|---|--------------|------------------|---------------|----------------------------|
-| Typical grace | 30 s | 20 s | 5 s | **0 s** |
-| Notifications | On | Off | Off | Off |
-| Shutdown on cable | Configurable delay | Configurable | Logout + your order | **Immediate** |
-| Hotkey | — | — | — | **⌃⌘P** |
+**Different from the Panic Settings preset.** Paranoid is a separate armed state that **destroys configured data**, then shuts down.
 
-**Paranoid mode** (data destruction) is **not** implemented — planned v0.6.0 (will reuse panic-style network baseline including clipboard clear).
+| | Panic **protection** armed | Paranoid **protection** armed |
+|---|----------------------------|-------------------------------|
+| Data destruction | No | **Yes** (configured paths/volumes) |
+| Prerequisites | Short legal notice | FileVault on, wipe targets, full legal, codeword |
+| Hotkey | **⌃⌘P** | **⌃⌘⇧P** |
+| Remote URL | `…/panic?token=` | `…/paranoid?token=` (optional separate token) |
+
+### How to prepare
+
+1. **Settings → Security → Paranoid Setup Wizard…** (FileVault on + at least one wipe path or APFS volume UUID).
+2. **Full Legal Notice…** — scroll, checkbox, accept.
+3. **Set Codeword…** (min. 4 characters; stored hashed only).
+4. Optionally set wipe order (↑/↓) and wipe time budget.
+
+### How to arm
+
+1. Menu → **Arm Paranoid Mode…**
+2. Enter codeword + confirm intent checkbox.
+3. Authenticate with Touch ID / password.
+4. Menu bar uses **bolt.shield.fill** while paranoid-armed.
+
+### How to trigger (when paranoid-armed)
+
+| Trigger | What happens |
+|---------|----------------|
+| **Unplug cable** | Wipe (list order, time budget) + lock/hygiene, then hard shutdown |
+| **⌃⌘⇧P** | Same |
+| `magsafeguard://paranoid?token=…` | Same (remote trigger enabled; token must match) |
+
+### ⚠️ Warnings
+
+- **Irreversible data loss** on configured targets.
+- APFS does **not** guarantee secure overwrite (TRIM/snapshots).
+- Never target the boot volume.
+- **Do not** use on employer/shared Macs unless authorized.
+- Test only with disposable paths on a spare Mac / dedicated volume.
+- DE/EU legal review for wide public beta: [legal-review-gate.md](../maintainers/legal-review-gate.md).
 
 ---
 
-## 7. Auto-arm (optional)
+## 7. Quick comparison
+
+| | Normal armed | Discreet profile | Panic profile | Panic **protection** | Paranoid **protection** |
+|---|--------------|------------------|---------------|----------------------|-------------------------|
+| Typical grace | 30 s | 20 s | 5 s | **0 s** | **0 s** |
+| Data wipe | No | No | No | No | **Yes** |
+| Hotkey | — | — | — | **⌃⌘P** | **⌃⌘⇧P** |
+
+---
+
+## 8. Auto-arm (optional)
 
 In the app, open **Settings → Auto-Arm**.
 
 - Arm automatically when leaving a trusted location or joining an untrusted network.
 - Uses `armAutomatically()` — no Touch ID prompt on auto-arm (by design).
 - Can be temporarily disabled from the menu.
+- Auto-arm uses **normal** armed mode (not panic/paranoid).
 
 ---
 
-## 8. Troubleshooting
+## 9. Troubleshooting
 
 | Problem | Check |
 |---------|--------|
@@ -233,7 +276,9 @@ In the app, open **Settings → Auto-Arm**.
 | No menu bar icon | App running? Check menu bar overflow (•••) |
 | Can't find app | Settings → General → **Show in Dock** on, or use Spotlight |
 | Hotkey ⌃⌘P does nothing | Must be **panic-armed**; app must be running |
-| Remote URL ignored | Token correct? Remote trigger enabled in Settings? |
+| Hotkey ⌃⌘⇧P does nothing | Must be **paranoid-armed**; app must be running |
+| Remote URL ignored | Token correct? Remote trigger enabled? Correct host (`panic` vs `paranoid`)? |
+| Can't arm Paranoid | Setup + legal + codeword checklist in Settings → Security |
 | CLI says “Status unavailable” | Is the app running? Run `status` once after launch so the status file is written |
 | CLI `arm` times out | Complete Touch ID / password in the app; allow up to 30 s |
 | Build expired after ~7 days | Personal Team — rebuild with `task release` or Xcode |
@@ -242,7 +287,7 @@ More: [maintainers/troubleshooting.md](../maintainers/troubleshooting.md)
 
 ---
 
-## 9. Further reading
+## 10. Further reading
 
 | Document | Audience |
 |----------|----------|

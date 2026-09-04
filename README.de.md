@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.5.9` (Build `19`) |
+| **Version** | `0.6.0` (Build `20`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -88,7 +88,7 @@ Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser
 | Netzwerk-Aktionen + Fernauslösung | **Ausgeliefert** | v0.4.0 — Webhook, VPN, SSH, Zwischenablage, WLAN; `magsafeguard://` |
 | Diskreter Betrieb | **Ausgeliefert** | v0.4.3+ — Profil **Diskret** oder Mitteilungs-Schalter · [Anleitung](docs/features/user-guide.de.md#4-diskreter-betrieb) |
 | Panic-Modus | **Ausgeliefert** | v0.5.0 — 0 s Karenz im Panic-Schutz, **⌃⌘P** · [Anleitung](docs/features/user-guide.de.md#5-panic-schutzmodus-v050) |
-| Paranoid-Modus | **Geplant** | v0.6.0 — Vernichtung + Shutdown (FileVault + Setup nötig) |
+| Paranoid-Modus | **Ausgeliefert** | v0.6.0 — Wipe + Shutdown; FileVault + Setup + Codewort · [Anleitung](docs/features/user-guide.de.md#6-paranoid-schutzmodus-v060) |
 | Notarisierte DMG für Dritte | **Später** | v1.0 · Paid Dev optional |
 | Mac App Store | **Ausgeschlossen** | Sandbox inkompatibel |
 
@@ -204,21 +204,23 @@ task release:clean
 | Erledigt | **0.5.5** | Trigger-Pipeline: Hygiene-Phase, Skript-Budget, Logout + sofort Shutdown |
 | Erledigt | **0.5.6** | Einsteiger-Preset, Risiko-Labels, Erst-Scharf-Hinweis, `magsafeguard-cli` |
 | Erledigt | **0.5.7** | Onboarding aufgeteilt (Alltag vs. Panic/Paranoid), CLI in Kurzanleitung |
-| Als Nächstes | **0.6.0** | Paranoid-Modus — Datenvernichtung (Setup nötig) |
+| Erledigt | **0.5.8** | Auswerfen entfernbarer Volumes (Hygiene) |
+| Erledigt | **0.5.9** | Cryptomator/Bluetooth-Hygiene, gebündelte Trigger-Skripte |
+| Erledigt | **0.6.0** | Paranoid-Modus — Wipe, FileVault-Gate, Codewort, **⌃⌘⇧P**, `magsafeguard://paranoid` |
 | Stabil | **1.0.0** | Notarisierte Developer-ID-Verteilung |
 
 Details: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)** · **Kurzanleitung:** [DE](docs/features/user-guide.de.md) · [EN](docs/features/user-guide.md)
 
-### Paranoid-Modus (v0.6.0 — nicht ausgeliefert)
+### Paranoid-Modus (v0.6.0 — ausgeliefert)
 
-> Design: **[docs/features/panic-modes.md](docs/features/panic-modes.md)**
+> Details: **[docs/features/panic-modes.md](docs/features/panic-modes.md)** · [Kurzanleitung §6](docs/features/user-guide.de.md#6-paranoid-schutzmodus-v060)
 
-- [ ] Voller Rechtshinweis (DE + EN): irreversibler Datenverlust, eigene Verantwortung, Dienstgerät-Warnung
-- [ ] Doppelte Bestätigung + Pflicht-Codewort
-- [ ] Setup-Wizard (FileVault, Wipe-Pfade/Volumes)
-- [ ] Rechtliche Prüfung DE/EU (keine Rechtsberatung — ggf. Anwalt)
+- [x] Voller Rechtshinweis (DE + EN): irreversibler Datenverlust, eigene Verantwortung, Dienstgerät-Warnung
+- [x] Doppelte Bestätigung + Pflicht-Codewort
+- [x] Setup-Wizard (FileVault, Wipe-Pfade/Volumes)
+- [ ] Rechtliche Prüfung DE/EU vor breiter öffentlicher Beta — [Checkliste](docs/maintainers/legal-review-gate.md) (keine Rechtsberatung — ggf. Anwalt)
 
-**Panic (v0.5.0)** ist ausgeliefert — siehe [Kurzanleitung §5](docs/features/user-guide.de.md#5-panic-schutzmodus-v050).
+**Panic (v0.5.0)** und **Paranoid (v0.6.0)** sind ausgeliefert — siehe [Kurzanleitung](docs/features/user-guide.de.md).
 
 ---
 

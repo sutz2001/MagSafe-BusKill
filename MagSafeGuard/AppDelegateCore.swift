@@ -182,7 +182,7 @@ public class AppDelegateCore {
       let paranoidItem = NSMenuItem.accessibleMenuItem(
         title: L10n.tr("menu.armParanoid"),
         accessibilityLabel: L10n.tr("menu.armParanoid"),
-        hint: L10n.tr("menu.armParanoid.hint"),
+        hint: L10n.tr("menu.armParanoid.hint", ParanoidHotkeyService.displayShortcut),
         keyEquivalent: "P",
         action: #selector(AppDelegate.toggleParanoidMode),
         target: appDelegate
@@ -200,7 +200,7 @@ public class AppDelegateCore {
       let paranoidStatus = NSMenuItem.accessibleMenuItem(
         title: L10n.tr("menu.paranoidArmed"),
         accessibilityLabel: L10n.tr("menu.paranoidArmed"),
-        hint: L10n.tr("menu.paranoidArmed.hint")
+        hint: L10n.tr("menu.paranoidArmed.hint", ParanoidHotkeyService.displayShortcut)
       )
       paranoidStatus.isEnabled = false
       menu.addItem(paranoidStatus)

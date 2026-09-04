@@ -46,10 +46,27 @@ public enum NetworkActionType: String, CaseIterable, Codable, Sendable, Equatabl
 /// Remote trigger configuration (URL scheme).
 public struct RemoteTriggerSettings: Codable, Equatable, Sendable {
   public var isEnabled: Bool
+  /// Shared token for `trigger`, `arm`, and `panic` hosts.
   public var token: String
+  /// Optional token for `paranoid` only. Empty → falls back to `token`.
+  public var paranoidToken: String
 
-  public init(isEnabled: Bool = false, token: String = "") {
+  public init(isEnabled: Bool = false, token: String = "", paranoidToken: String = "") {
     self.isEnabled = isEnabled
     self.token = token
+    self.paranoidToken = paranoidToken
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? false
+    token = try container.decodeIfPresent(String.self, forKey: .token) ?? ""
+    paranoidToken = try container.decodeIfPresent(String.self, forKey: .paranoidToken) ?? ""
+  }
+
+  /// Effective token for `magsafeguard://paranoid`.
+  public var effectiveParanoidToken: String {
+    let trimmed = paranoidToken.trimmingCharacters(in: .whitespacesAndNewlines)
+    return trimmed.isEmpty ? token : trimmed
   }
 }

@@ -561,6 +561,22 @@ public class AppController: ObservableObject {
     executePanicResponse()
   }
 
+  /// Remote paranoid URL (`magsafeguard://paranoid`) — only when paranoid-armed.
+  public func triggerRemoteParanoidResponse() {
+    guard protectionMode == .paranoid else { return }
+    guard currentState == .armed || currentState == .gracePeriod else { return }
+    logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.remoteParanoid"))
+    executeParanoidResponse()
+  }
+
+  /// Global paranoid hotkey (⌃⌘⇧P) — only when paranoid-armed.
+  public func triggerParanoidHotkeyResponse() {
+    guard protectionMode == .paranoid else { return }
+    guard currentState == .armed || currentState == .gracePeriod else { return }
+    logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.paranoidHotkey"))
+    executeParanoidResponse()
+  }
+
   // MARK: - Auto-Arm Management
 
   /// Gets the auto-arm manager instance
