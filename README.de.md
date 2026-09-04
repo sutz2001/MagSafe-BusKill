@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.6.0` (Build `20`) |
+| **Version** | `0.6.1` (Build `21`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -218,7 +218,7 @@ Details: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/F
 - [x] Voller Rechtshinweis (DE + EN): irreversibler Datenverlust, eigene Verantwortung, Dienstgerät-Warnung
 - [x] Doppelte Bestätigung + Pflicht-Codewort
 - [x] Setup-Wizard (FileVault, Wipe-Pfade/Volumes)
-- [ ] Rechtliche Prüfung DE/EU vor breiter öffentlicher Beta — [Checkliste](docs/maintainers/legal-review-gate.md) (keine Rechtsberatung — ggf. Anwalt)
+- [x] Informed Self-Review (BusKill-orientiert) — [Checkliste](docs/maintainers/legal-review-gate.md); formeller Anwalt optional vor kommerziellem Push
 
 **Panic (v0.5.0)** und **Paranoid (v0.6.0)** sind ausgeliefert — siehe [Kurzanleitung](docs/features/user-guide.de.md).
 

@@ -3,6 +3,17 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.6.1] — 2026-09-04
+
+### Added
+
+- Dedicated menu-bar asset **`MenuBarIconParanoid`** (template 1x/2x) for paranoid-armed status
+
+### Changed
+
+- Version **0.6.1** (build 21)
+- **[Legal review gate](maintainers/legal-review-gate.md)** — informed self-review signed off (BusKill-aligned warnings); formal counsel deferred until commercial push
+
 ## [0.6.0] — 2026-09-04
 
 ### Added
@@ -14,7 +25,7 @@ Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archiv
 - Optional APFS volume erase (non-boot) and recovery-key backup delete
 - Hotkey **⌃⌘⇧P** and remote `magsafeguard://paranoid?token=…` (optional dedicated token)
 - Distinct menu-bar SF Symbol (`bolt.shield.fill`) while paranoid-armed
-- Maintainer **[legal review gate](maintainers/legal-review-gate.md)** checklist (sign-off still open for wide public beta)
+- Maintainer **[legal review gate](maintainers/legal-review-gate.md)** checklist
 
 ### Changed
 

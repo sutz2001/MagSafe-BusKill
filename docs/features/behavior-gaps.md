@@ -62,7 +62,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 
 | ID | Issue | Target |
 |----|-------|--------|
-| — | Paranoid mode (data destruction) | **Resolved in 0.6.0** — arming, wipe, hotkey, URL shipped; DE/EU legal review gate still open — [panic-modes.md](panic-modes.md) · [legal-review-gate.md](../maintainers/legal-review-gate.md) |
+| — | Paranoid mode (data destruction) | **Resolved in 0.6.0 / 0.6.1** — arming, wipe, hotkey, URL, menu icon; informed legal self-review signed off — [panic-modes.md](panic-modes.md) · [legal-review-gate.md](../maintainers/legal-review-gate.md) |
 
 ---
 

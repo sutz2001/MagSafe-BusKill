@@ -243,7 +243,7 @@ To leave: menu → **Disarm Protection** (normal disarm flow).
 - Never target the boot volume.
 - **Do not** use on employer/shared Macs unless authorized.
 - Test only with disposable paths on a spare Mac / dedicated volume.
-- DE/EU legal review for wide public beta: [legal-review-gate.md](../maintainers/legal-review-gate.md).
+- Informed legal self-review (BusKill-aligned): [legal-review-gate.md](../maintainers/legal-review-gate.md). Formal counsel optional before commercial push.
 
 ---
 

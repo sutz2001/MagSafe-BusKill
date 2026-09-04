@@ -243,7 +243,7 @@ Verlassen: Menü → **Schutz deaktivieren**.
 - Nie das Boot-Volume wählen.
 - **Nicht** auf Dienst-/geteilten Macs ohne Berechtigung.
 - Nur mit Wegwerf-Pfaden auf Spare-Mac / Test-Volume testen.
-- DE/EU-Rechtsprüfung für breite öffentliche Beta: [legal-review-gate.md](../maintainers/legal-review-gate.md).
+- Informierte Selbstprüfung (BusKill-orientiert): [legal-review-gate.md](../maintainers/legal-review-gate.md). Formeller Anwalt optional vor kommerziellem Push.
 
 ---
 

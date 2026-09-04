@@ -19,7 +19,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 
 | | |
 | --- | --- |
-| **Version** | `0.6.0` (build `20`) |
+| **Version** | `0.6.1` (build `21`) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -235,7 +235,7 @@ The repository is **public** at [github.com/sutz2001/MagSafe-BusKill](https://gi
 | README — fork vs upstream, maintainer, license pointers | Done |
 | Binary releases include `LICENSE` + `NOTICE` | To do when publishing GitHub Releases |
 | Panic-mode legal UI | Shipped in v0.5.0 (short notice EN/DE at first arm) |
-| Paranoid-mode legal UI | Shipped in v0.6.0 (full notice EN/DE + codeword); DE/EU review gate open |
+| Paranoid-mode legal UI | Shipped in v0.6.0 (full notice EN/DE + codeword); informed self-review signed off in v0.6.1 |
 
 The first three items were verified on `main` before the repository was made public (August 2026).
 

@@ -192,7 +192,7 @@ File GitHub Issue or add row to behavior-gaps **Open** until fixed.
 |----------------|------|
 | **0.5.x patches** | Bugs from daily use only |
 | **1.0.0** | Stable + optional notarized DMG |
-| **0.6.0 Paranoid** | Only after explicit decision + legal review |
+| **0.6.x Paranoid** | Shipped; informed legal self-review signed (formal counsel optional for commercial) |
 
 ---
 

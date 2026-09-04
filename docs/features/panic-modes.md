@@ -200,7 +200,7 @@ DestructionPipeline (M2 — shipped)
       always refuse boot volume UUID / whole boot disk
 ```
 
-`ParanoidConfiguration`, Settings UI, setup wizard, full legal notice, codeword, `armParanoid` (menu), cable path, hotkey **⌃⌘⇧P**, and `magsafeguard://paranoid` are shipped in **0.6.0**. DE/EU legal review gate remains open for wide public beta.
+`ParanoidConfiguration`, Settings UI, setup wizard, full legal notice, codeword, `armParanoid` (menu), cable path, hotkey **⌃⌘⇧P**, and `magsafeguard://paranoid` are shipped in **0.6.0**. Menu-bar asset + informed legal self-review in **0.6.1** (formal counsel optional before commercial push).
 
 ### New types (sketch)
 
@@ -256,7 +256,7 @@ Do not conflate `trigger` with panic or paranoid.
 - [x] Double confirm + codeword + full legal UI + `armParanoid` menu
 - [x] Dedicated paranoid hotkey (**⌃⌘⇧P**)
 - [x] `magsafeguard://paranoid`
-- [ ] Legal review DE/EU before wide public beta — [legal-review-gate.md](../maintainers/legal-review-gate.md)
+- [x] Informed legal self-review (BusKill-aligned) — [legal-review-gate.md](../maintainers/legal-review-gate.md); formal counsel deferred
 - [x] README EN + DE updated (version 0.6.0)
 
 ---
