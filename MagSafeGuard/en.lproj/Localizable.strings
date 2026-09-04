@@ -1,6 +1,7 @@
 /* Settings — sidebar tabs */
 "settings.tab.general" = "General";
 "settings.tab.security" = "Security";
+"settings.tab.paranoid" = "Paranoid";
 "settings.tab.autoArm" = "Auto-Arm";
 "settings.tab.notifications" = "Notifications";
 "settings.tab.cloudSync" = "iCloud Sync";
@@ -203,7 +204,7 @@
 "paranoid.legal.accept" = "Accept Legal Notice";
 
 "paranoid.codeword.title" = "Paranoid codeword";
-"paranoid.codeword.caption" = "Required to arm Paranoid. Stored as a salted hash only — not recoverable if forgotten. Minimum 4 characters.";
+"paranoid.codeword.caption" = "Required to arm Paranoid. Stored as a salted hash only — not recoverable if forgotten. Minimum 6 characters.";
 "paranoid.codeword.alreadySet" = "A codeword is already set. Saving replaces it.";
 "paranoid.codeword.placeholder" = "Codeword";
 "paranoid.codeword.confirmPlaceholder" = "Confirm codeword";
@@ -218,7 +219,7 @@
 "paranoid.arm.confirmCheckbox" = "I understand this will destroy configured data on trigger and cannot be undone.";
 "paranoid.arm.continue" = "Continue to Authenticate";
 "paranoid.arm.notReady.title" = "Paranoid not ready";
-"paranoid.arm.notReady.message" = "Complete the setup wizard, accept the full legal notice, and set a codeword in Settings → Security before arming.";
+"paranoid.arm.notReady.message" = "Complete the setup wizard, accept the full legal notice, and set a codeword in Settings → Paranoid before arming.";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
@@ -622,8 +623,8 @@
 "onboarding.paranoid.title" = "Paranoid mode";
 "onboarding.paranoid.body" = "One step beyond panic: guided data destruction before shutdown. Opt-in only — for users who accept irreversible loss.";
 "onboarding.paranoid.feature" = "Paranoid protection (v0.6) — wipe configured paths, optional APFS volume erase, then hard shutdown.";
-"onboarding.paranoid.scripts" = "Start in Settings → Security → Paranoid Setup Wizard (FileVault on + at least one wipe target). Built-in hygiene: eject, Cryptomator, Bluetooth.";
-"onboarding.paranoid.footnote" = "Complete Settings → Security: setup wizard, legal notice, and codeword. Then Arm Paranoid… from the menu. Dedicated hotkey and remote URL follow later.";
+"onboarding.paranoid.scripts" = "Start in Settings → Paranoid → Paranoid Setup Wizard (FileVault on + at least one wipe target). Built-in hygiene: eject, Cryptomator, Bluetooth.";
+"onboarding.paranoid.footnote" = "Complete Settings → Paranoid: setup wizard, legal notice, and codeword. Then Arm Paranoid… from the menu. Dedicated hotkey and remote URL follow later.";
 "onboarding.highAssurance.title" = "Panic & maximum protection";
 "onboarding.highAssurance.body" = "Stronger presets and a separate panic-armed mode for zero grace on cable pull. Use only when you accept possible data loss.";
 "onboarding.highAssurance.modes.title" = "High-assurance options";

@@ -482,7 +482,7 @@ Do not confuse `magsafeguard://trigger` with panic or paranoid.
 
 ### Paranoid mode (shipped v0.6.0)
 
-Settings → Security: setup wizard (FileVault + wipe targets), **Full Legal Notice**, **Set Codeword**. When the checklist is ready, menu **Arm Paranoid Mode…** asks for codeword + intent checkbox, then Touch ID/password. Distinct menu-bar asset **`MenuBarIconParanoid`** (bolt-shield template). Triggers when paranoid-armed: cable disconnect, **⌃⌘⇧P**, or `magsafeguard://paranoid?token=…`.
+Settings → **Paranoid** (dedicated sidebar tab): setup wizard (FileVault + wipe targets), **Full Legal Notice**, **Set Codeword** (min. 6 characters). When the checklist is ready, menu **Arm Paranoid Mode…** asks for codeword + intent checkbox, then Touch ID/password. Distinct menu-bar asset **`MenuBarIconParanoid`** (bolt-shield template). Triggers when paranoid-armed: cable disconnect, **⌃⌘⇧P**, or `magsafeguard://paranoid?token=…`.
 
 | Trigger | Behavior |
 |---------|----------|

@@ -14,7 +14,7 @@ struct ParanoidCodewordSetupView: View {
   @State private var confirm = ""
   @State private var errorText: String?
 
-  private let minimumLength = 4
+  private let minimumLength = ParanoidConfiguration.minimumCodewordLength
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {

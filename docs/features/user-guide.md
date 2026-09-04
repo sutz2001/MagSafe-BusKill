@@ -216,9 +216,9 @@ To leave: menu → **Disarm Protection** (normal disarm flow).
 
 ### How to prepare
 
-1. **Settings → Security → Paranoid Setup Wizard…** (FileVault on + at least one wipe path or APFS volume UUID).
+1. **Settings → Paranoid → Paranoid Setup Wizard…** (FileVault on + at least one wipe path or APFS volume UUID).
 2. **Full Legal Notice…** — scroll, checkbox, accept.
-3. **Set Codeword…** (min. 4 characters; stored hashed only).
+3. **Set Codeword…** (min. 6 characters; stored hashed only).
 4. Optionally set wipe order (↑/↓) and wipe time budget.
 
 ### How to arm
@@ -278,7 +278,7 @@ In the app, open **Settings → Auto-Arm**.
 | Hotkey ⌃⌘P does nothing | Must be **panic-armed**; app must be running |
 | Hotkey ⌃⌘⇧P does nothing | Must be **paranoid-armed**; app must be running |
 | Remote URL ignored | Token correct? Remote trigger enabled? Correct host (`panic` vs `paranoid`)? |
-| Can't arm Paranoid | Setup + legal + codeword checklist in Settings → Security |
+| Can't arm Paranoid | Setup + legal + codeword checklist in Settings → Paranoid |
 | CLI says “Status unavailable” | Is the app running? Run `status` once after launch so the status file is written |
 | CLI `arm` times out | Complete Touch ID / password in the app; allow up to 30 s |
 | Build expired after ~7 days | Personal Team — rebuild with `task release` or Xcode |

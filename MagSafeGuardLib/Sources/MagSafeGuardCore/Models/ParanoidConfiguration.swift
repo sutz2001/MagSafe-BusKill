@@ -13,6 +13,9 @@ import Security
 /// backup path, hashed codeword, and legal/setup gates used by `armParanoid`.
 public struct ParanoidConfiguration: Codable, Equatable, Sendable {
 
+  /// Minimum length for a new codeword (arming secret).
+  public static let minimumCodewordLength = 6
+
   /// Absolute directory or file paths to delete on trigger (list order = wipe priority).
   public var wipePaths: [String]
 
@@ -122,12 +125,17 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
   }
 
   /// Stores a new codeword (overwrites previous hash/salt).
-  public mutating func setCodeword(_ plaintext: String) {
+  /// Empty string clears. Returns `false` if plaintext is non-empty but shorter than `minimumCodewordLength`.
+  @discardableResult
+  public mutating func setCodeword(_ plaintext: String) -> Bool {
     let trimmed = plaintext.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else {
       codewordHash = nil
       codewordSalt = nil
-      return
+      return true
+    }
+    guard trimmed.count >= Self.minimumCodewordLength else {
+      return false
     }
     var salt = Data(count: 16)
     salt.withUnsafeMutableBytes { buffer in
@@ -135,6 +143,7 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
     }
     codewordSalt = salt.map { String(format: "%02x", $0) }.joined()
     codewordHash = Self.hashCodeword(trimmed, salt: salt)
+    return true
   }
 
   /// Constant-time-ish compare of plaintext against stored hash.

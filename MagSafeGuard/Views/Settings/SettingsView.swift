@@ -27,6 +27,7 @@ public struct SettingsView: View {
   private enum SettingsTab: CaseIterable, Identifiable, Hashable {
     case general
     case security
+    case paranoid
     case autoArm
     case notifications
     case cloudSync
@@ -38,6 +39,7 @@ public struct SettingsView: View {
       switch self {
       case .general: return "settings.tab.general"
       case .security: return "settings.tab.security"
+      case .paranoid: return "settings.tab.paranoid"
       case .autoArm: return "settings.tab.autoArm"
       case .notifications: return "settings.tab.notifications"
       case .cloudSync: return "settings.tab.cloudSync"
@@ -53,6 +55,8 @@ public struct SettingsView: View {
         return "gear"
       case .security:
         return "lock.shield"
+      case .paranoid:
+        return "bolt.shield.fill"
       case .autoArm:
         return "location.fill"
       case .notifications:
@@ -90,6 +94,10 @@ public struct SettingsView: View {
             .navigationTitle(tab.title)
         case .security:
           SecuritySettingsView(onOpenNotifications: { selectedTab = .notifications })
+            .environmentObject(settingsManager)
+            .navigationTitle(tab.title)
+        case .paranoid:
+          ParanoidSettingsView()
             .environmentObject(settingsManager)
             .navigationTitle(tab.title)
         case .autoArm:
@@ -503,8 +511,6 @@ struct SecuritySettingsView: View {
 
       networkActionsSection
       remoteTriggerSection
-      ParanoidSettingsSection()
-        .environmentObject(settingsManager)
     }
     .formStyle(.grouped)
   }

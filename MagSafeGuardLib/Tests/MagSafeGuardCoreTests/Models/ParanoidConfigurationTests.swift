@@ -77,11 +77,19 @@ final class ParanoidConfigurationTests: XCTestCase {
 
   func testClearingCodewordRemovesHash() {
     var config = ParanoidConfiguration()
-    config.setCodeword("temp")
+    config.setCodeword("temporary")
     config.setCodeword("   ")
     XCTAssertNil(config.codewordHash)
     XCTAssertNil(config.codewordSalt)
     XCTAssertFalse(config.hasCodeword)
+  }
+
+  func testShortCodewordIsRejected() {
+    var config = ParanoidConfiguration()
+    XCTAssertFalse(config.setCodeword("short"))
+    XCTAssertFalse(config.hasCodeword)
+    XCTAssertTrue(config.setCodeword("longenough"))
+    XCTAssertTrue(config.hasCodeword)
   }
 
   func testCodableRoundTrip() throws {

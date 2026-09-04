@@ -216,9 +216,9 @@ Verlassen: Menü → **Schutz deaktivieren**.
 
 ### Vorbereiten
 
-1. **Einstellungen → Sicherheit → Paranoid-Setup-Assistent…** (FileVault an + Wipe-Pfad oder APFS-Volume-UUID).
+1. **Einstellungen → Paranoid → Paranoid-Setup-Assistent…** (FileVault an + Wipe-Pfad oder APFS-Volume-UUID).
 2. **Vollständiger Rechtstext…** — scrollen, Checkbox, akzeptieren.
-3. **Codewort setzen…** (mind. 4 Zeichen; nur Hash gespeichert).
+3. **Codewort setzen…** (mind. 6 Zeichen; nur Hash gespeichert).
 4. Optional Wipe-Reihenfolge (↑/↓) und Zeitbudget.
 
 ### Scharfschalten
@@ -278,7 +278,7 @@ In der App: **Einstellungen → Auto-Arm**.
 | Hotkey ⌃⌘P ohne Wirkung | Muss **panic-scharf** sein; App muss laufen |
 | Hotkey ⌃⌘⇧P ohne Wirkung | Muss **paranoid-scharf** sein; App muss laufen |
 | Fern-URL ignoriert | Token korrekt? Fernauslösung an? Richtiger Host (`panic` vs `paranoid`)? |
-| Paranoid lässt sich nicht scharfschalten | Checkliste Setup + Rechtstext + Codewort unter Einstellungen → Sicherheit |
+| Paranoid lässt sich nicht scharfschalten | Checkliste Setup + Rechtstext + Codewort unter Einstellungen → Paranoid |
 | CLI: „Status unavailable“ | Läuft die App? Einmal `status` nach Start ausführen, damit die Statusdatei geschrieben wird |
 | CLI `arm` läuft in Timeout | Touch ID / Passwort in der App bestätigen; bis 30 s warten |
 | Build nach ~7 Tagen abgelaufen | Personal Team — neu bauen mit `task release` oder Xcode |

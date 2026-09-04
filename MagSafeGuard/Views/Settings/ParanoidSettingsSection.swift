@@ -6,7 +6,16 @@
 import MagSafeGuardCore
 import SwiftUI
 
-/// Settings → Security: wipe targets, legal notice, codeword (arm from menu when ready).
+/// Settings → Paranoid tab: wipe targets, legal notice, codeword (arm from menu when ready).
+struct ParanoidSettingsView: View {
+  var body: some View {
+    Form {
+      ParanoidSettingsSection()
+    }
+    .formStyle(.grouped)
+  }
+}
+
 struct ParanoidSettingsSection: View {
   @EnvironmentObject var settingsManager: UserDefaultsManager
   @State private var showingSetupWizard = false

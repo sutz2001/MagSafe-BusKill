@@ -125,7 +125,7 @@ BusKill’s [LUKS self-destruct](https://www.buskill.in/luks-self-destruct/) (Li
 |------|-------------|
 | Enable | Paranoid setup wizard completed |
 | Confirm | **Double confirmation** |
-| Codeword | **Mandatory** codeword to arm |
+| Codeword | **Mandatory** codeword to arm (min. 6 characters) |
 | Legal | **Full disclaimer** (EN + DE) — see [Legal notices](#legal-notices) |
 | Work device | Explicit **employer / work laptop** warning |
 | Icon | Distinct menu bar icon (different from panic) |

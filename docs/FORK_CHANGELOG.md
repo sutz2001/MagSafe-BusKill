@@ -3,6 +3,14 @@
 Independent release history for [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
 Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archive/UPSTREAM_CHANGELOG.md).
 
+## [0.6.2] — 2026-09-04
+
+### Changed
+
+- Paranoid settings moved to dedicated **Settings → Paranoid** sidebar tab (no longer under Security)
+- Paranoid codeword minimum length raised from 4 to **6** characters
+- Version **0.6.2** (build 22)
+
 ## [0.6.1] — 2026-09-04
 
 ### Added

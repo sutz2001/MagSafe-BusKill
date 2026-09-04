@@ -19,7 +19,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 
 | | |
 | --- | --- |
-| **Version** | `0.6.1` (Build `21`) |
+| **Version** | `0.6.2` (Build `22`) |
 | **Plattform** | macOS 13+ (Ventura) · Menüleisten-App |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **Lizenz** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
