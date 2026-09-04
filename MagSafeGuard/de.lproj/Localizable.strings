@@ -118,11 +118,22 @@
 "settings.network.ejectRemovableVolumes.warning" = "Hard Eject wartet nicht, bis Apps fertig schreiben. Ungespeicherte Daten auf USB-Sticks, SD-Karten oder externen SSDs können verloren gehen oder beschädigt werden. Interne Festplatte bleibt unberührt.";
 "settings.network.disableBluetooth.warning" = "Benötigt blueutil (brew install blueutil). Bluetooth wird sofort ausgeschaltet; gekoppelte Geräte trennen.";
 
-/* Paranoid (v0.6 — nur Konfiguration; Scharfschalten folgt) */
+/* Paranoid (v0.6 — configuration + arming gates) */
 "settings.paranoid.title" = "Paranoid (Vorschau)";
-"settings.paranoid.caption" = "Wipe-Ziele für den kommenden Paranoid-Modus festlegen. Die Pfade werden gespeichert; gelöscht wird erst, wenn das Scharfschalten in v0.6 fertig ist.";
-"settings.paranoid.notArmedYet" = "Paranoid kann noch nicht scharfgeschaltet werden. Setup-Wizard hier abschließen; Codewort und Scharfschalten folgen später in v0.6.";
+"settings.paranoid.caption" = "Wipe-Ziele festlegen, vollständigen Rechtstext akzeptieren und Codewort setzen. Scharfschalten über die Menüleiste, sobald die Checkliste fertig ist.";
+"settings.paranoid.notReady" = "Paranoid ist noch nicht scharfschaltbereit. Checkliste unten abschließen, dann im Menü „Paranoid aktivieren…“.";
+"settings.paranoid.readyToArm" = "Bereit — im Menü „Paranoid aktivieren…“ (Codewort + Touch ID / Passwort).";
+"settings.paranoid.check.setup" = "Setup-Assistent abgeschlossen (FileVault + Wipe-Ziel)";
+"settings.paranoid.check.targets" = "Mindestens ein Wipe-Pfad oder APFS-Volume";
+"settings.paranoid.check.legal" = "Vollständiger Rechtstext akzeptiert";
+"settings.paranoid.check.codeword" = "Codewort gesetzt";
 "settings.paranoid.limits" = "APFS garantiert kein sicheres Überschreiben (TRIM/Snapshots). Nie das Boot-Volume wählen. Wipe läuft in Listenreihenfolge bis zum Zeitbudget, danach Hard-Shutdown.";
+"settings.paranoid.openSetup" = "Paranoid-Setup-Assistent…";
+"settings.paranoid.openLegal" = "Vollständiger Rechtstext…";
+"settings.paranoid.setCodeword" = "Codewort setzen…";
+"settings.paranoid.changeCodeword" = "Codewort ändern…";
+"settings.paranoid.setup.needed" = "Setup-Assistent nicht abgeschlossen. FileVault muss an sein, plus mindestens ein Wipe-Pfad oder APFS-Volume.";
+"settings.paranoid.setup.done" = "Setup-Assistent abgeschlossen.";
 "settings.paranoid.wipePaths" = "Wipe-Pfade";
 "settings.paranoid.wipePaths.caption" = "Listenreihenfolge = Wipe-Priorität (oben zuerst). Löschen mit rm -rf, nacheinander, bis zum Zeitbudget — dann Hard-Shutdown. Eigene Pfade, Dateidialog oder Vorschläge.";
 "settings.paranoid.wipePaths.empty" = "Keine Ordner oder Dateien ausgewählt.";
@@ -165,15 +176,12 @@
 "settings.paranoid.chooseRecoveryKey" = "Recovery-Key-Datei wählen…";
 "settings.paranoid.clearRecoveryKey" = "Entfernen";
 "settings.paranoid.recoveryKeyPicker.message" = "Lokale Backup-Datei des FileVault-Wiederherstellungsschlüssels wählen.";
-"settings.paranoid.openSetup" = "Paranoid-Setup-Assistent…";
-"settings.paranoid.setup.needed" = "Setup-Assistent nicht abgeschlossen. FileVault muss an sein, plus mindestens ein Wipe-Pfad oder APFS-Volume.";
-"settings.paranoid.setup.done" = "Setup-Assistent abgeschlossen. Scharfschalten, Codewort und Rechtstext folgen später.";
 
 "paranoid.setup.title" = "Paranoid-Setup";
 "paranoid.setup.warnings.body" = "Paranoid ist ein Setup-Modus: du wählst, was zerstört wird. FileVault auf der Systemplatte wird nicht geschreddert — keine Forensik-Garantie.";
 "paranoid.setup.warnings.work" = "Nicht auf Dienst- oder geteilten Macs nutzen, außer du bist dazu berechtigt. Die Verantwortung liegt bei dir.";
 "paranoid.setup.warnings.ack" = "Ich verstehe diese Grenzen und die Warnung zu Dienstgeräten.";
-"paranoid.setup.warnings.noArm" = "Dieser Assistent schaltet Paranoid nicht scharf. Codewort, Rechtstext und Menü folgen später.";
+"paranoid.setup.warnings.noArm" = "Dieser Assistent schaltet Paranoid nicht scharf. Danach: Rechtstext akzeptieren und Codewort in den Einstellungen setzen, dann im Menü „Paranoid aktivieren…“.";
 "paranoid.setup.fileVault.body" = "FileVault muss an sein. Sonst kann eine ausgeschaltete Platte weiterhin lesbar sein.";
 "paranoid.setup.fileVault.on" = "FileVault ist an.";
 "paranoid.setup.fileVault.off" = "FileVault ist aus.";
@@ -182,9 +190,32 @@
 "paranoid.setup.fileVault.required" = "FileVault in Systemeinstellungen → Datenschutz & Sicherheit einschalten, bevor du weitermachst.";
 "paranoid.setup.targets.body" = "Mindestens einen Wipe-Ordner/Datei oder eine dedizierte APFS-Volume-UUID angeben. Niemals das Boot-Volume. Recovery-Key-Backup ist optional.";
 "paranoid.setup.targets.required" = "Zum Weiterfahren mindestens einen Wipe-Pfad oder ein APFS-Volume hinzufügen.";
-"paranoid.setup.finish.body" = "FileVault ist an und ein Wipe-Ziel ist gespeichert. Setup abschließen merkt das. Scharfschalten bleibt deaktiviert.";
+"paranoid.setup.finish.body" = "FileVault ist an und ein Wipe-Ziel ist gespeichert. Setup abschließen, danach Rechtstext und Codewort — dann Scharfschalten über das Menü.";
 "paranoid.setup.complete" = "Setup abschließen";
 "paranoid.setup.finish.blocked" = "Nicht möglich: FileVault muss an sein, plus mindestens ein Wipe-Ziel.";
+
+"paranoid.legal.title" = "Paranoid-Modus — vollständiger Hinweis";
+"paranoid.legal.body" = "Der Paranoid-Modus vernichtet die von dir konfigurierten Daten und fährt den Mac herunter.\n\n• Konfigurierte Ordner/Dateien werden mit rm -rf gelöscht (Best Effort; auf APFS keine sichere Überschreib-Garantie).\n• Optionale dedizierte APFS-Volumes können gelöscht werden. Niemals das Boot-/Macintosh-HD-Volume.\n• Eine lokale FileVault-Recovery-Key-Backup-Datei kann gelöscht werden, falls konfiguriert.\n• Sperre, Logout und Hygiene laufen parallel zum Wipe; Hard-Shutdown folgt dem Wipe-Zeitbudget.\n• Keine Karenzzeit. Nach dem Kabelzug ist kein Abbruch möglich.\n• Ungespeicherte Arbeit geht verloren. Irreversibler Datenverlust ist zu erwarten.\n• Nicht auf Dienst- oder geteilten Macs nutzen, außer du bist ausdrücklich berechtigt. Die Verantwortung liegt bei dir.\n• APFS-TRIM und Snapshots können Reste behalten; das ist kein forensisches Wipe.\n\nDu handelst auf eigenes Risiko. Keine Rechtsberatung.";
+"paranoid.legal.checkbox" = "Ich habe diesen Hinweis gelesen und verstanden, einschließlich irreversiblen Datenverlusts und der Warnung zu Dienstgeräten.";
+"paranoid.legal.accept" = "Rechtstext akzeptieren";
+
+"paranoid.codeword.title" = "Paranoid-Codewort";
+"paranoid.codeword.caption" = "Erforderlich zum Scharfschalten. Nur als Salted Hash gespeichert — bei Vergessen nicht wiederherstellbar. Mindestens 4 Zeichen.";
+"paranoid.codeword.alreadySet" = "Es ist bereits ein Codewort gesetzt. Speichern ersetzt es.";
+"paranoid.codeword.placeholder" = "Codewort";
+"paranoid.codeword.confirmPlaceholder" = "Codewort bestätigen";
+"paranoid.codeword.save" = "Codewort speichern";
+"paranoid.codeword.clear" = "Codewort löschen";
+"paranoid.codeword.tooShort" = "Mindestens %d Zeichen verwenden.";
+"paranoid.codeword.mismatch" = "Codewörter stimmen nicht überein.";
+
+"paranoid.arm.title" = "Paranoid-Modus aktivieren";
+"paranoid.arm.caption" = "Codewort eingeben und bestätigen. Danach Authentifizierung mit Touch ID oder Passwort. Bei Kabeltrennung: konfigurierte Pfade wipen und herunterfahren.";
+"paranoid.arm.codewordPlaceholder" = "Codewort";
+"paranoid.arm.confirmCheckbox" = "Ich verstehe, dass bei Auslösung konfigurierte Daten vernichtet werden und das nicht rückgängig zu machen ist.";
+"paranoid.arm.continue" = "Weiter zur Authentifizierung";
+"paranoid.arm.notReady.title" = "Paranoid nicht bereit";
+"paranoid.arm.notReady.message" = "Zuerst Setup-Assistent, vollständigen Rechtstext und Codewort unter Einstellungen → Sicherheit abschließen.";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Bildschirm sperren";
@@ -328,6 +359,10 @@
 "menu.armPanic.hint" = "Keine Karenzzeit — sofortige Sperre und Abschaltung bei Kabeltrennung; Auslösung mit %@ wenn aktiv";
 "menu.panicArmed" = "Panic-Modus aktiv";
 "menu.panicArmed.hint" = "%@ drücken oder Kabel trennen für sofortige Auslösung";
+"menu.armParanoid" = "Paranoid-Modus aktivieren…";
+"menu.armParanoid.hint" = "Keine Karenzzeit — konfigurierte Pfade wipen, dann Hard-Shutdown bei Kabeltrennung";
+"menu.paranoidArmed" = "Paranoid-Modus aktiv";
+"menu.paranoidArmed.hint" = "Kabeltrennung wischt konfigurierte Pfade und fährt herunter";
 "menu.cancelAction" = "Sicherheitsaktion abbrechen";
 "menu.cancelAction.hint" = "Ausstehende Sicherheitsaktion während der Karenzzeit abbrechen";
 "menu.power.connected" = "Netzteil angeschlossen";
@@ -355,6 +390,7 @@
 "status.disarmed" = "Schutz deaktiviert";
 "status.armed" = "Schutz aktiv";
 "status.panicArmed" = "Panic-Modus aktiv";
+"status.paranoidArmed" = "Paranoid-Modus aktiv";
 "status.gracePeriod" = "Karenzzeit – %lld s";
 "status.triggered" = "Sicherheitsaktion ausgelöst";
 
@@ -366,6 +402,7 @@
 "app.fail.arm" = "Aktivierung fehlgeschlagen: %@";
 "app.fail.disarm" = "Deaktivierung fehlgeschlagen: %@";
 "app.fail.armPanic" = "Panic-Modus konnte nicht aktiviert werden: %@";
+"app.fail.armParanoid" = "Paranoid-Modus konnte nicht aktiviert werden: %@";
 "app.crash.title" = "Vorheriger Absturz erkannt";
 "app.crash.message" = "Ausnahme: %@\nGrund: %@";
 "app.quit.grace.title" = "Sicherheitsaktion läuft";
@@ -429,12 +466,15 @@
 "auth.reason.disarm" = "Authentifizieren, um MagSafe Guard zu entschärfen";
 "auth.reason.cancelGrace" = "Authentifizieren, um die Sicherheitsaktion abzubrechen";
 "auth.reason.armPanic" = "Authentifizieren, um den Panic-Modus zu aktivieren";
+"auth.reason.armParanoid" = "Authentifizieren, um den Paranoid-Modus zu aktivieren";
 
 /* Notifications */
 "notification.armed.title" = "MagSafe Guard scharf";
 "notification.armed.message" = "Schutz ist jetzt aktiv";
 "notification.panicArmed.title" = "Panic-Modus aktiv";
 "notification.panicArmed.message" = "Kabeltrennung sperrt und fährt den Mac sofort herunter";
+"notification.paranoidArmed.title" = "Paranoid-Modus aktiv";
+"notification.paranoidArmed.message" = "Kabeltrennung wischt konfigurierte Pfade und fährt herunter";
 "notification.disarmed.title" = "MagSafe Guard entschärft";
 "notification.disarmed.message" = "Schutz ist jetzt inaktiv";
 "notification.graceCancelled.title" = "Sicherheitsaktion abgebrochen";
@@ -450,6 +490,12 @@
 "error.gracePeriodNotCancellable" = "Abbruch der Karenzzeit ist nicht erlaubt";
 "error.authenticationRequired" = "Für diese Aktion ist eine Authentifizierung erforderlich";
 "error.panicLegalNoticeRequired" = "Bitte bestätigen Sie den Panic-Hinweis vor der Aktivierung";
+"error.paranoidSetupRequired" = "Paranoid-Setup-Assistent vor dem Scharfschalten abschließen";
+"error.paranoidWipeTargetRequired" = "Mindestens einen Wipe-Pfad oder ein APFS-Volume vor dem Scharfschalten hinzufügen";
+"error.paranoidLegalNoticeRequired" = "Vollständigen Paranoid-Rechtstext vor dem Scharfschalten akzeptieren";
+"error.paranoidCodewordRequired" = "Paranoid-Codewort vor dem Scharfschalten setzen";
+"error.paranoidCodewordMismatch" = "Codewort stimmt nicht";
+"error.paranoidFileVaultRequired" = "FileVault vor dem Scharfschalten von Paranoid einschalten";
 
 /* Panic mode */
 "panic.legal.title" = "Panic-Modus";
@@ -522,6 +568,8 @@
 "logDetail.remoteArm" = "Fern-Scharfschaltung per URL";
 "logDetail.remotePanic" = "Fern-Panic-Auslösung per URL";
 "logDetail.armingPanic" = "Panic-Modus wird aktiviert";
+"logDetail.armingParanoid" = "Paranoid-Modus wird aktiviert";
+"logDetail.paranoidTriggered" = "Paranoid-Reaktion ausgelöst";
 "logDetail.panicTriggered" = "Panic-Reaktion ausgelöst";
 "logDetail.panicHotkey" = "Panic-Tastenkürzel gedrückt";
 "logDetail.networkActionSucceeded" = "%@ erfolgreich";
@@ -569,7 +617,7 @@
 "onboarding.paranoid.body" = "Eine Stufe über Panic: geführte Datenvernichtung vor dem Shutdown. Nur opt-in — für Nutzer, die irreversiblen Verlust akzeptieren.";
 "onboarding.paranoid.feature" = "Paranoid-Schutz (v0.6) — konfigurierte Pfade löschen, optional APFS-Volume, dann Hard-Shutdown.";
 "onboarding.paranoid.scripts" = "Start: Einstellungen → Sicherheit → Paranoid-Setup-Assistent (FileVault an + mindestens ein Wipe-Ziel). Hygiene: Auswerfen, Cryptomator, Bluetooth.";
-"onboarding.paranoid.footnote" = "Das Setup speichert nur Ziele. Scharfschalten, Codewort und Wipe bei Kabelzug sind noch nicht aktiv.";
+"onboarding.paranoid.footnote" = "Einstellungen → Sicherheit: Setup-Assistent, Rechtstext und Codewort. Dann im Menü „Paranoid aktivieren…“. Eigener Hotkey und Remote-URL folgen später.";
 "onboarding.highAssurance.title" = "Panic & maximaler Schutz";
 "onboarding.highAssurance.body" = "Stärkere Presets und ein separater Panic-Schutz mit 0 s Karenz bei Kabeltrennung. Nur nutzen, wenn Datenverlust möglich ist.";
 "onboarding.highAssurance.modes.title" = "High-Assurance-Optionen";

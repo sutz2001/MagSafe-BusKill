@@ -16,6 +16,7 @@ enum MenuBarIconHelper {
     case armed
     case gracePeriod
     case triggered
+    case paranoid
   }
 
   static func symbolImage(
@@ -58,6 +59,8 @@ enum MenuBarIconHelper {
       return NSColor(srgbRed: 0.78, green: 0.62, blue: 0.22, alpha: 1)
     case .triggered:
       return NSColor(srgbRed: 0.78, green: 0.35, blue: 0.35, alpha: 1)
+    case .paranoid:
+      return NSColor(srgbRed: 0.72, green: 0.28, blue: 0.55, alpha: 1)
     }
   }
 

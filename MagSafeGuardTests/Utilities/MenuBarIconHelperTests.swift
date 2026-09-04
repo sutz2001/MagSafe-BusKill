@@ -34,8 +34,10 @@ final class MenuBarIconHelperTests: XCTestCase {
     let armed = MenuBarIconHelper.accentTint(for: .armed)
     let grace = MenuBarIconHelper.accentTint(for: .gracePeriod)
     let triggered = MenuBarIconHelper.accentTint(for: .triggered)
+    let paranoid = MenuBarIconHelper.accentTint(for: .paranoid)
     XCTAssertNotEqual(armed, grace)
     XCTAssertNotEqual(grace, triggered)
+    XCTAssertNotEqual(triggered, paranoid)
   }
 
   func testDefaultSettingsUseMonochromeMenuBarIcons() {

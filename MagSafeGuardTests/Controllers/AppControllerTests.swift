@@ -7,6 +7,7 @@
 //  Tests for AppController - the central coordinator
 //
 
+import MagSafeGuardCore
 import XCTest
 
 @testable import MagSafeGuard
@@ -575,6 +576,116 @@ final class AppControllerTests: XCTestCase {
     XCTAssertFalse(mockSecurityActions.executeImmediateShutdownCalled)
   }
 
+  // MARK: - Paranoid Mode Tests
+
+  func testArmParanoidRequiresLegalNotice() {
+    prepareParanoidConfig(legal: false, codeword: "secret42")
+    mockAuthService.shouldSucceed = true
+
+    let expectation = expectation(description: "arm without legal")
+    sut.armParanoid(codeword: "secret42", fileVaultChecker: Self.enabledFileVault) { result in
+      guard case .failure(AppControllerError.paranoidLegalNoticeRequired) = result else {
+        XCTFail("Expected paranoidLegalNoticeRequired")
+        return
+      }
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+    XCTAssertEqual(sut.currentState, .disarmed)
+  }
+
+  func testArmParanoidRejectsWrongCodeword() {
+    prepareParanoidConfig(legal: true, codeword: "secret42")
+    mockAuthService.shouldSucceed = true
+
+    let expectation = expectation(description: "wrong codeword")
+    sut.armParanoid(codeword: "nope", fileVaultChecker: Self.enabledFileVault) { result in
+      guard case .failure(AppControllerError.paranoidCodewordMismatch) = result else {
+        XCTFail("Expected paranoidCodewordMismatch")
+        return
+      }
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+  }
+
+  func testArmParanoidRequiresFileVault() {
+    prepareParanoidConfig(legal: true, codeword: "secret42")
+    mockAuthService.shouldSucceed = true
+    let off = FileVaultStatusChecker(outputProvider: { "FileVault is Off." })
+
+    let expectation = expectation(description: "fv off")
+    sut.armParanoid(codeword: "secret42", fileVaultChecker: off) { result in
+      guard case .failure(AppControllerError.paranoidFileVaultRequired) = result else {
+        XCTFail("Expected paranoidFileVaultRequired")
+        return
+      }
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+  }
+
+  func testArmParanoidSucceedsWhenReady() {
+    prepareParanoidConfig(legal: true, codeword: "secret42")
+    mockAuthService.shouldSucceed = true
+
+    let expectation = expectation(description: "arm paranoid")
+    sut.armParanoid(codeword: "secret42", fileVaultChecker: Self.enabledFileVault) { result in
+      if case .failure = result {
+        XCTFail("Paranoid arm should succeed")
+      }
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+
+    XCTAssertEqual(sut.currentState, .armed)
+    XCTAssertEqual(sut.protectionMode, .paranoid)
+    XCTAssertEqual(sut.statusIconName, "bolt.shield.fill")
+    XCTAssertEqual(sut.statusDescription, L10n.tr("status.paranoidArmed"))
+  }
+
+  func testParanoidPowerDisconnectRunsExecutor() {
+    prepareParanoidConfig(legal: true, codeword: "secret42")
+    mockAuthService.shouldSucceed = true
+
+    let securityService = SecurityActionsService(systemActions: mockSecurityActions)
+    let pipeline = SecurityTriggerPipeline(
+      networkActions: NetworkActionsService(settingsManager: .shared),
+      securityActions: securityService,
+      settingsManager: .shared
+    )
+    let destruction = MockDestructionPipeline()
+    let paranoidExecutor = ParanoidModeExecutor(
+      pipeline: pipeline,
+      destruction: destruction,
+      settingsManager: .shared,
+      systemActions: mockSecurityActions
+    )
+    sut = AppController(
+      powerMonitor: PowerMonitorService.shared,
+      authService: mockAuthService.createConfiguredService(),
+      securityActions: securityService,
+      notificationService: NotificationService(deliveryMethod: mockNotificationService),
+      paranoidExecutor: paranoidExecutor,
+      triggerPipeline: pipeline
+    )
+
+    let armExpectation = expectation(description: "arm paranoid")
+    sut.armParanoid(codeword: "secret42", fileVaultChecker: Self.enabledFileVault) { _ in
+      armExpectation.fulfill()
+    }
+    waitForExpectations(timeout: 1.0)
+
+    sut.simulatePowerDisconnectForTesting()
+
+    waitUntil("paranoid wipe+shutdown") {
+      self.mockSecurityActions.executeImmediateShutdownCalled
+    }
+    XCTAssertEqual(destruction.executeCallCount, 1)
+    XCTAssertTrue(
+      sut.getEventLog().contains { $0.details == L10n.tr("logDetail.paranoidTriggered") })
+  }
+
   func testEnterGracePeriodForTesting() {
     mockAuthService.shouldSucceed = true
     let armExpectation = expectation(description: "Arm")
@@ -589,6 +700,23 @@ final class AppControllerTests: XCTestCase {
   }
 
   // MARK: - Test Helpers
+
+  private static let enabledFileVault = FileVaultStatusChecker(
+    outputProvider: { "FileVault is On." }
+  )
+
+  private func prepareParanoidConfig(legal: Bool, codeword: String?) {
+    UserDefaultsManager.shared.updateSettings { settings in
+      var config = ParanoidConfiguration()
+      config.wipePaths = ["/Users/test/paranoid-wipe"]
+      config.setupCompleted = true
+      config.legalNoticeAccepted = legal
+      if let codeword {
+        config.setCodeword(codeword)
+      }
+      settings.paranoid = config
+    }
+  }
 
   private func armSystem(file: StaticString = #filePath, line: UInt = #line) {
     mockAuthService.shouldSucceed = true

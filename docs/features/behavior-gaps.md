@@ -62,7 +62,7 @@ Companion to [Operating Modes](operating-modes.md). Tracks UI/runtime mismatches
 
 | ID | Issue | Target |
 |----|-------|--------|
-| — | Paranoid mode (data destruction) | v0.6 — config model + Settings UI in progress; arming not shipped — [panic-modes.md](panic-modes.md) |
+| — | Paranoid mode (data destruction) | v0.6 — arming + cable wipe path shipped; hotkey/URL + legal review open — [panic-modes.md](panic-modes.md) |
 
 ---
 

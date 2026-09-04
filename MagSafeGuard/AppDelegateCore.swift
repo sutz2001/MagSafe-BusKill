@@ -178,6 +178,16 @@ public class AppDelegateCore {
         target: appDelegate
       )
       menu.addItem(panicItem)
+
+      let paranoidItem = NSMenuItem.accessibleMenuItem(
+        title: L10n.tr("menu.armParanoid"),
+        accessibilityLabel: L10n.tr("menu.armParanoid"),
+        hint: L10n.tr("menu.armParanoid.hint"),
+        keyEquivalent: "P",
+        action: #selector(AppDelegate.toggleParanoidMode),
+        target: appDelegate
+      )
+      menu.addItem(paranoidItem)
     } else if appController.protectionMode == .panic {
       let panicStatus = NSMenuItem.accessibleMenuItem(
         title: L10n.tr("menu.panicArmed"),
@@ -186,6 +196,14 @@ public class AppDelegateCore {
       )
       panicStatus.isEnabled = false
       menu.addItem(panicStatus)
+    } else if appController.protectionMode == .paranoid {
+      let paranoidStatus = NSMenuItem.accessibleMenuItem(
+        title: L10n.tr("menu.paranoidArmed"),
+        accessibilityLabel: L10n.tr("menu.paranoidArmed"),
+        hint: L10n.tr("menu.paranoidArmed.hint")
+      )
+      paranoidStatus.isEnabled = false
+      menu.addItem(paranoidStatus)
     }
 
     // Cancel grace period item (if in grace period) with accessibility

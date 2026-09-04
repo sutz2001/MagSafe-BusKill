@@ -118,11 +118,22 @@
 "settings.network.ejectRemovableVolumes.warning" = "Hard eject does not wait for apps to finish writing. Unsaved work on USB sticks, SD cards, or portable SSDs may be lost or corrupted. Internal disk is not affected.";
 "settings.network.disableBluetooth.warning" = "Requires blueutil (brew install blueutil). Bluetooth turns off immediately; paired devices disconnect.";
 
-/* Paranoid (v0.6 — configuration only; arming not shipped) */
+/* Paranoid (v0.6 — wipe targets, legal, codeword, menu arming) */
 "settings.paranoid.title" = "Paranoid (preview)";
-"settings.paranoid.caption" = "Configure wipe targets for the upcoming Paranoid mode. These paths are stored now; nothing is deleted until Paranoid arming ships.";
-"settings.paranoid.notArmedYet" = "Paranoid cannot be armed yet. Complete the setup wizard here; codeword and arming follow in later v0.6 updates.";
+"settings.paranoid.caption" = "Configure wipe targets, accept the full legal notice, and set a codeword. Arm from the menu bar when the checklist is complete.";
+"settings.paranoid.notReady" = "Paranoid is not ready to arm yet. Complete the checklist below, then choose Arm Paranoid… in the menu.";
+"settings.paranoid.readyToArm" = "Ready to arm — use Arm Paranoid… in the menu bar (codeword + Touch ID / password).";
+"settings.paranoid.check.setup" = "Setup wizard completed (FileVault + wipe target)";
+"settings.paranoid.check.targets" = "At least one wipe path or APFS volume";
+"settings.paranoid.check.legal" = "Full legal notice accepted";
+"settings.paranoid.check.codeword" = "Codeword set";
 "settings.paranoid.limits" = "APFS does not guarantee secure overwrite (TRIM/snapshots may retain data). Never target the boot volume. Wipe runs in list order up to the time budget, then hard shutdown.";
+"settings.paranoid.openSetup" = "Paranoid Setup Wizard…";
+"settings.paranoid.openLegal" = "Full Legal Notice…";
+"settings.paranoid.setCodeword" = "Set Codeword…";
+"settings.paranoid.changeCodeword" = "Change Codeword…";
+"settings.paranoid.setup.needed" = "Setup wizard not completed. FileVault must be on and at least one wipe path or APFS volume is required.";
+"settings.paranoid.setup.done" = "Setup wizard completed.";
 "settings.paranoid.wipePaths" = "Wipe paths";
 "settings.paranoid.wipePaths.caption" = "List order is wipe priority (top first). Paths are deleted with rm -rf, one after another, for up to the time budget — then hard shutdown. Add custom paths, pick from disk, or use suggestions.";
 "settings.paranoid.wipePaths.empty" = "No folders or files selected.";
@@ -165,15 +176,12 @@
 "settings.paranoid.chooseRecoveryKey" = "Choose Recovery Key File…";
 "settings.paranoid.clearRecoveryKey" = "Clear";
 "settings.paranoid.recoveryKeyPicker.message" = "Select the local FileVault recovery key backup file.";
-"settings.paranoid.openSetup" = "Paranoid Setup Wizard…";
-"settings.paranoid.setup.needed" = "Setup wizard not completed. FileVault must be on and at least one wipe path or APFS volume is required.";
-"settings.paranoid.setup.done" = "Setup wizard completed. Arming, codeword, and legal notice still come later.";
 
 "paranoid.setup.title" = "Paranoid setup";
 "paranoid.setup.warnings.body" = "Paranoid is a setup mode: you choose what to destroy. It does not shred FileVault on the boot disk and is not a forensic guarantee.";
 "paranoid.setup.warnings.work" = "Do not use this on an employer or shared Mac unless you are authorized. You are solely responsible.";
 "paranoid.setup.warnings.ack" = "I understand these limits and the work-device warning.";
-"paranoid.setup.warnings.noArm" = "Finishing this wizard does not arm Paranoid. Codeword, legal notice, and menu arming come later.";
+"paranoid.setup.warnings.noArm" = "Finishing this wizard does not arm Paranoid. Next: accept the full legal notice and set a codeword in Settings, then Arm Paranoid… from the menu.";
 "paranoid.setup.fileVault.body" = "FileVault must be on. Without it, a powered-off disk may still be readable.";
 "paranoid.setup.fileVault.on" = "FileVault is on.";
 "paranoid.setup.fileVault.off" = "FileVault is off.";
@@ -182,9 +190,32 @@
 "paranoid.setup.fileVault.required" = "Turn on FileVault in System Settings → Privacy & Security before continuing.";
 "paranoid.setup.targets.body" = "Add at least one wipe folder/file or a dedicated APFS volume UUID. Never the boot volume. Recovery-key backup is optional.";
 "paranoid.setup.targets.required" = "Add at least one wipe path or APFS volume to continue.";
-"paranoid.setup.finish.body" = "FileVault is on and a wipe target is saved. Complete setup to remember this. Arming is still disabled.";
+"paranoid.setup.finish.body" = "FileVault is on and a wipe target is saved. Complete setup, then accept the legal notice and set a codeword before arming from the menu.";
 "paranoid.setup.complete" = "Complete setup";
 "paranoid.setup.finish.blocked" = "Cannot complete: FileVault must be on and at least one wipe target is required.";
+
+"paranoid.legal.title" = "Paranoid mode — full notice";
+"paranoid.legal.body" = "Paranoid mode destroys data you configured, then shuts down the Mac.\n\n• Configured folders/files are deleted with rm -rf (best effort; not a secure overwrite guarantee on APFS).\n• Optional dedicated APFS volumes may be erased. Never the boot / Macintosh HD volume.\n• A local FileVault recovery-key backup file may be deleted if you configured one.\n• Lock, logout, and hygiene actions run in parallel with the wipe; hard shutdown follows the wipe time budget.\n• There is no grace period. A false trigger cannot be cancelled after the cable is pulled.\n• Unsaved work will be lost. Irreversible data loss is expected.\n• Do not use this on an employer or shared Mac unless you are explicitly authorized. You are solely responsible.\n• APFS TRIM and snapshots may retain remnants; this is not a forensic wipe.\n\nYou act at your own risk. This is not legal advice.";
+"paranoid.legal.checkbox" = "I have read and understand this notice, including irreversible data loss and the work-device warning.";
+"paranoid.legal.accept" = "Accept Legal Notice";
+
+"paranoid.codeword.title" = "Paranoid codeword";
+"paranoid.codeword.caption" = "Required to arm Paranoid. Stored as a salted hash only — not recoverable if forgotten. Minimum 4 characters.";
+"paranoid.codeword.alreadySet" = "A codeword is already set. Saving replaces it.";
+"paranoid.codeword.placeholder" = "Codeword";
+"paranoid.codeword.confirmPlaceholder" = "Confirm codeword";
+"paranoid.codeword.save" = "Save Codeword";
+"paranoid.codeword.clear" = "Clear Codeword";
+"paranoid.codeword.tooShort" = "Use at least %d characters.";
+"paranoid.codeword.mismatch" = "Codewords do not match.";
+
+"paranoid.arm.title" = "Arm Paranoid Mode";
+"paranoid.arm.caption" = "Enter your codeword and confirm. You will then authenticate with Touch ID or your password. Cable disconnect will wipe configured paths and shut down.";
+"paranoid.arm.codewordPlaceholder" = "Codeword";
+"paranoid.arm.confirmCheckbox" = "I understand this will destroy configured data on trigger and cannot be undone.";
+"paranoid.arm.continue" = "Continue to Authenticate";
+"paranoid.arm.notReady.title" = "Paranoid not ready";
+"paranoid.arm.notReady.message" = "Complete the setup wizard, accept the full legal notice, and set a codeword in Settings → Security before arming.";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
@@ -328,6 +359,10 @@
 "menu.armPanic.hint" = "Zero grace — immediate lock and shutdown on cable pull; trigger with %@ when armed";
 "menu.panicArmed" = "Panic Mode Active";
 "menu.panicArmed.hint" = "Press %@ or disconnect cable to trigger immediately";
+"menu.armParanoid" = "Arm Paranoid Mode…";
+"menu.armParanoid.hint" = "Zero grace — wipe configured paths then hard shutdown on cable pull";
+"menu.paranoidArmed" = "Paranoid Mode Active";
+"menu.paranoidArmed.hint" = "Disconnect cable to wipe configured paths and shut down";
 "menu.cancelAction" = "Cancel Security Action";
 "menu.cancelAction.hint" = "Cancel the pending security action during grace period";
 "menu.power.connected" = "Power Connected";
@@ -355,6 +390,7 @@
 "status.disarmed" = "Protection Disabled";
 "status.armed" = "Protection Active";
 "status.panicArmed" = "Panic Mode Active";
+"status.paranoidArmed" = "Paranoid Mode Active";
 "status.gracePeriod" = "Grace Period - %llds";
 "status.triggered" = "Security Action Triggered";
 
@@ -366,6 +402,7 @@
 "app.fail.arm" = "Failed to arm: %@";
 "app.fail.disarm" = "Failed to disarm: %@";
 "app.fail.armPanic" = "Failed to arm panic mode: %@";
+"app.fail.armParanoid" = "Failed to arm paranoid mode: %@";
 "app.crash.title" = "Previous Crash Detected";
 "app.crash.message" = "Exception: %@\nReason: %@";
 "app.quit.grace.title" = "Security Action in Progress";
@@ -429,12 +466,15 @@
 "auth.reason.disarm" = "Authenticate to disarm MagSafe Guard";
 "auth.reason.cancelGrace" = "Authenticate to cancel security action";
 "auth.reason.armPanic" = "Authenticate to arm panic mode";
+"auth.reason.armParanoid" = "Authenticate to arm paranoid mode";
 
 /* Notifications */
 "notification.armed.title" = "MagSafe Guard Armed";
 "notification.armed.message" = "Protection is now active";
 "notification.panicArmed.title" = "Panic Mode Armed";
 "notification.panicArmed.message" = "Cable disconnect will lock and shut down immediately";
+"notification.paranoidArmed.title" = "Paranoid Mode Armed";
+"notification.paranoidArmed.message" = "Cable disconnect will wipe configured paths and shut down";
 "notification.disarmed.title" = "MagSafe Guard Disarmed";
 "notification.disarmed.message" = "Protection is now inactive";
 "notification.graceCancelled.title" = "Security Action Cancelled";
@@ -450,6 +490,12 @@
 "error.gracePeriodNotCancellable" = "Grace period cancellation is not allowed";
 "error.authenticationRequired" = "Authentication is required for this operation";
 "error.panicLegalNoticeRequired" = "Accept the panic mode notice before arming";
+"error.paranoidSetupRequired" = "Complete the Paranoid setup wizard before arming";
+"error.paranoidWipeTargetRequired" = "Add at least one wipe path or APFS volume before arming";
+"error.paranoidLegalNoticeRequired" = "Accept the full Paranoid legal notice before arming";
+"error.paranoidCodewordRequired" = "Set a Paranoid codeword before arming";
+"error.paranoidCodewordMismatch" = "Codeword does not match";
+"error.paranoidFileVaultRequired" = "Turn on FileVault before arming Paranoid";
 
 /* Panic mode */
 "panic.legal.title" = "Panic Mode";
@@ -522,6 +568,8 @@
 "logDetail.remoteArm" = "Remote arm via URL";
 "logDetail.remotePanic" = "Remote panic trigger via URL";
 "logDetail.armingPanic" = "Arming panic mode";
+"logDetail.armingParanoid" = "Arming paranoid mode";
+"logDetail.paranoidTriggered" = "Paranoid response triggered";
 "logDetail.panicTriggered" = "Panic response triggered";
 "logDetail.panicHotkey" = "Panic hotkey pressed";
 "logDetail.networkActionSucceeded" = "%@ succeeded";
@@ -569,7 +617,7 @@
 "onboarding.paranoid.body" = "One step beyond panic: guided data destruction before shutdown. Opt-in only — for users who accept irreversible loss.";
 "onboarding.paranoid.feature" = "Paranoid protection (v0.6) — wipe configured paths, optional APFS volume erase, then hard shutdown.";
 "onboarding.paranoid.scripts" = "Start in Settings → Security → Paranoid Setup Wizard (FileVault on + at least one wipe target). Built-in hygiene: eject, Cryptomator, Bluetooth.";
-"onboarding.paranoid.footnote" = "Setup stores targets only. Arming, codeword, and destruction on cable pull are not enabled yet.";
+"onboarding.paranoid.footnote" = "Complete Settings → Security: setup wizard, legal notice, and codeword. Then Arm Paranoid… from the menu. Dedicated hotkey and remote URL follow later.";
 "onboarding.highAssurance.title" = "Panic & maximum protection";
 "onboarding.highAssurance.body" = "Stronger presets and a separate panic-armed mode for zero grace on cable pull. Use only when you accept possible data loss.";
 "onboarding.highAssurance.modes.title" = "High-assurance options";

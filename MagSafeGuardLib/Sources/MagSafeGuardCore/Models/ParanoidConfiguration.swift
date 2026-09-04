@@ -9,9 +9,8 @@ import Security
 
 /// User-configured data-destruction targets for paranoid mode (v0.6).
 ///
-/// Arming paranoid is a later milestone. This type only stores setup data:
-/// wipe paths, optional APFS volume identifiers, optional recovery-key backup path,
-/// and a hashed codeword (never plaintext).
+/// Stores wipe paths, optional APFS volume identifiers, optional recovery-key
+/// backup path, hashed codeword, and legal/setup gates used by `armParanoid`.
 public struct ParanoidConfiguration: Codable, Equatable, Sendable {
 
   /// Absolute directory or file paths to delete on trigger (list order = wipe priority).

@@ -178,10 +178,10 @@ M3 + M5 → M6 Routing + Trigger → M7 Docs + Legal-Gate
 | 3 | [#7 DestructionPipeline + Mock](https://github.com/sutz2001/MagSafe-BusKill/issues/7) | M2 — done |
 | 4 | [#8 MacDestructionPipeline](https://github.com/sutz2001/MagSafe-BusKill/issues/8) | M2 — done |
 | 5 | [#9 ParanoidModeExecutor](https://github.com/sutz2001/MagSafe-BusKill/issues/9) | M3 — done |
-| 6 | [#10 Setup wizard](https://github.com/sutz2001/MagSafe-BusKill/issues/10) | M4 — in progress |
-| 7 | [#11 Legal + codeword](https://github.com/sutz2001/MagSafe-BusKill/issues/11) | M5 |
-| 8 | [#12 armParanoid + menu + icon](https://github.com/sutz2001/MagSafe-BusKill/issues/12) | M5–M6 |
-| 9 | [#13 Trigger routing](https://github.com/sutz2001/MagSafe-BusKill/issues/13) | M6 |
+| 6 | [#10 Setup wizard](https://github.com/sutz2001/MagSafe-BusKill/issues/10) | M4 — done |
+| 7 | [#11 Legal + codeword](https://github.com/sutz2001/MagSafe-BusKill/issues/11) | M5 — done |
+| 8 | [#12 armParanoid + menu + icon](https://github.com/sutz2001/MagSafe-BusKill/issues/12) | M5 done (icon SF Symbol); hotkey/URL → M6 |
+| 9 | [#13 Trigger routing](https://github.com/sutz2001/MagSafe-BusKill/issues/13) | M6 — cable path wired with arm; hotkey open |
 | 10 | [#14 magsafeguard://paranoid](https://github.com/sutz2001/MagSafe-BusKill/issues/14) | M6 |
 | 11 | [#15 Docs + version 0.6.0](https://github.com/sutz2001/MagSafe-BusKill/issues/15) | M7 |
 | 12 | [#16 Legal review gate](https://github.com/sutz2001/MagSafe-BusKill/issues/16) | M7 |
@@ -218,13 +218,14 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 
 ### Pflicht-Checkliste vor Paranoid (v0.6.0)
 
-- [ ] `ParanoidModeExecutor` + `DestructionPipeline` + Mocks
-- [ ] Setup-Wizard + FileVault-Prüfung
-- [ ] Doppelte Bestätigung + Codewort + voller Rechtstext
+- [x] `ParanoidModeExecutor` + `DestructionPipeline` + Mocks
+- [x] Setup-Wizard + FileVault-Prüfung
+- [x] Doppelte Bestätigung + Codewort + voller Rechtstext + Menü-Arming
 - [ ] `magsafeguard://paranoid` (eigenes Token empfohlen)
-- [ ] Ehrliche Limits in UI (APFS, Forensik)
+- [ ] Dedizierter Paranoid-Hotkey
+- [x] Ehrliche Limits in UI (APFS, Forensik)
 - [ ] Rechtliche Prüfung DE/EU vor öffentlicher Beta
-- [ ] README EN + DE
+- [ ] README EN + DE (Version 0.6.0)
 
 ### Teststrategie (beide Modi)
 

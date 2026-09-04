@@ -16,6 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   private var settingsWindow: NSWindow?
   private var settingsHostingController: NSHostingController<AnyView>?
+  private var paranoidArmWindow: NSWindow?
   private var windowDelegates: [NSWindow: WindowDelegate] = [:]
   private var cancellables = Set<AnyCancellable>()
   private let menuBarGracePulseController = MenuBarGracePulseController()
@@ -290,9 +291,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func menuBarVisualState() -> MenuBarIconHelper.VisualState {
-    if core.appController.currentState == .armed,
-      core.appController.protectionMode == .panic {
-      return .triggered
+    if core.appController.currentState == .armed {
+      switch core.appController.protectionMode {
+      case .panic:
+        return .triggered
+      case .paranoid:
+        return .paranoid
+      case .normal:
+        break
+      }
     }
     switch core.appController.currentState {
     case .disarmed:
@@ -384,6 +391,81 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self?.showNotification(
           title: AppDelegate.appName,
           message: L10n.tr("app.fail.armPanic", error.localizedDescription)
+        )
+      }
+    }
+  }
+
+  @objc func toggleParanoidMode() {
+    let controller = core.appController
+
+    if controller.protectionMode == .paranoid, controller.currentState != .disarmed {
+      controller.disarm { [weak self] result in
+        if case .failure(let error) = result {
+          self?.showNotification(
+            title: AppDelegate.appName,
+            message: L10n.tr("app.fail.disarm", error.localizedDescription)
+          )
+        }
+      }
+      return
+    }
+
+    guard controller.currentState == .disarmed else { return }
+
+    let config = UserDefaultsManager.shared.settings.paranoid
+    guard config.isReadyToArm else {
+      let alert = NSAlert()
+      alert.messageText = L10n.tr("paranoid.arm.notReady.title")
+      alert.informativeText = L10n.tr("paranoid.arm.notReady.message")
+      alert.alertStyle = .informational
+      alert.addButton(withTitle: L10n.tr("settings.paranoid.openSetup"))
+      alert.addButton(withTitle: L10n.tr("common.cancel"))
+      if alert.runModal() == .alertFirstButtonReturn {
+        showSettings()
+      }
+      return
+    }
+
+    presentParanoidArmConfirm()
+  }
+
+  private func presentParanoidArmConfirm() {
+    if let existing = paranoidArmWindow, existing.isVisible {
+      existing.makeKeyAndOrderFront(nil)
+      NSApp.activate(ignoringOtherApps: true)
+      return
+    }
+
+    let root = ParanoidArmConfirmView(
+      onCancel: { [weak self] in
+        self?.paranoidArmWindow?.close()
+        self?.paranoidArmWindow = nil
+      },
+      onConfirm: { [weak self] codeword in
+        self?.paranoidArmWindow?.close()
+        self?.paranoidArmWindow = nil
+        self?.completeParanoidArm(codeword: codeword)
+      }
+    )
+    let hosting = NSHostingController(rootView: root)
+    let window = NSWindow(contentViewController: hosting)
+    window.title = L10n.tr("paranoid.arm.title")
+    window.styleMask = [.titled, .closable]
+    window.setContentSize(NSSize(width: 460, height: 280))
+    window.center()
+    window.isReleasedWhenClosed = false
+    paranoidArmWindow = window
+    window.makeKeyAndOrderFront(nil)
+    NSApp.activate(ignoringOtherApps: true)
+  }
+
+  private func completeParanoidArm(codeword: String) {
+    core.appController.armParanoid(codeword: codeword) { [weak self] result in
+      if case .failure(let error) = result {
+        self?.showNotification(
+          title: AppDelegate.appName,
+          message: L10n.tr("app.fail.armParanoid", error.localizedDescription)
         )
       }
     }

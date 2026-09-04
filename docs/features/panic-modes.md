@@ -187,20 +187,20 @@ PanicModeExecutor
   - executeImmediateShutdown()
   - parallel: lock, logout, network, shutdown
 
-ParanoidModeExecutor (M3 — not wired to AppController)
+ParanoidModeExecutor (M3/M5 — cable disconnect when paranoid-armed)
   - DestructionPipeline.execute(config) sequential wipe in list order (budgeted)
   - SecurityTriggerPipeline context `.paranoid` (scripts + lock/logout, no inline shutdown)
   - hard shutdown after wipe + protection finish
   - path order = priority within time budget
 
-DestructionPipeline (M2 — shipped in code, unused at runtime)
+DestructionPipeline (M2 — shipped)
   - MockDestructionPipeline — CI / unit tests, no IO
   - MacDestructionPipeline — path wipe, APFS eraseVolume, recovery-key file
       CI/XCTest: no-op unless tests inject DestructionSafetyPolicy
       always refuse boot volume UUID / whole boot disk
 ```
 
-`ParanoidConfiguration` and Settings UI exist (M1). Pipeline is **not** called from `AppController` yet.
+`ParanoidConfiguration`, Settings UI, setup wizard, full legal notice, codeword, and `armParanoid` (menu) are in place. Remaining M6: dedicated hotkey + `magsafeguard://paranoid`.
 
 ### New types (sketch)
 
@@ -251,12 +251,13 @@ Do not conflate `trigger` with panic or paranoid.
 
 ### v0.6.0 — Paranoid
 
-- [x] Setup wizard (FileVault check, wipe targets) — arming still blocked
-- [ ] `ParanoidModeExecutor` + `DestructionPipeline` (executor exists; AppController not wired)
-- [ ] Double confirm + codeword + full legal UI
+- [x] Setup wizard (FileVault check, wipe targets)
+- [x] `ParanoidModeExecutor` + `DestructionPipeline` (wired on cable disconnect when paranoid-armed)
+- [x] Double confirm + codeword + full legal UI + `armParanoid` menu
+- [ ] Dedicated paranoid hotkey
 - [ ] `magsafeguard://paranoid`
 - [ ] Legal review DE/EU before public beta
-- [ ] README EN + DE updated
+- [ ] README EN + DE updated (version 0.6.0)
 
 ---
 

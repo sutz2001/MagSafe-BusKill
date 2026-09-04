@@ -450,7 +450,7 @@ All three off → `isDiscreetOperation`. Grace period and state changes still ru
 
 ## 10. Panic & Paranoid modes
 
-**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** Settings → Security → **Paranoid Setup Wizard** (FileVault on + wipe target). `ParanoidModeExecutor` exists but is **not** invoked from the menu or cable path. Design: [panic-modes.md](panic-modes.md) · Issues: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
+**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** Setup wizard + legal notice + codeword + **Arm Paranoid…** menu. Cable disconnect runs wipe then shutdown when paranoid-armed. Dedicated hotkey and `magsafeguard://paranoid` still open. Design: [panic-modes.md](panic-modes.md) · Issues: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
 
 ### Panic mode (shipped v0.5.0)
 
@@ -475,6 +475,10 @@ Arm via menu **Arm Panic Mode…** (legal notice on first use) or disarm with th
 | Remote URL | `…/panic?token=` | `…/paranoid?token=` |
 
 Do not confuse `magsafeguard://trigger` with panic or paranoid.
+
+### Paranoid mode (arming shipped; hotkey/URL open)
+
+Settings → Security: setup wizard (FileVault + wipe targets), **Full Legal Notice**, **Set Codeword**. When the checklist is ready, menu **Arm Paranoid Mode…** asks for codeword + intent checkbox, then Touch ID/password. Distinct menu-bar SF Symbol (`bolt.shield.fill`). Cable disconnect runs `ParanoidModeExecutor` (budgeted path wipe, then hard shutdown). Dedicated hotkey and `magsafeguard://paranoid` are M6.
 
 ---
 

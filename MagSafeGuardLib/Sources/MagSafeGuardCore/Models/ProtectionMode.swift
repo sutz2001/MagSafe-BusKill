@@ -11,7 +11,7 @@ public enum ProtectionMode: String, Codable, Sendable, Equatable {
   case normal
   /// Panic mode — zero grace, immediate lock/logout/shutdown on cable pull.
   case panic
-  /// Paranoid mode (v0.6) — panic plus data-destruction path (arming not shipped yet).
+  /// Paranoid mode (v0.6) — data destruction then hard shutdown when armed.
   case paranoid
 
   /// When armed in panic or paranoid, the Dock icon stays hidden regardless of settings.

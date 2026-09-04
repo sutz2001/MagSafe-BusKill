@@ -151,7 +151,7 @@ public class AppController: ObservableObject {
   /// countdown displays. Value is 0 when grace period is not active.
   @Published public private(set) var gracePeriodRemaining: TimeInterval = 0
 
-  /// Active protection profile when armed (`normal` or `panic`).
+  /// Active protection profile when armed (`normal`, `panic`, or `paranoid`).
   @Published public private(set) var protectionMode: ProtectionMode = .normal
 
   /// Last known power adapter connection state.
@@ -167,6 +167,7 @@ public class AppController: ObservableObject {
   private let securityActions: SecurityActionsService
   private let notificationService: NotificationService
   private let panicExecutor: PanicModeExecutor
+  private let paranoidExecutor: ParanoidModeExecutor
   private let triggerPipeline: SecurityTriggerPipeline
   private var autoArmManager: AutoArmManager?
 
@@ -243,6 +244,7 @@ public class AppController: ObservableObject {
     securityActions: SecurityActionsService = .shared,
     notificationService: NotificationService = .shared,
     panicExecutor: PanicModeExecutor = PanicModeExecutor(),
+    paranoidExecutor: ParanoidModeExecutor? = nil,
     triggerPipeline: SecurityTriggerPipeline? = nil
   ) {
     self.powerMonitor = powerMonitor
@@ -250,12 +252,20 @@ public class AppController: ObservableObject {
     self.securityActions = securityActions
     self.notificationService = notificationService
     self.panicExecutor = panicExecutor
-    self.triggerPipeline =
+    let pipeline =
       triggerPipeline
       ?? SecurityTriggerPipeline(
         networkActions: NetworkActionsService(settingsManager: .shared),
         securityActions: securityActions,
         settingsManager: .shared
+      )
+    self.triggerPipeline = pipeline
+    self.paranoidExecutor =
+      paranoidExecutor
+      ?? ParanoidModeExecutor(
+        pipeline: pipeline,
+        settingsManager: UserDefaultsManager.shared,
+        systemActions: MacSystemActions()
       )
 
     setupPowerMonitoring()
@@ -349,6 +359,72 @@ public class AppController: ObservableObject {
           L10n.tr("notification.panicArmed.title"), L10n.tr("notification.panicArmed.message"))
         AccessibilityAnnouncement.announceStateChange(
           component: "MagSafe Guard", newState: "panic armed")
+        completion(.success(()))
+
+      case .failure(let error):
+        self.logEventInternal(.authenticationFailed, details: error.localizedDescription)
+        completion(.failure(error))
+
+      case .cancelled:
+        self.logEventInternal(.authenticationFailed, details: AppController.userCancelledMessage)
+        completion(.failure(AppControllerError.authenticationRequired))
+      }
+    }
+  }
+
+  /// Arms paranoid mode after setup, full legal notice, codeword verify, FileVault, and auth.
+  public func armParanoid(
+    codeword: String,
+    fileVaultChecker: FileVaultStatusChecker = FileVaultStatusChecker(),
+    completion: @escaping (Result<Void, Error>) -> Void
+  ) {
+    guard currentState == .disarmed else {
+      completion(
+        .failure(
+          AppControllerError.invalidState("Cannot arm paranoid from state: \(currentState)")))
+      return
+    }
+
+    let config = settingsManager.settings.paranoid.validated()
+    guard config.setupCompleted else {
+      completion(.failure(AppControllerError.paranoidSetupRequired))
+      return
+    }
+    guard config.hasWipeTarget else {
+      completion(.failure(AppControllerError.paranoidWipeTargetRequired))
+      return
+    }
+    guard config.legalNoticeAccepted else {
+      completion(.failure(AppControllerError.paranoidLegalNoticeRequired))
+      return
+    }
+    guard config.hasCodeword else {
+      completion(.failure(AppControllerError.paranoidCodewordRequired))
+      return
+    }
+    guard config.matchesCodeword(codeword) else {
+      completion(.failure(AppControllerError.paranoidCodewordMismatch))
+      return
+    }
+    guard fileVaultChecker.check().isEnabled else {
+      completion(.failure(AppControllerError.paranoidFileVaultRequired))
+      return
+    }
+
+    authService.authenticate(reason: L10n.tr("auth.reason.armParanoid")) { [weak self] result in
+      guard let self else { return }
+
+      switch result {
+      case .success:
+        self.logEventInternal(
+          .authenticationSucceeded, details: L10n.tr("logDetail.armingParanoid"))
+        self.protectionMode = .paranoid
+        self.transitionToState(.armed)
+        self.onNotification?(
+          L10n.tr("notification.paranoidArmed.title"),
+          L10n.tr("notification.paranoidArmed.message"))
+        AccessibilityAnnouncement.announceStateChange(
+          component: "MagSafe Guard", newState: "paranoid armed")
         completion(.success(()))
 
       case .failure(let error):
@@ -462,6 +538,8 @@ public class AppController: ObservableObject {
     logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.remoteTrigger"))
     if protectionMode == .panic {
       executePanicResponse()
+    } else if protectionMode == .paranoid {
+      executeParanoidResponse()
     } else {
       executeSecurityActions(allowFromArmedState: currentState == .armed)
     }
@@ -548,6 +626,11 @@ public class AppController: ObservableObject {
 
     if protectionMode == .panic {
       executePanicResponse()
+      return
+    }
+
+    if protectionMode == .paranoid {
+      executeParanoidResponse()
       return
     }
 
@@ -664,6 +747,23 @@ public class AppController: ObservableObject {
     logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.panicTriggered"))
 
     panicExecutor.execute { [weak self] networkResult, scriptResult, _ in
+      guard let self else { return }
+      self.logNetworkActionResults(networkResult)
+      self.logScriptPhaseResults(scriptResult)
+      if self.currentState == .triggered {
+        self.transitionToState(.armed)
+      }
+    }
+  }
+
+  private func executeParanoidResponse() {
+    guard currentState == .armed || currentState == .gracePeriod else { return }
+
+    transitionToState(.triggered)
+    cancelGracePeriod()
+    logEventInternal(.securityActionExecuted, details: L10n.tr("logDetail.paranoidTriggered"))
+
+    paranoidExecutor.execute { [weak self] networkResult, scriptResult, _ in
       guard let self else { return }
       self.logNetworkActionResults(networkResult)
       self.logScriptPhaseResults(scriptResult)
@@ -815,6 +915,18 @@ public enum AppControllerError: LocalizedError {
   case authenticationRequired
   /// Panic legal notice must be accepted in Settings before arming panic mode
   case panicLegalNoticeRequired
+  /// Paranoid setup wizard must be completed before arming
+  case paranoidSetupRequired
+  /// At least one wipe path or APFS volume is required
+  case paranoidWipeTargetRequired
+  /// Full paranoid legal notice must be accepted
+  case paranoidLegalNoticeRequired
+  /// Paranoid codeword must be set before arming
+  case paranoidCodewordRequired
+  /// Entered codeword does not match stored hash
+  case paranoidCodewordMismatch
+  /// FileVault must be enabled to arm paranoid mode
+  case paranoidFileVaultRequired
 
   /// Localized error description for user display.
   public var errorDescription: String? {
@@ -827,6 +939,18 @@ public enum AppControllerError: LocalizedError {
       return L10n.tr("error.authenticationRequired")
     case .panicLegalNoticeRequired:
       return L10n.tr("error.panicLegalNoticeRequired")
+    case .paranoidSetupRequired:
+      return L10n.tr("error.paranoidSetupRequired")
+    case .paranoidWipeTargetRequired:
+      return L10n.tr("error.paranoidWipeTargetRequired")
+    case .paranoidLegalNoticeRequired:
+      return L10n.tr("error.paranoidLegalNoticeRequired")
+    case .paranoidCodewordRequired:
+      return L10n.tr("error.paranoidCodewordRequired")
+    case .paranoidCodewordMismatch:
+      return L10n.tr("error.paranoidCodewordMismatch")
+    case .paranoidFileVaultRequired:
+      return L10n.tr("error.paranoidFileVaultRequired")
     }
   }
 }
@@ -846,6 +970,9 @@ extension AppController {
 
   /// Returns the appropriate SF Symbol name for current state (fallback when assets are missing).
   public var statusIconName: String {
+    if currentState == .armed && protectionMode == .paranoid {
+      return "bolt.shield.fill"
+    }
     switch currentState {
     case .disarmed:
       return "shield"
@@ -862,6 +989,10 @@ extension AppController {
   public var statusMenuBarImageName: String {
     if currentState == .armed && protectionMode == .panic {
       return "MenuBarIconTriggered"
+    }
+    // Prefer SF Symbol for paranoid so it stays visually distinct without a new asset.
+    if currentState == .armed && protectionMode == .paranoid {
+      return "MenuBarIconParanoidMissing"
     }
     return Self.menuBarImageName(for: currentState)
   }
@@ -888,6 +1019,9 @@ extension AppController {
     case .armed:
       if protectionMode == .panic {
         return L10n.tr("status.panicArmed")
+      }
+      if protectionMode == .paranoid {
+        return L10n.tr("status.paranoidArmed")
       }
       return L10n.tr("status.armed")
     case .gracePeriod:
