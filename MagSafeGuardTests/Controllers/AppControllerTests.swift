@@ -641,6 +641,7 @@ final class AppControllerTests: XCTestCase {
     XCTAssertEqual(sut.currentState, .armed)
     XCTAssertEqual(sut.protectionMode, .paranoid)
     XCTAssertEqual(sut.statusIconName, "bolt.shield.fill")
+    XCTAssertEqual(sut.statusMenuBarImageName, "MenuBarIconParanoid")
     XCTAssertEqual(sut.statusDescription, L10n.tr("status.paranoidArmed"))
   }
 

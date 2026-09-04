@@ -1006,9 +1006,8 @@ extension AppController {
     if currentState == .armed && protectionMode == .panic {
       return "MenuBarIconTriggered"
     }
-    // Prefer SF Symbol for paranoid so it stays visually distinct without a new asset.
     if currentState == .armed && protectionMode == .paranoid {
-      return "MenuBarIconParanoidMissing"
+      return "MenuBarIconParanoid"
     }
     return Self.menuBarImageName(for: currentState)
   }
