@@ -70,8 +70,8 @@ Maximum speed data destruction for users who accept irreversible loss. Targets o
 
 User must confirm before paranoid can be armed:
 
-- [ ] **FileVault enabled** (verified via `fdesetup status`)
-- [x] At least one **wipe target** configurable in Settings → Security → Paranoid (paths / APFS UUID / recovery-key file) — wizard + FileVault check still required before arming
+- [x] **FileVault enabled** (verified via `fdesetup status` in the setup wizard)
+- [x] At least one **wipe target** required to complete setup (paths / APFS UUID); recovery-key file optional
 - [x] Optional: local FileVault recovery key backup path (stored; delete-on-trigger not shipped)
 - [ ] Full paranoid onboarding (EN + DE) with explicit consent
 
@@ -249,7 +249,7 @@ Do not conflate `trigger` with panic or paranoid.
 
 ### v0.6.0 — Paranoid
 
-- [ ] Setup wizard (FileVault check, wipe targets)
+- [x] Setup wizard (FileVault check, wipe targets) — arming still blocked
 - [ ] `ParanoidModeExecutor` + `DestructionPipeline` (executor exists; AppController not wired)
 - [ ] Double confirm + codeword + full legal UI
 - [ ] `magsafeguard://paranoid`

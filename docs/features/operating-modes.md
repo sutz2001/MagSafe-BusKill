@@ -450,7 +450,7 @@ All three off → `isDiscreetOperation`. Grace period and state changes still ru
 
 ## 10. Panic & Paranoid modes
 
-**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** wipe targets in Settings; `ParanoidModeExecutor` runs destruction in parallel with panic-style shutdown (unit-tested) but is **not** invoked from the menu or cable path yet. Design: [panic-modes.md](panic-modes.md) · Issues: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
+**Panic (v0.5.0):** shipped. **Paranoid (v0.6.0):** Settings → Security → **Paranoid Setup Wizard** (FileVault on + wipe target). `ParanoidModeExecutor` exists but is **not** invoked from the menu or cable path. Design: [panic-modes.md](panic-modes.md) · Issues: [v0.6-paranoid](https://github.com/sutz2001/MagSafe-BusKill/milestone/1)
 
 ### Panic mode (shipped v0.5.0)
 

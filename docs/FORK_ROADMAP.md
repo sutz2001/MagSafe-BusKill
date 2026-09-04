@@ -177,8 +177,8 @@ M3 + M5 → M6 Routing + Trigger → M7 Docs + Legal-Gate
 | 2 | [#6 Settings UI wipe targets](https://github.com/sutz2001/MagSafe-BusKill/issues/6) | M1 — done |
 | 3 | [#7 DestructionPipeline + Mock](https://github.com/sutz2001/MagSafe-BusKill/issues/7) | M2 — done |
 | 4 | [#8 MacDestructionPipeline](https://github.com/sutz2001/MagSafe-BusKill/issues/8) | M2 — done |
-| 5 | [#9 ParanoidModeExecutor](https://github.com/sutz2001/MagSafe-BusKill/issues/9) | M3 — in progress |
-| 6 | [#10 Setup wizard](https://github.com/sutz2001/MagSafe-BusKill/issues/10) | M4 |
+| 5 | [#9 ParanoidModeExecutor](https://github.com/sutz2001/MagSafe-BusKill/issues/9) | M3 — done |
+| 6 | [#10 Setup wizard](https://github.com/sutz2001/MagSafe-BusKill/issues/10) | M4 — in progress |
 | 7 | [#11 Legal + codeword](https://github.com/sutz2001/MagSafe-BusKill/issues/11) | M5 |
 | 8 | [#12 armParanoid + menu + icon](https://github.com/sutz2001/MagSafe-BusKill/issues/12) | M5–M6 |
 | 9 | [#13 Trigger routing](https://github.com/sutz2001/MagSafe-BusKill/issues/13) | M6 |

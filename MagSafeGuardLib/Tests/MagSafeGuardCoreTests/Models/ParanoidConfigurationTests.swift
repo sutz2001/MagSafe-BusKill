@@ -131,4 +131,24 @@ final class ParanoidConfigurationTests: XCTestCase {
     let validated = settings.validated()
     XCTAssertEqual(validated.paranoid.wipePaths, ["/Users/ok"])
   }
+
+  func testCompleteSetupRequiresFileVaultAndWipeTarget() {
+    var config = ParanoidConfiguration()
+    XCTAssertFalse(config.completeSetup(fileVaultEnabled: true))
+    XCTAssertFalse(config.setupCompleted)
+
+    config.wipePaths = ["/Users/test/secrets"]
+    XCTAssertFalse(config.completeSetup(fileVaultEnabled: false))
+    XCTAssertFalse(config.setupCompleted)
+
+    XCTAssertTrue(config.completeSetup(fileVaultEnabled: true))
+    XCTAssertTrue(config.setupCompleted)
+  }
+
+  func testCompleteSetupRejectsForbiddenOnlyPaths() {
+    var config = ParanoidConfiguration()
+    config.wipePaths = ["/System"]
+    XCTAssertFalse(config.canCompleteSetup(fileVaultEnabled: true))
+    XCTAssertFalse(config.completeSetup(fileVaultEnabled: true))
+  }
 }

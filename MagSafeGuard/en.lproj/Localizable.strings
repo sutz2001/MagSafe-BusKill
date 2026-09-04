@@ -121,7 +121,7 @@
 /* Paranoid (v0.6 — configuration only; arming not shipped) */
 "settings.paranoid.title" = "Paranoid (preview)";
 "settings.paranoid.caption" = "Configure wipe targets for the upcoming Paranoid mode. These paths are stored now; nothing is deleted until Paranoid arming ships.";
-"settings.paranoid.notArmedYet" = "Paranoid cannot be armed yet. Setup wizard, codeword, and destruction pipeline come in later v0.6 updates.";
+"settings.paranoid.notArmedYet" = "Paranoid cannot be armed yet. Complete the setup wizard here; codeword and arming follow in later v0.6 updates.";
 "settings.paranoid.limits" = "APFS does not guarantee secure overwrite (TRIM/snapshots may retain data). Never target the boot volume. Shutdown may occur before a wipe finishes.";
 "settings.paranoid.wipePaths" = "Wipe paths";
 "settings.paranoid.wipePaths.empty" = "No folders or files selected.";
@@ -137,6 +137,26 @@
 "settings.paranoid.chooseRecoveryKey" = "Choose Recovery Key File…";
 "settings.paranoid.clearRecoveryKey" = "Clear";
 "settings.paranoid.recoveryKeyPicker.message" = "Select the local FileVault recovery key backup file.";
+"settings.paranoid.openSetup" = "Paranoid Setup Wizard…";
+"settings.paranoid.setup.needed" = "Setup wizard not completed. FileVault must be on and at least one wipe path or APFS volume is required.";
+"settings.paranoid.setup.done" = "Setup wizard completed. Arming, codeword, and legal notice still come later.";
+
+"paranoid.setup.title" = "Paranoid setup";
+"paranoid.setup.warnings.body" = "Paranoid is a setup mode: you choose what to destroy. It does not shred FileVault on the boot disk and is not a forensic guarantee.";
+"paranoid.setup.warnings.work" = "Do not use this on an employer or shared Mac unless you are authorized. You are solely responsible.";
+"paranoid.setup.warnings.ack" = "I understand these limits and the work-device warning.";
+"paranoid.setup.warnings.noArm" = "Finishing this wizard does not arm Paranoid. Codeword, legal notice, and menu arming come later.";
+"paranoid.setup.fileVault.body" = "FileVault must be on. Without it, a powered-off disk may still be readable.";
+"paranoid.setup.fileVault.on" = "FileVault is on.";
+"paranoid.setup.fileVault.off" = "FileVault is off.";
+"paranoid.setup.fileVault.unknown" = "Could not read FileVault status: %@";
+"paranoid.setup.fileVault.refresh" = "Check again";
+"paranoid.setup.fileVault.required" = "Turn on FileVault in System Settings → Privacy & Security before continuing.";
+"paranoid.setup.targets.body" = "Add at least one wipe folder/file or a dedicated APFS volume UUID. Never the boot volume. Recovery-key backup is optional.";
+"paranoid.setup.targets.required" = "Add at least one wipe path or APFS volume to continue.";
+"paranoid.setup.finish.body" = "FileVault is on and a wipe target is saved. Complete setup to remember this. Arming is still disabled.";
+"paranoid.setup.complete" = "Complete setup";
+"paranoid.setup.finish.blocked" = "Cannot complete: FileVault must be on and at least one wipe target is required.";
 
 /* Security actions */
 "securityAction.lockScreen.name" = "Lock Screen";
@@ -517,11 +537,11 @@
 "onboarding.panic.preset" = "Panic preset (Settings) — lock + logout, short grace, network hygiene when normally armed.";
 "onboarding.panic.menu" = "Arm Panic Mode (menu) — separate armed state with 0 s grace and immediate shutdown on cable pull.";
 "onboarding.panic.footnote" = "Panic preset and menu panic are different: the preset configures normal armed behavior; menu panic skips grace entirely.";
-"onboarding.paranoid.title" = "Paranoid mode (planned)";
+"onboarding.paranoid.title" = "Paranoid mode";
 "onboarding.paranoid.body" = "One step beyond panic: guided data destruction before shutdown. Opt-in only — for users who accept irreversible loss.";
 "onboarding.paranoid.feature" = "Paranoid protection (v0.6) — wipe configured paths, optional APFS volume erase, then hard shutdown.";
-"onboarding.paranoid.scripts" = "Built-in: eject externals, Cryptomator unmount, Bluetooth off. More scripts ship in the app (TriggerScripts/) — browsers, password managers, VeraCrypt, FileVault recovery key backup.";
-"onboarding.paranoid.footnote" = "Paranoid is not available yet. Do not enable destructive scripts until you have tested them on a spare machine.";
+"onboarding.paranoid.scripts" = "Start in Settings → Security → Paranoid Setup Wizard (FileVault on + at least one wipe target). Built-in hygiene: eject, Cryptomator, Bluetooth.";
+"onboarding.paranoid.footnote" = "Setup stores targets only. Arming, codeword, and destruction on cable pull are not enabled yet.";
 "onboarding.highAssurance.title" = "Panic & maximum protection";
 "onboarding.highAssurance.body" = "Stronger presets and a separate panic-armed mode for zero grace on cable pull. Use only when you accept possible data loss.";
 "onboarding.highAssurance.modes.title" = "High-assurance options";

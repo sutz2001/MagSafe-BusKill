@@ -76,9 +76,24 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
     !(codewordHash ?? "").isEmpty && !(codewordSalt ?? "").isEmpty
   }
 
-  /// Gates arming: setup, legal, wipe target, and codeword. FileVault is checked at arm time.
+  /// Gates arming: setup, legal, wipe target, and codeword. FileVault is re-checked at arm time.
   public var isReadyToArm: Bool {
     setupCompleted && legalNoticeAccepted && hasWipeTarget && hasCodeword
+  }
+
+  /// Setup wizard finish: FileVault on and at least one wipe target after sanitizing.
+  public func canCompleteSetup(fileVaultEnabled: Bool) -> Bool {
+    fileVaultEnabled && validated().hasWipeTarget
+  }
+
+  /// Marks setup complete, or returns false and leaves `setupCompleted` false.
+  public mutating func completeSetup(fileVaultEnabled: Bool) -> Bool {
+    guard canCompleteSetup(fileVaultEnabled: fileVaultEnabled) else {
+      setupCompleted = false
+      return false
+    }
+    setupCompleted = true
+    return true
   }
 
   /// Trims paths, drops empties/duplicates, and clears obviously unsafe wipe roots.
