@@ -23,6 +23,8 @@ MARKETING="$(jq -r .marketingVersion version.json)"
 BUILD_NUM="$(jq -r .buildNumber version.json)"
 ARTIFACT_BASE="MagSafeGuard-${MARKETING}"
 STAGED_APP="${DIST_DIR}/${ARTIFACT_BASE}.app"
+# User-facing .app name inside DMG /Applications (no version in the name).
+APP_BUNDLE_NAME="MagSafe Guard.app"
 PRODUCTS_DIR="${DERIVED_DATA}/Build/Products/${CONFIGURATION}"
 BUILT_APP="${PRODUCTS_DIR}/MagSafeGuard.app"
 DMG_PATH="${DIST_DIR}/${ARTIFACT_BASE}.dmg"
@@ -36,6 +38,7 @@ read_version() {
   BUILD_NUM="$(jq -r .buildNumber version.json)"
   ARTIFACT_BASE="MagSafeGuard-${MARKETING}"
   STAGED_APP="${DIST_DIR}/${ARTIFACT_BASE}.app"
+  APP_BUNDLE_NAME="MagSafe Guard.app"
   DMG_PATH="${DIST_DIR}/${ARTIFACT_BASE}.dmg"
 }
 
@@ -137,7 +140,8 @@ cmd_dmg() {
   STAGING="${DIST_DIR}/.dmg-staging"
   rm -rf "$STAGING" "$DMG_PATH"
   mkdir -p "$STAGING"
-  cp -R "$STAGED_APP" "$STAGING/"
+  # Drag-install name must not include the version (Finder / Applications convention).
+  cp -R "$STAGED_APP" "${STAGING}/${APP_BUNDLE_NAME}"
   ln -s /Applications "$STAGING/Applications"
 
   log "💿 Creating DMG: $DMG_PATH"
@@ -149,7 +153,7 @@ cmd_dmg() {
     "$DMG_PATH" >/dev/null
 
   rm -rf "$STAGING"
-  log "✅ DMG: $DMG_PATH"
+  log "✅ DMG: $DMG_PATH (contains ${APP_BUNDLE_NAME})"
 }
 
 cmd_checksum() {
@@ -174,9 +178,10 @@ cmd_install() {
   read_version
   [ -d "$STAGED_APP" ] || die "Staged app missing — run: task release"
 
-  TARGET="/Applications/$(basename "$STAGED_APP")"
+  TARGET="/Applications/${APP_BUNDLE_NAME}"
   log "📲 Installing to $TARGET"
-  rm -rf "$TARGET"
+  # Remove prior versioned install names from older packaging.
+  rm -rf "$TARGET" /Applications/MagSafeGuard-*.app
   cp -R "$STAGED_APP" "$TARGET"
   log "✅ Installed — launch from Applications or Spotlight"
 }
@@ -214,9 +219,9 @@ Usage: $(basename "$0") <command>
 
 Commands:
   build      Release xcodebuild → dist/MagSafeGuard-<version>.app
-  dmg        Create drag-install DMG (requires build)
+  dmg        Create DMG containing "MagSafe Guard.app" (no version in app name)
   checksum   Write dist/SHA256SUMS
-  install    Copy staged app to /Applications
+  install    Copy staged app to /Applications/MagSafe Guard.app
   open       Open DMG or .app
   show       Print artifact paths
   all        build + dmg + checksum
