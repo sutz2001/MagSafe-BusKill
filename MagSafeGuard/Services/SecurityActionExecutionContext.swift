@@ -32,8 +32,8 @@ public enum SecurityActionExecutionContext: Equatable, Sendable {
 
   var forcesImmediateShutdown: Bool {
     switch self {
-    case .panic, .paranoid: return true
-    case .standard, .theftTrigger: return false
+    case .panic: return true
+    case .standard, .theftTrigger, .paranoid: return false
     }
   }
 }

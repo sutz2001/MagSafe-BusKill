@@ -89,6 +89,7 @@ final class ParanoidConfigurationTests: XCTestCase {
     original.wipePaths = ["/Users/test/wipe-me"]
     original.apfsVolumeIdentifiers = ["VOL-UUID"]
     original.recoveryKeyBackupPath = "/Users/test/recovery.txt"
+    original.pathWipeTimeBudgetSeconds = 15
     original.setCodeword("phrase")
     original.setupCompleted = true
     original.legalNoticeAccepted = true
@@ -99,6 +100,7 @@ final class ParanoidConfigurationTests: XCTestCase {
     XCTAssertEqual(decoded.wipePaths, original.wipePaths)
     XCTAssertEqual(decoded.apfsVolumeIdentifiers, original.apfsVolumeIdentifiers)
     XCTAssertEqual(decoded.recoveryKeyBackupPath, original.recoveryKeyBackupPath)
+    XCTAssertEqual(decoded.pathWipeTimeBudgetSeconds, 15)
     XCTAssertEqual(decoded.codewordHash, original.codewordHash)
     XCTAssertEqual(decoded.codewordSalt, original.codewordSalt)
     XCTAssertTrue(decoded.matchesCodeword("phrase"))

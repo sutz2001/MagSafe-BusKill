@@ -8,6 +8,9 @@ import MagSafeGuardCore
 
 /// Production destruction pipeline. Never erases the boot volume. No-ops in CI/XCTest
 /// unless a test injects `DestructionSafetyPolicy`.
+///
+/// Paths are wiped **sequentially in list order** (user priority) via `/bin/rm -rf --`.
+/// `pathWipeTimeBudgetSeconds` stops starting further paths when the budget elapses (`0` = no cap).
 public final class MacDestructionPipeline: DestructionPipeline, @unchecked Sendable {
 
   public typealias ShellCapture = (String, [String]) throws -> String
@@ -34,6 +37,8 @@ public final class MacDestructionPipeline: DestructionPipeline, @unchecked Senda
   public func execute(_ config: ParanoidConfiguration) -> DestructionResult {
     let validated = config.validated()
     let boot = bootIdentity()
+    let budget = validated.pathWipeTimeBudgetSeconds
+    let deadline: Date? = budget > 0 ? Date().addingTimeInterval(budget) : nil
 
     var wiped: [String] = []
     var failedPaths: [DestructionResult.Failure] = []
@@ -42,65 +47,50 @@ public final class MacDestructionPipeline: DestructionPipeline, @unchecked Senda
     var recoveryDeleted = false
     var recoveryError: String?
 
-    let lock = NSLock()
-    let group = DispatchGroup()
-    let queue = DispatchQueue(
-      label: "com.sutz2001.MagSafeGuard.destruction",
-      qos: .userInitiated,
-      attributes: .concurrent
-    )
-
     for path in validated.wipePaths {
-      group.enter()
-      queue.async {
-        defer { group.leave() }
-        let outcome = self.wipePath(path)
-        lock.lock()
-        switch outcome {
-        case .wiped(let p): wiped.append(p)
-        case .failed(let f): failedPaths.append(f)
-        }
-        lock.unlock()
+      if let deadline, Date() >= deadline {
+        failedPaths.append(
+          .init(target: path, message: "Path wipe budget exhausted")
+        )
+        continue
+      }
+      switch wipePath(path) {
+      case .wiped(let p): wiped.append(p)
+      case .failed(let f): failedPaths.append(f)
       }
     }
 
     if let recovery = validated.recoveryKeyBackupPath {
-      group.enter()
-      queue.async {
-        defer { group.leave() }
-        let outcome = self.wipePath(recovery)
-        lock.lock()
-        switch outcome {
+      if let deadline, Date() >= deadline {
+        recoveryError = "Path wipe budget exhausted"
+      } else {
+        switch wipePath(recovery) {
         case .wiped:
           recoveryDeleted = true
         case .failed(let f):
           recoveryError = f.message
         }
-        lock.unlock()
       }
     }
 
     for volumeID in validated.apfsVolumeIdentifiers {
-      group.enter()
-      queue.async {
-        defer { group.leave() }
-        let outcome = self.eraseVolume(volumeID, bootUUID: boot.uuid, bootDevice: boot.deviceNode)
-        lock.lock()
-        switch outcome {
-        case .erased(let id): erased.append(id)
-        case .failed(let f): failedVolumes.append(f)
-        }
-        lock.unlock()
+      if let deadline, Date() >= deadline {
+        failedVolumes.append(
+          .init(target: volumeID, message: "Path wipe budget exhausted")
+        )
+        continue
+      }
+      switch eraseVolume(volumeID, bootUUID: boot.uuid, bootDevice: boot.deviceNode) {
+      case .erased(let id): erased.append(id)
+      case .failed(let f): failedVolumes.append(f)
       }
     }
 
-    group.wait()
-
     return DestructionResult(
-      wipedPaths: wiped.sorted(),
-      failedPaths: failedPaths.sorted { $0.target < $1.target },
-      erasedVolumes: erased.sorted(),
-      failedVolumes: failedVolumes.sorted { $0.target < $1.target },
+      wipedPaths: wiped,
+      failedPaths: failedPaths,
+      erasedVolumes: erased,
+      failedVolumes: failedVolumes,
       recoveryKeyDeleted: recoveryDeleted,
       recoveryKeyError: recoveryError
     )
@@ -127,7 +117,8 @@ public final class MacDestructionPipeline: DestructionPipeline, @unchecked Senda
       return .failed(.init(target: path, message: "Path not found"))
     }
     do {
-      try fileManager.removeItem(atPath: path)
+      // argv form — no shell. Equivalent to `rm -rf -- <path>`.
+      _ = try captureShell("/bin/rm", ["-rf", "--", path])
       return .wiped(path)
     } catch {
       return .failed(.init(target: path, message: error.localizedDescription))

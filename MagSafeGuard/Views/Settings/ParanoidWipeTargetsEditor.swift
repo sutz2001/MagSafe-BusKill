@@ -11,6 +11,9 @@ import SwiftUI
 struct ParanoidWipeTargetsEditor: View {
   @EnvironmentObject var settingsManager: UserDefaultsManager
   @State private var volumeIDDraft = ""
+  @State private var customPathDraft = ""
+  @State private var customPathError: String?
+  @State private var showingSuggestions = false
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
@@ -18,25 +21,59 @@ struct ParanoidWipeTargetsEditor: View {
       volumeIDsBlock
       recoveryKeyBlock
     }
+    .sheet(isPresented: $showingSuggestions) {
+      ParanoidWipePathSuggestionsSheet(isPresented: $showingSuggestions)
+        .environmentObject(settingsManager)
+    }
   }
 
   private var wipePathsBlock: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(l10n: "settings.paranoid.wipePaths")
         .font(.headline)
+      Text(l10n: "settings.paranoid.wipePaths.caption")
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
 
       if settingsManager.settings.paranoid.wipePaths.isEmpty {
         Text(l10n: "settings.paranoid.wipePaths.empty")
           .font(.caption)
           .foregroundColor(.secondary)
       } else {
-        ForEach(settingsManager.settings.paranoid.wipePaths, id: \.self) { path in
-          HStack {
+        Text(l10n: "settings.paranoid.wipePaths.orderHint")
+          .font(.caption)
+          .foregroundColor(.secondary)
+
+        ForEach(Array(settingsManager.settings.paranoid.wipePaths.enumerated()), id: \.element) {
+          index,
+          path in
+          HStack(spacing: 8) {
+            Text("\(index + 1).")
+              .font(.caption.monospacedDigit())
+              .foregroundColor(.secondary)
+              .frame(width: 22, alignment: .trailing)
             Text(path)
               .font(.caption)
               .lineLimit(2)
               .textSelection(.enabled)
             Spacer()
+            Button {
+              moveWipePath(from: index, direction: -1)
+            } label: {
+              Image(systemName: "arrow.up")
+            }
+            .buttonStyle(.borderless)
+            .disabled(index == 0)
+            .help(L10n.tr("settings.paranoid.wipePaths.moveUp"))
+            Button {
+              moveWipePath(from: index, direction: 1)
+            } label: {
+              Image(systemName: "arrow.down")
+            }
+            .buttonStyle(.borderless)
+            .disabled(index >= settingsManager.settings.paranoid.wipePaths.count - 1)
+            .help(L10n.tr("settings.paranoid.wipePaths.moveDown"))
             Button(role: .destructive) {
               removeWipePath(path)
             } label: {
@@ -48,8 +85,31 @@ struct ParanoidWipeTargetsEditor: View {
         }
       }
 
-      Button(L10n.tr("settings.paranoid.addPath")) {
-        addWipePath()
+      wipeBudgetBlock
+
+      HStack {
+        TextField(L10n.tr("settings.paranoid.customPath.placeholder"), text: $customPathDraft)
+          .onSubmit { addCustomPathFromDraft() }
+        Button(L10n.tr("settings.paranoid.customPath.add")) {
+          addCustomPathFromDraft()
+        }
+        .disabled(customPathDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+      }
+
+      if let customPathError {
+        Text(customPathError)
+          .font(.caption)
+          .foregroundColor(.orange)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+
+      HStack {
+        Button(L10n.tr("settings.paranoid.addPath")) {
+          addWipePath()
+        }
+        Button(L10n.tr("settings.paranoid.suggest.open")) {
+          showingSuggestions = true
+        }
       }
     }
   }
@@ -116,9 +176,54 @@ struct ParanoidWipeTargetsEditor: View {
     }
   }
 
+  private var wipeBudgetBlock: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text(l10n: "settings.paranoid.wipeBudget.title")
+        .font(.headline)
+      Text(wipeBudgetCaption)
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
+      HStack {
+        Text(l10n: "settings.paranoid.wipeBudget.min")
+          .font(.caption)
+        Slider(value: wipeBudgetBinding, in: 0...60, step: 1)
+        Text(l10n: "settings.paranoid.wipeBudget.max")
+          .font(.caption)
+      }
+    }
+  }
+
+  private var wipeBudgetCaption: String {
+    let seconds = Int(settingsManager.settings.paranoid.pathWipeTimeBudgetSeconds.rounded())
+    if seconds == 0 {
+      return L10n.tr("settings.paranoid.wipeBudget.unlimited")
+    }
+    return L10n.tr("settings.paranoid.wipeBudget.value", seconds)
+  }
+
+  private var wipeBudgetBinding: Binding<Double> {
+    Binding(
+      get: { settingsManager.settings.paranoid.pathWipeTimeBudgetSeconds },
+      set: { value in
+        updateParanoid { $0.pathWipeTimeBudgetSeconds = value }
+      }
+    )
+  }
+
   private func updateParanoid(_ mutate: (inout ParanoidConfiguration) -> Void) {
     settingsManager.updateSettings { settings in
       mutate(&settings.paranoid)
+    }
+  }
+
+  private func moveWipePath(from index: Int, direction: Int) {
+    updateParanoid { config in
+      let destination = index + direction
+      guard config.wipePaths.indices.contains(index),
+        config.wipePaths.indices.contains(destination)
+      else { return }
+      config.wipePaths.swapAt(index, destination)
     }
   }
 
@@ -136,6 +241,41 @@ struct ParanoidWipeTargetsEditor: View {
         config.wipePaths.append(path)
       }
     }
+    customPathError = nil
+  }
+
+  private func addCustomPathFromDraft() {
+    let raw = customPathDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !raw.isEmpty else { return }
+
+    let expanded: String
+    if raw == "~" || raw.hasPrefix("~/") {
+      expanded = (raw as NSString).expandingTildeInPath
+    } else {
+      expanded = raw
+    }
+    let standardized = (expanded as NSString).standardizingPath
+
+    guard standardized.hasPrefix("/") else {
+      customPathError = L10n.tr("settings.paranoid.customPath.absoluteRequired")
+      return
+    }
+    guard !ParanoidConfiguration.isForbiddenWipePath(standardized) else {
+      customPathError = L10n.tr("settings.paranoid.customPath.forbidden")
+      return
+    }
+
+    let alreadyListed = settingsManager.settings.paranoid.wipePaths.contains(standardized)
+    if alreadyListed {
+      customPathError = L10n.tr("settings.paranoid.customPath.duplicate")
+      return
+    }
+
+    updateParanoid { config in
+      config.wipePaths.append(standardized)
+    }
+    customPathDraft = ""
+    customPathError = nil
   }
 
   private func removeWipePath(_ path: String) {

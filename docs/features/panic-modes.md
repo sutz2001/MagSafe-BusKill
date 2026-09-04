@@ -72,6 +72,7 @@ User must confirm before paranoid can be armed:
 
 - [x] **FileVault enabled** (verified via `fdesetup status` in the setup wizard)
 - [x] At least one **wipe target** required to complete setup (paths / APFS UUID); recovery-key file optional
+- [x] **Suggested wipe folders** (opt-in sheet): existing paths including Home/Documents/Desktop/Downloads (labeled severe) plus vault-style folders — never auto-applied
 - [x] Optional: local FileVault recovery key backup path (stored; delete-on-trigger not shipped)
 - [ ] Full paranoid onboarding (EN + DE) with explicit consent
 
@@ -87,16 +88,16 @@ User must confirm before paranoid can be armed:
 | SSH agent clear | immediate | |
 | Browser / app session kill | immediate | best-effort |
 | Keychain items (configured) | fast | user-selected or preset list |
-| `rm -rf` on configured paths | parallel | user-defined only |
-| APFS volume erase | parallel | dedicated volume ID only |
+| `rm -rf` on configured paths | **sequential, list order** | user-defined; `/bin/rm -rf -- <path>`; time budget then remaining paths skipped |
+| APFS volume erase | after paths (same budget) | dedicated volume ID only |
 | Delete local recovery key backup | if configured | only if path known |
 | Custom wipe script | parallel | bundled `TriggerScripts/` in app + user paths — see [panic-modes § LUKS vs macOS](#linux-luks-header-shredder-vs-macos) |
 
-**Phase 2 — terminal (immediate, do not wait for Phase 1):**
+**Phase 2 — terminal:**
 
-- Hard shutdown / halt (same path as Panic)
+- Hard shutdown after wipe budget (or when wipe finishes earlier). Lock/logout/hygiene run in parallel with the wipe.
 
-**Design rule:** Speed beats completeness — power off quickly; destruction runs until power is gone.
+**Design rule:** Path list order is priority. Within `pathWipeTimeBudgetSeconds` (default 10; `0` = no cap), wipe top-to-bottom; then shut down. Completeness is still best-effort if a single huge tree exceeds the budget.
 
 ### Linux LUKS header shredder vs macOS
 
@@ -187,9 +188,10 @@ PanicModeExecutor
   - parallel: lock, logout, network, shutdown
 
 ParanoidModeExecutor (M3 — not wired to AppController)
-  - DestructionPipeline.execute(config) on a background queue (fire-and-forget)
-  - SecurityTriggerPipeline context `.paranoid` (scripts + protection-first + immediate shutdown)
-  - shutdown does not wait for wipe
+  - DestructionPipeline.execute(config) sequential wipe in list order (budgeted)
+  - SecurityTriggerPipeline context `.paranoid` (scripts + lock/logout, no inline shutdown)
+  - hard shutdown after wipe + protection finish
+  - path order = priority within time budget
 
 DestructionPipeline (M2 — shipped in code, unused at runtime)
   - MockDestructionPipeline — CI / unit tests, no IO

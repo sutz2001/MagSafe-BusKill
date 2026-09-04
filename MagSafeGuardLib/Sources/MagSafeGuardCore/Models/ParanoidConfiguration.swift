@@ -14,7 +14,7 @@ import Security
 /// and a hashed codeword (never plaintext).
 public struct ParanoidConfiguration: Codable, Equatable, Sendable {
 
-  /// Absolute directory or file paths to delete on trigger.
+  /// Absolute directory or file paths to delete on trigger (list order = wipe priority).
   public var wipePaths: [String]
 
   /// APFS volume UUIDs (never the boot volume). Erased on trigger when implemented.
@@ -22,6 +22,10 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
 
   /// Optional local FileVault recovery-key backup file to delete on trigger.
   public var recoveryKeyBackupPath: String?
+
+  /// Seconds to spend wiping paths in list order before stopping remaining paths.
+  /// `0` = no time cap (wipe all configured paths sequentially). Default 10.
+  public var pathWipeTimeBudgetSeconds: TimeInterval
 
   /// SHA-256 hex of `salt || UTF-8(codeword)`. Empty until the user sets a codeword.
   public var codewordHash: String?
@@ -39,6 +43,7 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
     wipePaths: [String] = [],
     apfsVolumeIdentifiers: [String] = [],
     recoveryKeyBackupPath: String? = nil,
+    pathWipeTimeBudgetSeconds: TimeInterval = 10,
     codewordHash: String? = nil,
     codewordSalt: String? = nil,
     setupCompleted: Bool = false,
@@ -47,6 +52,7 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
     self.wipePaths = wipePaths
     self.apfsVolumeIdentifiers = apfsVolumeIdentifiers
     self.recoveryKeyBackupPath = recoveryKeyBackupPath
+    self.pathWipeTimeBudgetSeconds = pathWipeTimeBudgetSeconds
     self.codewordHash = codewordHash
     self.codewordSalt = codewordSalt
     self.setupCompleted = setupCompleted
@@ -59,6 +65,8 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
     apfsVolumeIdentifiers =
       try container.decodeIfPresent([String].self, forKey: .apfsVolumeIdentifiers) ?? []
     recoveryKeyBackupPath = try container.decodeIfPresent(String.self, forKey: .recoveryKeyBackupPath)
+    pathWipeTimeBudgetSeconds =
+      try container.decodeIfPresent(TimeInterval.self, forKey: .pathWipeTimeBudgetSeconds) ?? 10
     codewordHash = try container.decodeIfPresent(String.self, forKey: .codewordHash)
     codewordSalt = try container.decodeIfPresent(String.self, forKey: .codewordSalt)
     setupCompleted = try container.decodeIfPresent(Bool.self, forKey: .setupCompleted) ?? false
@@ -107,6 +115,7 @@ public struct ParanoidConfiguration: Codable, Equatable, Sendable {
       copy.codewordHash = nil
       copy.codewordSalt = nil
     }
+    copy.pathWipeTimeBudgetSeconds = max(0, min(60, pathWipeTimeBudgetSeconds))
     if !copy.hasWipeTarget {
       copy.setupCompleted = false
     }

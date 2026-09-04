@@ -29,7 +29,8 @@ final class ParanoidModeExecutorTests: XCTestCase {
     sut = ParanoidModeExecutor(
       pipeline: pipeline,
       destruction: mockDestruction,
-      settingsManager: .shared
+      settingsManager: .shared,
+      systemActions: mockSystemActions
     )
   }
 
@@ -41,25 +42,22 @@ final class ParanoidModeExecutorTests: XCTestCase {
     super.tearDown()
   }
 
-  func testExecuteRunsShutdownAndStartsDestruction() {
-    let pipelineDone = expectation(description: "paranoid pipeline completes")
-    let destructionStarted = expectation(description: "destruction started")
-    mockDestruction.onExecute = { _ in
-      destructionStarted.fulfill()
-    }
+  func testExecuteRunsDestructionThenShutdown() {
+    let done = expectation(description: "paranoid completes")
+    mockDestruction.onExecute = { _ in }
 
     sut.execute { _, _, _ in
-      pipelineDone.fulfill()
+      done.fulfill()
     }
 
-    wait(for: [pipelineDone, destructionStarted], timeout: 3)
+    wait(for: [done], timeout: 3)
     XCTAssertTrue(mockSystemActions.lockScreenCalled)
     XCTAssertTrue(mockSystemActions.executeImmediateShutdownCalled)
     XCTAssertEqual(mockDestruction.executeCallCount, 1)
   }
 
-  func testPipelineDoesNotWaitForSlowDestruction() {
-    let slow = SlowDestructionPipeline(sleepSeconds: 2)
+  func testShutdownWaitsForDestructionToFinish() {
+    let slow = SlowDestructionPipeline(sleepSeconds: 0.4)
     let pipeline = SecurityTriggerPipeline(
       networkActions: NetworkActionsService(settingsManager: .shared),
       securityActions: securityActions,
@@ -68,21 +66,22 @@ final class ParanoidModeExecutorTests: XCTestCase {
     sut = ParanoidModeExecutor(
       pipeline: pipeline,
       destruction: slow,
-      settingsManager: .shared
+      settingsManager: .shared,
+      systemActions: mockSystemActions
     )
 
-    let pipelineDone = expectation(description: "pipeline finished without waiting for wipe")
+    let done = expectation(description: "finished after wipe")
     let started = Date()
     sut.execute { _, _, _ in
-      pipelineDone.fulfill()
+      done.fulfill()
     }
 
-    wait(for: [pipelineDone], timeout: 1.5)
-    XCTAssertLessThan(Date().timeIntervalSince(started), 1.5)
+    wait(for: [done], timeout: 3)
+    XCTAssertGreaterThanOrEqual(Date().timeIntervalSince(started), 0.35)
     XCTAssertTrue(mockSystemActions.executeImmediateShutdownCalled)
   }
 
-  func testParanoidContextBypassesRateLimitAndShutsDown() {
+  func testParanoidContextBypassesRateLimitWithoutInlineShutdown() {
     securityActions.configureRateLimitForTesting(minimumInterval: 10, maxExecutions: 1, window: 60)
     let first = expectation(description: "standard run")
     securityActions.executeActions { _ in first.fulfill() }
@@ -91,11 +90,10 @@ final class ParanoidModeExecutorTests: XCTestCase {
     let paranoid = expectation(description: "paranoid bypass")
     securityActions.executeActions(context: .paranoid) { result in
       XCTAssertTrue(result.executedActions.contains(.lockScreen))
-      XCTAssertTrue(result.executedActions.contains(.shutdown))
+      XCTAssertFalse(result.executedActions.contains(.shutdown))
       paranoid.fulfill()
     }
     wait(for: [paranoid], timeout: 2)
-    XCTAssertTrue(mockSystemActions.executeImmediateShutdownCalled)
   }
 }
 
