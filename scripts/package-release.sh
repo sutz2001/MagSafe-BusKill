@@ -145,11 +145,13 @@ cmd_dmg() {
   ln -s /Applications "$STAGING/Applications"
 
   log "💿 Creating DMG: $DMG_PATH"
+  # HFS+ so Finder reliably shows MagSafe Guard.app (default APFS images often look empty).
   hdiutil create \
     -volname "MagSafe Guard ${MARKETING}" \
     -srcfolder "$STAGING" \
     -ov \
     -format UDZO \
+    -fs HFS+ \
     "$DMG_PATH" >/dev/null
 
   rm -rf "$STAGING"
