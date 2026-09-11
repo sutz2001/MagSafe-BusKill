@@ -39,7 +39,7 @@ Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork 
 | **Fork maintainer** | Marc Seitz |
 | **Attribution** | [`LICENSE`](LICENSE) (dual copyright) · [`NOTICE`](NOTICE) (provenance) |
 
-Upstream targets the Mac App Store and paid Apple capabilities. **This fork** focuses on Personal Team signing, bilingual UI (EN/DE), operation presets, network actions, panic mode, release automation (`task release`), and **GitHub + notarized DMG** distribution — not the App Store.
+Upstream targets the Mac App Store and paid Apple capabilities. **This fork** focuses on bilingual UI (EN/DE), operation presets, network actions, panic/paranoid modes, release automation (`task release`), and **GitHub + notarized Developer ID DMG** distribution — not the App Store.
 
 ---
 
@@ -123,7 +123,7 @@ Security actions: **Settings → Security** (+ / − / drag to reorder).
 ## Build & run
 
 Needs **macOS 13+**, **Xcode 15+**, and [Task](https://taskfile.dev) (`brew install go-task/tap/go-task`).  
-A **free Apple ID** (Personal Team) is enough to build and run on your Mac.
+A **free Apple ID** is enough to clone and build for yourself. **Paid Apple Developer** (~$99/year) is required for **Developer ID + notarized** DMGs that others can open without Gatekeeper warnings — see [notarization.md](docs/maintainers/notarization.md).
 
 ### Quick start
 
@@ -166,6 +166,7 @@ Output directory: `dist/` (`MagSafeGuard-<version>.app`, `.dmg`, `SHA256SUMS`).
 
 ```bash
 SKIP_TESTS=true task release         # skip test suite
+SIGN_MODE=developerid task release:developerid  # Developer ID + notarize
 SIGN_MODE=adhoc task release:build    # ad-hoc signing fallback
 SIGN_MODE=unsigned task release:build
 task release:clean                   # remove dist/
@@ -173,7 +174,7 @@ task release:clean                   # remove dist/
 
 </details>
 
-**Signing note:** Personal Team builds expire after ~7 days — rebuild with `task release` or ⌘R in Xcode. Normal Apple code signing, not an app trial.
+**Signing note:** Free Personal Team builds expire after ~7 days. **Developer ID** + notarized releases do not — setup in [docs/maintainers/notarization.md](docs/maintainers/notarization.md).
 
 ---
 
@@ -184,7 +185,7 @@ task release:clean                   # remove dist/
 | Clone source & build on your Mac | No — free Apple ID |
 | Publish source on GitHub | No |
 | Attach a `.dmg` to GitHub Releases for yourself | No |
-| Others install your `.dmg` without Gatekeeper warnings | Yes — Developer ID + notarization |
+| Others install your `.dmg` without Gatekeeper warnings | Yes — Developer ID + notarization ([guide](docs/maintainers/notarization.md)) |
 | Mac App Store | Not planned (sandbox limits) |
 
 **Model:** open source on GitHub; users **compile locally** or install a **notarized DMG** when available.
@@ -207,7 +208,7 @@ task release:clean                   # remove dist/
 | Done | **0.5.8** | Eject removable volumes (built-in hygiene) |
 | Done | **0.5.9** | Cryptomator/Bluetooth hygiene, bundled trigger scripts |
 | Done | **0.6.0** | Paranoid mode — wipe paths, FileVault gate, codeword, **⌃⌘⇧P**, `magsafeguard://paranoid` |
-| Stable | **1.0.0** | Notarized Developer ID distribution |
+| Stable | **1.0.0** | Notarized Developer ID distribution ([notarization.md](docs/maintainers/notarization.md)) |
 
 Full plan: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)** · **User guide:** [EN](docs/features/user-guide.md) · [DE](docs/features/user-guide.de.md)
 
@@ -247,7 +248,8 @@ The first three items were verified on `main` before the repository was made pub
 | --- | --- |
 | Bundle ID | `com.sutz2001.MagSafeGuard` |
 | Grace period default | 30 s |
-| iCloud / Push | Removed from entitlements (Personal Team) |
+| iCloud / Push | Removed from entitlements (optional later with paid capabilities) |
+| Code signing | Team `7FPM58LVXH` · Developer ID + notarization for public DMGs |
 | Version source | [`version.json`](version.json) → `task version:sync` |
 
 ```bash
@@ -271,7 +273,8 @@ Optional upstream reference (manual only): `git fetch upstream && git merge upst
 | [docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md) | Feature roadmap & legal notes |
 | [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md) | Fork release history |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Detailed build guide |
-| [docs/maintainers/code-signing.md](docs/maintainers/code-signing.md) | Signing & distribution |
+| [docs/maintainers/notarization.md](docs/maintainers/notarization.md) | Developer ID + notarytool |
+| [docs/maintainers/code-signing.md](docs/maintainers/code-signing.md) | Signing & distribution (broader) |
 | [AGENTS.md](AGENTS.md) | Contributor & AI agent rules |
 
 ---

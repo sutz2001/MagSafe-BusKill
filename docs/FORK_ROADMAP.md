@@ -21,7 +21,7 @@ Stand: nach **0.5.5** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FO
 | **Zwischenablage leeren** (Netzwerk-Aktion) | ✅ v0.5.1 |
 | **Paranoid-Modus** | ❌ geplant v0.6.0 |
 | **Stabilisierung (0.5.x)** | 🔄 **aktueller Fokus** — [Checkliste](maintainers/stabilization-checklist.md) |
-| Notarisierung (Developer ID) | ⏸️ wenn App reif + Paid Dev |
+| Notarisierung (Developer ID) | ✅ Tooling ready — [notarization.md](maintainers/notarization.md); run after cert + notary profile |
 | Mac App Store | ❌ **ausgeschlossen** (Sandbox) |
 | Repository | ✅ öffentlich — [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
 
@@ -244,7 +244,7 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 |-------|--------|---------|
 | **GitHub (Quellcode)** | ✅ jetzt | MIT + NOTICE; Nutzer bauen mit eigener Apple-ID |
 | **GitHub Releases (.dmg)** | geplant | Optional; für Fremde besser notarisiert |
-| **Developer ID + Notarisierung** | geplant | Paid Dev (~99 $/Jahr); Gatekeeper-freundlich |
+| **Developer ID + Notarisierung** | Tooling ready | Paid Dev; `SIGN_MODE=developerid task release:developerid` |
 | **Mac App Store** | ❌ ausgeschlossen | Sandbox: kein Shutdown, keine freien Skripte, kein Panic |
 
 ### Braucht man Apple Developer nur für GitHub?

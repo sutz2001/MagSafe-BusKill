@@ -39,7 +39,7 @@ Inspiriert von [BusKill](https://github.com/BusKill/buskill-app). Unabhängiger 
 | **Fork-Maintainer** | Marc Seitz |
 | **Namensnennung** | [`LICENSE`](LICENSE) (Doppel-Copyright) · [`NOTICE`](NOTICE) (Herkunft) |
 
-Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser Fork** setzt auf Personal Team, zweisprachige UI (EN/DE), Betriebsmodus-Voreinstellungen, Netzwerk-Aktionen, Panic-Modus, Release-Automatisierung (`task release`) und **GitHub + notarisierte DMG** — nicht über den App Store.
+Upstream zielt auf Mac App Store und kostenpflichtige Apple-Funktionen. **Dieser Fork** setzt auf zweisprachige UI (EN/DE), Betriebsmodus-Voreinstellungen, Netzwerk-Aktionen, Panic/Paranoid, Release-Automatisierung (`task release`) und **GitHub + notarisierte Developer-ID-DMG** — nicht über den App Store.
 
 ---
 
@@ -123,7 +123,7 @@ Sicherheitsaktionen: **Einstellungen → Security** — **+** / **−** / Drag &
 ## Bauen & starten
 
 Benötigt **macOS 13+**, **Xcode 15+** und [Task](https://taskfile.dev) (`brew install go-task/tap/go-task`).  
-Eine **kostenlose Apple-ID** (Personal Team) reicht für den eigenen Mac.
+Eine **kostenlose Apple-ID** reicht zum Klonen und Selbstbauen. **Kostenpflichtiger Apple Developer** (~99 €/Jahr) braucht es für **Developer ID + notarisierte** DMGs ohne Gatekeeper-Warnung — siehe [notarization.md](docs/maintainers/notarization.md).
 
 ### Schnellstart
 
@@ -166,6 +166,7 @@ Ausgabe: `dist/` (`.app`, `.dmg`, `SHA256SUMS`).
 
 ```bash
 SKIP_TESTS=true task release
+SIGN_MODE=developerid task release:developerid  # Developer ID + Notarisierung
 SIGN_MODE=adhoc task release:build
 SIGN_MODE=unsigned task release:build
 task release:clean
@@ -173,7 +174,7 @@ task release:clean
 
 </details>
 
-**Hinweis Signing:** Personal-Team-Builds laufen nach ~7 Tagen ab — neu bauen mit `task release` oder ⌘R. Normales Apple Code Signing.
+**Hinweis Signing:** Kostenlose Personal-Team-Builds laufen nach ~7 Tagen ab. **Developer ID** + Notarisierung nicht — Setup: [docs/maintainers/notarization.md](docs/maintainers/notarization.md).
 
 ---
 
@@ -184,7 +185,7 @@ task release:clean
 | Quellcode klonen & selbst bauen | Nein — kostenlose Apple-ID |
 | Quellcode auf GitHub veröffentlichen | Nein |
 | Eigene `.dmg` als GitHub-Release (nur für dich) | Nein |
-| Fremde installieren `.dmg` ohne Gatekeeper-Warnung | Ja — Developer ID + Notarisierung |
+| Fremde installieren `.dmg` ohne Gatekeeper-Warnung | Ja — Developer ID + Notarisierung ([Anleitung](docs/maintainers/notarization.md)) |
 | Mac App Store | Nicht geplant |
 
 **Modell:** Open Source auf GitHub; Nutzer **kompilieren selbst** oder nutzen eine **notarisierte DMG**, sobald verfügbar.

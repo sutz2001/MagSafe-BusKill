@@ -36,6 +36,7 @@ This documentation is organized by audience and role to help you find the inform
 - **[Manual test checklist v0.5.3](maintainers/manual-test-0.5.3.md)** — abhakbare Smoke-Tests (DE)
 - [CI/CD Workflows](devops/ci-cd-workflows.md) - GitHub Actions and automation
 - [Code Signing Guide](maintainers/code-signing.md) - macOS app signing process
+- [Notarization (Developer ID)](maintainers/notarization.md) - Public DMG signing + notarytool
 - [Crash Prevention Guide](maintainers/crash-prevention-guide.md) - Stability best practices
 - [Release Process](CHANGELOG.md) - Version history and release notes
 

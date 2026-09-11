@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build a signed Release .app, optional DMG, and SHA256 checksum.
+# Build a signed Release .app, optional DMG, checksum, and optional notarization.
 # Used by: task release, task release:build, task release:dmg, …
 set -euo pipefail
 
@@ -12,7 +12,12 @@ CONFIGURATION="${CONFIGURATION:-Release}"
 DESTINATION="${DESTINATION:-platform=macOS}"
 DIST_DIR="${DIST_DIR:-dist}"
 DERIVED_DATA="${DERIVED_DATA:-$DIST_DIR/DerivedData}"
-SIGN_MODE="${SIGN_MODE:-auto}" # auto | adhoc | unsigned
+# auto | adhoc | unsigned | developerid
+SIGN_MODE="${SIGN_MODE:-auto}"
+NOTARY_PROFILE="${NOTARY_PROFILE:-MagSafeGuard-notary}"
+DEVELOPER_ID_ENTITLEMENTS="${DEVELOPER_ID_ENTITLEMENTS:-$ROOT/MagSafeGuard/MagSafeGuard.developerid.entitlements}"
+# After developerid build: also notarize app+dmg when NOTARIZE=1 (default for developerid).
+NOTARIZE="${NOTARIZE:-}"
 
 if ! command -v jq &>/dev/null; then
   echo "❌ jq is required (brew install jq)"
@@ -23,12 +28,13 @@ MARKETING="$(jq -r .marketingVersion version.json)"
 BUILD_NUM="$(jq -r .buildNumber version.json)"
 ARTIFACT_BASE="MagSafeGuard-${MARKETING}"
 STAGED_APP="${DIST_DIR}/${ARTIFACT_BASE}.app"
-# User-facing .app name inside DMG /Applications (no version in the name).
+# User-facing .app name inside DMG / Applications (no version in the name).
 APP_BUNDLE_NAME="MagSafe Guard.app"
 PRODUCTS_DIR="${DERIVED_DATA}/Build/Products/${CONFIGURATION}"
 BUILT_APP="${PRODUCTS_DIR}/MagSafeGuard.app"
 DMG_PATH="${DIST_DIR}/${ARTIFACT_BASE}.dmg"
 CHECKSUMS_FILE="${DIST_DIR}/SHA256SUMS"
+FRIENDLY_APP="${DIST_DIR}/${APP_BUNDLE_NAME}"
 
 log() { echo "$*"; }
 die() { echo "❌ $*" >&2; exit 1; }
@@ -39,7 +45,21 @@ read_version() {
   ARTIFACT_BASE="MagSafeGuard-${MARKETING}"
   STAGED_APP="${DIST_DIR}/${ARTIFACT_BASE}.app"
   APP_BUNDLE_NAME="MagSafe Guard.app"
+  FRIENDLY_APP="${DIST_DIR}/${APP_BUNDLE_NAME}"
   DMG_PATH="${DIST_DIR}/${ARTIFACT_BASE}.dmg"
+}
+
+find_developer_id_identity() {
+  local id
+  id="$(security find-identity -v -p codesigning 2>/dev/null | grep -F 'Developer ID Application' | head -1 | awk '{print $2}')"
+  [ -n "$id" ] || die "No 'Developer ID Application' certificate in Keychain.
+
+Create one (Account Holder):
+  Xcode → Settings → Accounts → your Apple ID → Manage Certificates… → + → Developer ID Application
+
+Team ID expected: 7FPM58LVXH
+Docs: docs/maintainers/notarization.md"
+  echo "$id"
 }
 
 sign_settings() {
@@ -50,13 +70,27 @@ sign_settings() {
     adhoc)
       SIGN_SETTINGS='CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES'
       ;;
-    unsigned)
+    unsigned|developerid)
+      # Build unsigned (avoids Xcode codesign failures on com.apple.provenance),
+      # then re-sign below for developerid.
       SIGN_SETTINGS='CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO'
       ;;
     *)
-      die "Unknown SIGN_MODE=$SIGN_MODE (use auto, adhoc, or unsigned)"
+      die "Unknown SIGN_MODE=$SIGN_MODE (use auto, adhoc, unsigned, or developerid)"
       ;;
   esac
+}
+
+strip_xattrs_tree() {
+  local root="$1"
+  [ -d "$root" ] || return 0
+  # Rewrite files that carry sticky provenance; then clear remaining xattrs.
+  while IFS= read -r -d '' file; do
+    if xattr -l "$file" 2>/dev/null | grep -q .; then
+      python3 -c "from pathlib import Path; p=Path(r'''$file'''); p.write_bytes(p.read_bytes())" 2>/dev/null || true
+    fi
+  done < <(find "$root" -type f -print0 2>/dev/null)
+  xattr -cr "$root" 2>/dev/null || true
 }
 
 run_xcodebuild() {
@@ -83,6 +117,44 @@ run_xcodebuild() {
   fi
 }
 
+codesign_developer_id_app() {
+  local app_path="$1"
+  local identity
+  identity="$(find_developer_id_identity)"
+  [ -f "$DEVELOPER_ID_ENTITLEMENTS" ] || die "Missing entitlements: $DEVELOPER_ID_ENTITLEMENTS"
+
+  log "🔏 Developer ID signing: $identity"
+
+  # Fresh copy without resource forks / AppleDouble (codesign rejects them).
+  local clean
+  clean="$(mktemp -d)/MagSafeGuard-sign.app"
+  rm -rf "$clean"
+  ditto --norsrc "$app_path" "$clean"
+  find "$clean" \( -name '._*' -o -name '.DS_Store' \) -delete
+  dot_clean -m "$clean" 2>/dev/null || true
+  xattr -cr "$clean" 2>/dev/null || true
+
+  # Sign nested frameworks inside-out (avoid --deep).
+  if [ -d "$clean/Contents/Frameworks" ]; then
+    local fw
+    while IFS= read -r -d '' fw; do
+      codesign --force --options runtime --timestamp --sign "$identity" "$fw"
+    done < <(find "$clean/Contents/Frameworks" -maxdepth 1 -name '*.framework' -print0)
+  fi
+
+  codesign --force --options runtime --timestamp \
+    --entitlements "$DEVELOPER_ID_ENTITLEMENTS" \
+    --sign "$identity" \
+    "$clean"
+
+  codesign --verify --deep --strict --verbose=2 "$clean"
+
+  rm -rf "$app_path"
+  ditto --norsrc "$clean" "$app_path"
+  rm -rf "$(dirname "$clean")"
+  log "✅ Developer ID signature verified"
+}
+
 cmd_build() {
   read_version
   sign_settings
@@ -96,17 +168,29 @@ cmd_build() {
   # Extended attributes (e.g. com.apple.provenance on bundled assets) break Release codesign.
   strip_bundled_resource_xattrs() {
     local resources="$ROOT/MagSafeGuard/Resources"
-    [ -d "$resources" ] || return 0
-    while IFS= read -r -d '' file; do
-      if xattr -l "$file" 2>/dev/null | grep -q .; then
-        local tmp="${file}.xattrstrip"
-        ditto --norsrc "$file" "$tmp"
-        mv "$tmp" "$file"
-      fi
-    done < <(find "$resources" -type f -print0)
+    local assets="$ROOT/MagSafeGuard/Assets.xcassets"
+    for dir in "$resources" "$assets"; do
+      [ -d "$dir" ] || continue
+      while IFS= read -r -d '' file; do
+        if xattr -l "$file" 2>/dev/null | grep -q .; then
+          local tmp="${file}.xattrstrip"
+          ditto --norsrc "$file" "$tmp"
+          mv "$tmp" "$file"
+        fi
+      done < <(find "$dir" -type f -print0)
+    done
   }
   strip_bundled_resource_xattrs
-  xattr -cr "$ROOT/MagSafeGuard" "$ROOT/MagSafeGuardTests" 2>/dev/null || true
+  strip_xattrs_tree "$ROOT/MagSafeGuard"
+  strip_xattrs_tree "$ROOT/MagSafeGuardTests"
+
+  if [ "$SIGN_MODE" = "developerid" ]; then
+    # Fail early if cert missing.
+    find_developer_id_identity >/dev/null
+    if [ -z "${NOTARIZE}" ]; then
+      NOTARIZE=1
+    fi
+  fi
 
   log "📦 Release build — MagSafe Guard ${MARKETING} (build ${BUILD_NUM})"
   log "   Sign mode: ${SIGN_MODE}"
@@ -117,11 +201,14 @@ cmd_build() {
 
   [ -d "$BUILT_APP" ] || die "Built app not found at $BUILT_APP"
 
-  rm -rf "$STAGED_APP"
-  cp -R "$BUILT_APP" "$STAGED_APP"
-  xattr -cr "$STAGED_APP" 2>/dev/null || true
+  rm -rf "$STAGED_APP" "$FRIENDLY_APP"
+  # Clean copy without resource forks.
+  ditto --norsrc "$BUILT_APP" "$STAGED_APP"
+  strip_xattrs_tree "$STAGED_APP"
 
-  if [ "$SIGN_MODE" != "unsigned" ]; then
+  if [ "$SIGN_MODE" = "developerid" ]; then
+    codesign_developer_id_app "$STAGED_APP"
+  elif [ "$SIGN_MODE" != "unsigned" ]; then
     if codesign --verify --deep --verbose=2 "$STAGED_APP" >/dev/null 2>&1; then
       log "✅ Code signature verified"
     else
@@ -129,8 +216,15 @@ cmd_build() {
     fi
   fi
 
+  ditto --norsrc "$STAGED_APP" "$FRIENDLY_APP"
+  if [ "$SIGN_MODE" = "developerid" ]; then
+    # Keep friendly copy identically signed (re-sign after copy).
+    codesign_developer_id_app "$FRIENDLY_APP"
+  fi
+
   log ""
   log "✅ Staged app: $STAGED_APP"
+  log "✅ Friendly app: $FRIENDLY_APP"
 }
 
 cmd_dmg() {
@@ -141,7 +235,7 @@ cmd_dmg() {
   rm -rf "$STAGING" "$DMG_PATH"
   mkdir -p "$STAGING"
   # Drag-install name must not include the version (Finder / Applications convention).
-  cp -R "$STAGED_APP" "${STAGING}/${APP_BUNDLE_NAME}"
+  ditto --norsrc "$STAGED_APP" "${STAGING}/${APP_BUNDLE_NAME}"
   ln -s /Applications "$STAGING/Applications"
 
   log "💿 Creating DMG: $DMG_PATH"
@@ -155,6 +249,15 @@ cmd_dmg() {
     "$DMG_PATH" >/dev/null
 
   rm -rf "$STAGING"
+
+  # Optionally sign the DMG with Developer ID (helps Gatekeeper on the disk image).
+  if [ "$SIGN_MODE" = "developerid" ]; then
+    local identity
+    identity="$(find_developer_id_identity)"
+    codesign --force --timestamp --sign "$identity" "$DMG_PATH" || \
+      log "⚠️  DMG codesign skipped/failed (app inside is still signed)"
+  fi
+
   log "✅ DMG: $DMG_PATH (contains ${APP_BUNDLE_NAME})"
 }
 
@@ -176,6 +279,11 @@ cmd_checksum() {
   cat "$CHECKSUMS_FILE"
 }
 
+cmd_notarize() {
+  read_version
+  bash "$ROOT/scripts/notarize-release.sh" all
+}
+
 cmd_install() {
   read_version
   [ -d "$STAGED_APP" ] || die "Staged app missing — run: task release"
@@ -184,7 +292,7 @@ cmd_install() {
   log "📲 Installing to $TARGET"
   # Remove prior versioned install names from older packaging.
   rm -rf "$TARGET" /Applications/MagSafeGuard-*.app
-  cp -R "$STAGED_APP" "$TARGET"
+  ditto --norsrc "$STAGED_APP" "$TARGET"
   log "✅ Installed — launch from Applications or Spotlight"
 }
 
@@ -203,13 +311,18 @@ cmd_show() {
   read_version
   log "Version:  ${MARKETING} (build ${BUILD_NUM})"
   log "App:      ${STAGED_APP}"
+  log "Friendly: ${FRIENDLY_APP}"
   log "DMG:      ${DMG_PATH}"
   log "Checksum: ${CHECKSUMS_FILE}"
+  log "Sign mode:${SIGN_MODE}"
 }
 
 cmd_all() {
   cmd_build
   cmd_dmg
+  if [ "${NOTARIZE:-0}" = "1" ] || [ "${NOTARIZE:-}" = "true" ]; then
+    cmd_notarize
+  fi
   cmd_checksum
   echo ""
   cmd_show
@@ -222,15 +335,20 @@ Usage: $(basename "$0") <command>
 Commands:
   build      Release xcodebuild → dist/MagSafeGuard-<version>.app
   dmg        Create DMG containing "MagSafe Guard.app" (no version in app name)
+  notarize   Notarize + staple staged app and DMG (notarytool)
   checksum   Write dist/SHA256SUMS
   install    Copy staged app to /Applications/MagSafe Guard.app
   open       Open DMG or .app
   show       Print artifact paths
-  all        build + dmg + checksum
+  all        build + dmg (+ notarize if NOTARIZE=1) + checksum
 
 Environment:
-  SIGN_MODE=auto|adhoc|unsigned   (default: auto — Xcode automatic signing)
-  SKIP_TESTS=true                 (only used by task release, not this script)
+  SIGN_MODE=auto|adhoc|unsigned|developerid
+      default: auto — Xcode automatic signing
+      developerid — unsigned xcodebuild, then Developer ID + hardened runtime
+  NOTARIZE=1                 notarize after dmg (default on for SIGN_MODE=developerid)
+  NOTARY_PROFILE=name        notarytool keychain profile (default: MagSafeGuard-notary)
+  SKIP_TESTS=true            (only used by task release, not this script)
 EOF
 }
 
@@ -239,6 +357,7 @@ main() {
   case "$cmd" in
     build) cmd_build ;;
     dmg) cmd_dmg ;;
+    notarize) cmd_notarize ;;
     checksum) cmd_checksum ;;
     install) cmd_install ;;
     open) cmd_open ;;

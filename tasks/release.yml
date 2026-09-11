@@ -62,6 +62,19 @@ tasks:
     cmds:
       - bash scripts/package-release.sh install
 
+  notarize:
+    desc: Notarize + staple staged app and DMG (requires MagSafeGuard-notary profile)
+    silent: true
+    cmds:
+      - bash scripts/package-release.sh notarize
+
+  developerid:
+    desc: Developer ID build + DMG + notarize + checksums
+    silent: true
+    cmds:
+      - SIGN_MODE=developerid bash scripts/package-release.sh all
+      - bash scripts/package-release.sh show
+
   publish:
     desc: Full release — sync version, test, build, DMG, checksum
     silent: true
@@ -84,3 +97,4 @@ tasks:
         echo "  task release:install   # copy to /Applications"
         echo "  task release:open      # open DMG"
         echo "  gh release create …  # optional GitHub release upload"
+        echo "  SIGN_MODE=developerid task release:developerid  # notarized distribution"

@@ -13,6 +13,7 @@ alwaysApply: true
 - **Docs:** keep behavior/feature docs in sync with substantive code changes — [AGENTS.md § Documentation](../../AGENTS.md#documentation-required) (`operating-modes.md`, `behavior-gaps.md`, roadmap/testing index as needed)
 - **Version:** edit [version.json](../../version.json) only → `task version:sync`; suggest bump before user-facing commits (see AGENTS.md)
 - **Bundle ID:** `com.sutz2001.MagSafeGuard` — never `com.LekmanConsulting.*`
+- **Signing:** Team `7FPM58LVXH`; public DMGs via Developer ID + notarization ([notarization.md](../../docs/maintainers/notarization.md))
 - **Commits:** English body with `## Summary` + `## Changes` — see [.github/instructions/commits.instructions.md](../../.github/instructions/commits.instructions.md)
 - **Agents: never `git commit`** — Cursor injects `Co-authored-by` and CI fails. Use **`git commit-tree`** only (full recipe in [AGENTS.md](../../AGENTS.md#co-authored-by-trailers--do-not-use-ci-will-fail)). Blocked words anywhere in message: `co-authored`, `claude`, `anthropic`.
 

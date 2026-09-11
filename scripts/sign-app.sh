@@ -76,20 +76,25 @@ case "$CONFIGURATION" in
         ;;
     release)
         IDENTITY="Developer ID Application"
-        ENTITLEMENTS="$PROJECT_ROOT/Resources/MagSafeGuard.developerid.entitlements"
+        ENTITLEMENTS="$PROJECT_ROOT/MagSafeGuard/MagSafeGuard.developerid.entitlements"
         RUNTIME_FLAGS="--options=runtime --timestamp"
         ;;
     appstore)
         IDENTITY="Apple Distribution"
-        ENTITLEMENTS="$PROJECT_ROOT/Resources/MagSafeGuard.entitlements"
+        ENTITLEMENTS="$PROJECT_ROOT/MagSafeGuard/MagSafeGuard.entitlements"
         RUNTIME_FLAGS="--options=runtime --timestamp"
         ;;
     ci)
         IDENTITY="-" # Ad-hoc signing
-        ENTITLEMENTS="$PROJECT_ROOT/Resources/MagSafeGuard.ci.entitlements"
+        ENTITLEMENTS="$PROJECT_ROOT/MagSafeGuard/MagSafeGuard.entitlements"
         RUNTIME_FLAGS=""
         ;;
 esac
+
+# Development entitlements: reuse main entitlements if no dedicated file.
+if [ "$CONFIGURATION" = "development" ]; then
+        ENTITLEMENTS="$PROJECT_ROOT/MagSafeGuard/MagSafeGuard.entitlements"
+fi
 
 # Check entitlements file
 if [ ! -f "$ENTITLEMENTS" ]; then

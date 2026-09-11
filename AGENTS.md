@@ -19,7 +19,7 @@ Path-specific Copilot rules: [.github/instructions/](.github/instructions/) (REA
 
 - Fork: `sutz2001/MagSafe-BusKill` · Upstream: `lekman/magsafe-buskill`
 - Bundle ID: `com.sutz2001.MagSafeGuard` — never restore `com.LekmanConsulting.*` or team `PW6K4BERFV`
-- Personal Team: no iCloud/Push in `MagSafeGuard/MagSafeGuard.entitlements`
+- Development Team: `7FPM58LVXH` (paid Apple Developer). Prefer **Developer ID** + notarization for public DMGs — [docs/maintainers/notarization.md](docs/maintainers/notarization.md). Do not add iCloud/Push entitlements without noting paid capability requirements.
 - Grace period default: **30 s**
 - Config statics: `.defaultConfig` not `.default`
 
@@ -206,7 +206,8 @@ No ad-hoc system actions outside `SecurityActionType` / repository layer.
 
 - Do not run/build the armed app without user intent
 - No secrets in commits
-- Do not add iCloud entitlements without noting paid Apple Developer Program requirement
+- Do not add iCloud entitlements without noting App Store / paid capability requirements
+- Public DMGs: `SIGN_MODE=developerid task release:developerid` (see [notarization.md](docs/maintainers/notarization.md))
 
 ---
 

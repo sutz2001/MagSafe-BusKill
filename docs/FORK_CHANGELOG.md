@@ -10,6 +10,7 @@ Upstream releases (lekman v1.x, archive): [archive/UPSTREAM_CHANGELOG.md](archiv
 - Paranoid settings moved to dedicated **Settings → Paranoid** sidebar tab (no longer under Security)
 - Paranoid codeword minimum length raised from 4 to **6** characters
 - Version **0.6.2** (build 22)
+- Public builds: **Developer ID** signing + Apple **notarization** (`SIGN_MODE=developerid`) — see [notarization.md](maintainers/notarization.md)
 
 ## [0.6.1] — 2026-09-04
 
