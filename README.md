@@ -188,7 +188,7 @@ task release:clean                   # remove dist/
 | Others install your `.dmg` without Gatekeeper warnings | Yes — Developer ID + notarization ([guide](docs/maintainers/notarization.md)) |
 | Mac App Store | Not planned (sandbox limits) |
 
-**Model:** open source on GitHub; users **compile locally** or install a **notarized DMG** when available.
+**Model:** open source on GitHub; users **compile locally** or download a **notarized DMG** from [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases) (from **v0.6.2**).
 
 ---
 
@@ -208,7 +208,9 @@ task release:clean                   # remove dist/
 | Done | **0.5.8** | Eject removable volumes (built-in hygiene) |
 | Done | **0.5.9** | Cryptomator/Bluetooth hygiene, bundled trigger scripts |
 | Done | **0.6.0** | Paranoid mode — wipe paths, FileVault gate, codeword, **⌃⌘⇧P**, `magsafeguard://paranoid` |
-| Stable | **1.0.0** | Notarized Developer ID distribution ([notarization.md](docs/maintainers/notarization.md)) |
+| Done | **0.6.1** | MenuBarIconParanoid asset; informed legal self-review |
+| Done | **0.6.2** | Settings → Paranoid tab; codeword ≥ 6; **Developer ID + notarized DMG** |
+| Next | **1.0.0** | Stable daily-driver milestone (hardening, polish) |
 
 Full plan: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md)** · **User guide:** [EN](docs/features/user-guide.md) · [DE](docs/features/user-guide.de.md)
 

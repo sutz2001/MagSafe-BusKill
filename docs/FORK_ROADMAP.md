@@ -1,7 +1,7 @@
 # Fork-Roadmap (sutz2001)
 
 Planung für [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill).  
-Stand: nach **0.5.5** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
+Stand: nach **0.6.2** (September 2026) — Paranoid + notarized Developer ID DMG. Release-Historie: [FORK_CHANGELOG.md](FORK_CHANGELOG.md).
 
 **Kurzanleitung:** [user-guide.de.md](features/user-guide.de.md) · [user-guide.md](features/user-guide.md) (EN)
 
@@ -19,9 +19,9 @@ Stand: nach **0.5.5** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FO
 | **Panic-Modus** (0 Grace, Hotkey ⌃⌘P, sofort Shutdown) | ✅ v0.5.0 |
 | **Betriebsmodi** (Normal / Diskret / Panic-Presets) | ✅ v0.5.1 |
 | **Zwischenablage leeren** (Netzwerk-Aktion) | ✅ v0.5.1 |
-| **Paranoid-Modus** | ❌ geplant v0.6.0 |
-| **Stabilisierung (0.5.x)** | 🔄 **aktueller Fokus** — [Checkliste](maintainers/stabilization-checklist.md) |
-| Notarisierung (Developer ID) | ✅ Tooling ready — [notarization.md](maintainers/notarization.md); run after cert + notary profile |
+| **Paranoid-Modus** | ✅ v0.6.0 (+ Tab/Codewort in 0.6.2) |
+| **Stabilisierung (0.5.x → 1.0)** | 🔄 fortlaufend — [Checkliste](maintainers/stabilization-checklist.md) |
+| Notarisierung (Developer ID) | ✅ **v0.6.2** — [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases) · [notarization.md](maintainers/notarization.md) |
 | Mac App Store | ❌ **ausgeschlossen** (Sandbox) |
 | Repository | ✅ öffentlich — [sutz2001/MagSafe-BusKill](https://github.com/sutz2001/MagSafe-BusKill) |
 
@@ -32,7 +32,7 @@ Stand: nach **0.5.5** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FO
 | `LICENSE` (MIT, Dual-Copyright) | ✅ |
 | `NOTICE` (Upstream, Fork, BusKill) | ✅ |
 | README EN/DE (Fork vs. Upstream) | ✅ |
-| `LICENSE` + `NOTICE` in Release-Binaries | 📋 bei erstem GitHub Release |
+| `LICENSE` + `NOTICE` in Release-Binaries | 📋 bei GitHub Releases beachten |
 | Panic-Rechtstexte in der App | ✅ v0.5.0 (kurzer Hinweis EN/DE) |
 
 Öffentlich seit August 2026 (nach Prüfung der ersten drei Punkte auf `main`).
@@ -47,7 +47,7 @@ Stand: nach **0.5.5** (September 2026). Release-Historie: [FORK_CHANGELOG.md](FO
 | 2 | **Netzwerk-Aktionen** | **Vollpaket:** Webhook + VPN + SSH-Agent + WLAN (+ optional Proxy/DNS) |
 | 3 | **Panic-Auslöser** | **Hotkey ⌃⌘P** + Kabel + **Fernauslösung** (`magsafeguard://panic`); LAN/Web vom Handy → [Idee](features/future-ideas.md) |
 | 4 | **Verteilung** | **GitHub** (Quellcode + optionale Releases) + **notarisierte DMG** — **kein App Store** |
-| 5 | **Paid Apple Dev** | Wenn App veröffentlichungsreif: für **notarisierte Binaries**; nicht nötig zum Hosten von Quellcode auf GitHub |
+| 5 | **Paid Apple Dev** | **Aktiv** (Team `7FPM58LVXH`) für notarisierte GitHub-DMGs; nicht nötig nur zum Hosten von Quellcode |
 | 6 | **Repository** | **Öffentlich** seit August 2026 (siehe [README](../README.md#repository-visibility)) |
 
 ---
@@ -138,7 +138,7 @@ Checkliste: **[maintainers/stabilization-checklist.md](maintainers/stabilization
 | P1 | `task release` → `/Applications`, mehrere Tage Alltagsnutzung |
 | P2 | Acceptance-Tests-Doc aktualisieren; optional erstes GitHub Release |
 
-**Exit:** Checkliste § Exit criteria erfüllt → dann 0.5.x nur noch Patches oder Sprung Richtung 1.0.0 (notarisierte DMG).
+**Exit:** Checkliste § Exit criteria erfüllt → dann 0.5.x nur noch Patches oder Sprung Richtung **1.0.0** (Stabilität / Daily-Driver). Notarisierte DMG ist seit **0.6.2** ausgeliefert.
 
 ---
 
@@ -243,8 +243,8 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 | Kanal | Status | Hinweis |
 |-------|--------|---------|
 | **GitHub (Quellcode)** | ✅ jetzt | MIT + NOTICE; Nutzer bauen mit eigener Apple-ID |
-| **GitHub Releases (.dmg)** | geplant | Optional; für Fremde besser notarisiert |
-| **Developer ID + Notarisierung** | Tooling ready | Paid Dev; `SIGN_MODE=developerid task release:developerid` |
+| **GitHub Releases (.dmg)** | ✅ ab v0.6.x | [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases) |
+| **Developer ID + Notarisierung** | ✅ **v0.6.2** | `SIGN_MODE=developerid task release:developerid` · [notarization.md](maintainers/notarization.md) |
 | **Mac App Store** | ❌ ausgeschlossen | Sandbox: kein Shutdown, keine freien Skripte, kein Panic |
 
 ### Braucht man Apple Developer nur für GitHub?
@@ -275,8 +275,9 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 Jetzt ──► 0.4.x  Netzwerk + Fernauslösung (done)
        ──► 0.4.3  Diskreter Betrieb (done)
        ──► 0.5.0  Panic (Shutdown, 0 Grace, Hotkey ⌃⌘P) (done)
-       ──► 0.6.0  Paranoid (Vernichtung + Shutdown, Setup-Modus)
-       ──► 1.0.0  Stabil + notarisierte DMG (optional Paid Dev)
+       ──► 0.6.0  Paranoid (Vernichtung + Shutdown, Setup-Modus) (done)
+       ──► 0.6.2  Developer ID + notarisierte DMG (done)
+       ──► 1.0.0  Stabiler Daily-Driver (Härtung / Feinschliff)
 ```
 
 ---
@@ -294,7 +295,7 @@ Jetzt ──► 0.4.x  Netzwerk + Fernauslösung (done)
 
 ### Deutschland / EU (Panic-Modus)
 
-Security-Tools sind bei **informierter Einwilligung** grundsätzlich zulässig. Panic erhöht das Risiko (eigene Daten, **Dienstgeräte**, fernausgelöste Zerstörung). Kurzer Hinweis in der App (v0.5.0) ist ausgeliefert; Paranoid erfordert volle Prüfung vor v0.6.
+Security-Tools sind bei **informierter Einwilligung** grundsätzlich zulässig. Panic erhöht das Risiko (eigene Daten, **Dienstgeräte**, fernausgelöste Zerstörung). Kurzer Hinweis in der App (v0.5.0) ist ausgeliefert; Paranoid hat vollen Rechtstext + informierte Selbstprüfung (v0.6.x).
 
 ### Mac App Store — warum ausgeschlossen
 
