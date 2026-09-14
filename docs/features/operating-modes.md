@@ -2,10 +2,10 @@
 
 **Audience:** Users, contributors, and maintainers who need to know what the app *actually does* at runtime (not what the UI implies).
 
-**Version:** documents behavior as of fork **0.5.5** (build 14).  
+**Version:** documents behavior as of fork **0.6.2** (build 22).  
 **Primary code:** `MagSafeGuard/Controllers/AppController.swift`, services under `MagSafeGuard/Services/`.
 
-**Related:** [Behavior gaps & fix backlog](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) (planned features) · [README](../../README.md)
+**Related:** [Behavior gaps](behavior-gaps.md) · [FORK_ROADMAP](../FORK_ROADMAP.md) · [panic-modes.md](panic-modes.md) · [README](../../README.md) · [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases)
 
 ---
 

@@ -1,10 +1,10 @@
 # Panic & Paranoid Modes
 
-Design and reference for **v0.5.0** (Panic — **shipped**) and **v0.6.0** (Paranoid — planned).  
-**User guide:** [user-guide.md §5](user-guide.md#5-panic-protection-mode-v050) · [user-guide.de.md §5](user-guide.de.md#5-panic-schutzmodus-v050)  
-Companion: [operating-modes.md](operating-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md)
+Design and reference for **v0.5.0** (Panic — **shipped**) and **v0.6.x** (Paranoid — **shipped**).  
+**User guide:** [user-guide.md §5–6](user-guide.md#5-panic-protection-mode-v050) · [user-guide.de.md](user-guide.de.md)  
+Companion: [operating-modes.md](operating-modes.md) · [FORK_ROADMAP.md](../FORK_ROADMAP.md) · [notarization.md](../maintainers/notarization.md)
 
-**Status:** Panic mode is implemented (0.5.0). Paranoid mode is planning only.
+**Status:** Panic (0.5.0) and Paranoid (0.6.0+) are implemented. Configure Paranoid under **Settings → Paranoid**. Notarized DMGs from **v0.6.2**.
 
 ---
 
@@ -108,7 +108,7 @@ BusKill’s [LUKS self-destruct](https://www.buskill.in/luks-self-destruct/) (Li
 | Target | LUKS header on block device | No equivalent for the **boot** APFS/FileVault volume (would brick the Mac) |
 | RAM keys | `cryptsetup luksSuspend` | Lock + logout + shutdown (session ends; FileVault uses sealed volume keys) |
 | Removable crypto | Often full-disk LUKS | Unmount Cryptomator / VeraCrypt; eject externals (built-in + bundled scripts) |
-| Irreversible loss | Header shredded → volume permanently locked | **Paranoid v0.6 (planned):** wipe configured paths, **erase dedicated APFS volume**, delete **local FileVault recovery key backup** |
+| Irreversible loss | Header shredded → volume permanently locked | **Paranoid v0.6 (shipped):** wipe configured paths, **erase dedicated APFS volume**, delete **local FileVault recovery key backup** |
 | Available today | Community / [buskill-linux](https://github.com/BusKill/buskill-linux) | Script: `delete-filevault-recovery-key-backup-best-effort.sh` (user-configured path) |
 
 **Honest limit:** macOS has no supported “shred FileVault header” API. Paranoid targets **user-chosen** secrets — not the system boot volume.
@@ -200,7 +200,7 @@ DestructionPipeline (M2 — shipped)
       always refuse boot volume UUID / whole boot disk
 ```
 
-`ParanoidConfiguration`, Settings UI, setup wizard, full legal notice, codeword, `armParanoid` (menu), cable path, hotkey **⌃⌘⇧P**, and `magsafeguard://paranoid` are shipped in **0.6.0**. Menu-bar asset + informed legal self-review in **0.6.1** (formal counsel optional before commercial push).
+`ParanoidConfiguration`, **Settings → Paranoid**, setup wizard, full legal notice, codeword (min. 6), `armParanoid` (menu), cable path, hotkey **⌃⌘⇧P**, and `magsafeguard://paranoid` are shipped in **0.6.0+**. Menu-bar asset + informed legal self-review in **0.6.1**; notarized Developer ID DMG in **0.6.2**.
 
 ### New types (sketch)
 

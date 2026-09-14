@@ -125,7 +125,9 @@ Design: [docs/features/panic-modes.md](features/panic-modes.md) · Anleitung: [u
 
 ---
 
-## Phase 2c — Stabilisierung (0.5.x, aktueller Fokus)
+## Phase 2c — Stabilisierung (Richtung 1.0)
+
+Notarisierte DMG und Paranoid sind ausgeliefert (0.6.x). Fokus hier: Daily-Driver-Härte, Tests, Doku-Feinschliff.
 
 **Ziel:** App als **Daily Driver** auf dem eigenen Mac — Bugs fixen, Tests grün, Release-DMG, manuelle Smoke-Tests. **Keine neuen Features.**
 

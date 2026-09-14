@@ -1,21 +1,23 @@
 # MagSafe Guard Documentation Index
 
-> **Fork quick start:** Feature status, security actions, build, and Apple signing → [README.md](../README.md) · [README.de.md](../README.de.md)
+> **Fork quick start:** Feature status, security actions, build, and Apple signing → [README.md](../README.md) · [README.de.md](../README.de.md)  
+> **Download:** [Latest notarized release](https://github.com/sutz2001/MagSafe-BusKill/releases/latest)
 
 This documentation is organized by audience and role to help you find the information you need quickly.
 
-## 🚀 Quick Start by Role
+## Quick Start by Role
 
 ### For Users
 
-- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): **operation profiles** (Beginner / Normal / Discreet / Panic), impact labels, **`magsafeguard-cli`**, discreet use, **panic** + **paranoid** protection modes
+- **[User guide (mini)](features/user-guide.md)** — EN · [DE](features/user-guide.de.md): **operation profiles** (Beginner / Normal / Discreet / Panic), impact labels, **`magsafeguard-cli`**, discreet use, **panic** + **paranoid** (Settings → Paranoid)
 - [Operating Modes & Flows](features/operating-modes.md) - What each state/mode does (with diagrams)
 - [Behavior Gaps](features/behavior-gaps.md) - Known UI vs runtime mismatches
 - [Panic & Paranoid modes](features/panic-modes.md) - Panic (v0.5) + Paranoid (v0.6) shipped; [legal review gate](maintainers/legal-review-gate.md) informed self-review done
-- [Future ideas (scratch pad)](features/future-ideas.md) - Uncommitted thought fragments (e.g. LAN trigger from phone)
+- [Future ideas (scratch pad)](features/future-ideas.md) - Uncommitted thought fragments — ideas welcome
 - [Building and Running](maintainers/building-and-running.md) - Get MagSafe Guard running on your Mac
 - [Troubleshooting](maintainers/troubleshooting.md) - Common issues and solutions
-- [Legal review gate (Paranoid / DE/EU)](maintainers/legal-review-gate.md) - Sign-off before wide public beta
+- [Notarization (Developer ID)](maintainers/notarization.md) - Public DMG signing + notarytool (shipped v0.6.2)
+- [Legal review gate (Paranoid / DE/EU)](maintainers/legal-review-gate.md) - Informed self-review signed; formal counsel optional
 - [Feature Flags](features/flags.md) - Configure advanced features
 - [Accessibility Features](features/accessibility.md) - VoiceOver and accessibility support
 
@@ -23,6 +25,8 @@ This documentation is organized by audience and role to help you find the inform
 
 - [AGENTS.md](../AGENTS.md) - AI agent rules (Cursor, GitHub Copilot)
 - [Fork independence](FORK_INDEPENDENCE.md) - Fork vs upstream (read this first)
+- [Fork roadmap](FORK_ROADMAP.md) - Status after 0.6.2 (Paranoid + notarized DMG)
+- [Fork changelog](FORK_CHANGELOG.md) - Independent release history
 - [Product Requirements Document (PRD)](PRD.md) - Project vision and scope
 - [Requirements](REQUIREMENTS.md) - Detailed technical specifications
 - [Architecture Overview](architecture/architecture-overview.md) - System design
@@ -32,13 +36,13 @@ This documentation is organized by audience and role to help you find the inform
 ### For Maintainers
 
 - [Development Setup](DEVELOPMENT.md) - Complete development environment
-- **[Stabilization checklist](maintainers/stabilization-checklist.md)** — v0.5.x → daily driver (current focus)
-- **[Manual test checklist v0.5.3](maintainers/manual-test-0.5.3.md)** — abhakbare Smoke-Tests (DE)
+- **[Stabilization checklist](maintainers/stabilization-checklist.md)** — toward 1.0 daily driver
+- **[Manual test checklist v0.5.3](maintainers/manual-test-0.5.3.md)** — smoke tests (DE)
 - [CI/CD Workflows](devops/ci-cd-workflows.md) - GitHub Actions and automation
 - [Code Signing Guide](maintainers/code-signing.md) - macOS app signing process
 - [Notarization (Developer ID)](maintainers/notarization.md) - Public DMG signing + notarytool
 - [Crash Prevention Guide](maintainers/crash-prevention-guide.md) - Stability best practices
-- [Release Process](CHANGELOG.md) - Version history and release notes
+- [Release Process](CHANGELOG.md) - Upstream-oriented notes; prefer [FORK_CHANGELOG.md](FORK_CHANGELOG.md) for this fork
 
 ### For Security Auditors
 
@@ -83,6 +87,7 @@ This documentation is organized by audience and role to help you find the inform
 - [Crash Prevention Guide](maintainers/crash-prevention-guide.md) - Building stable macOS apps
 - [Crash Quick Reference](maintainers/crash-quick-reference.md) - Debugging crashes
 - [Code Signing Guide](maintainers/code-signing.md) - macOS signing process
+- [Notarization (Developer ID)](maintainers/notarization.md) - Public DMG (shipped v0.6.2)
 - [Code Signing Implementation](maintainers/code-signing-implementation.md) - Detailed signing steps
 
 ### DevOps & CI/CD

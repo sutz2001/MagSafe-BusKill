@@ -1,43 +1,36 @@
 # Future ideas (scratch pad)
 
-**Status:** thought fragments only — **not planned, not committed.**  
-Capture rough ideas before they become specs. Remove or promote to [FORK_ROADMAP.md](../FORK_ROADMAP.md) when scope is clear.
+**Status:** thought fragments only — **not committed specs.**  
+Capture rough ideas before they become roadmap items. Remove or promote to [FORK_ROADMAP.md](../FORK_ROADMAP.md) when scope is clear.
+
+**Contributions welcome:** open a GitHub issue or PR, or append a short section here.
 
 ---
 
-## Cryptomator unmount & volume eject (BusKill-style scripts)
+## Cryptomator unmount & volume eject (BusKill-style)
 
-**Shipped:** bundled in `MagSafeGuard/Resources/TriggerScripts/` (inside .app). Docs pointer: [examples/scripts/README.md](../examples/scripts/README.md).
+**Shipped** as built-in network/hygiene actions (eject, Cryptomator unmount) plus bundled scripts in `MagSafeGuard/Resources/TriggerScripts/`. Docs: [examples/scripts/README.md](../examples/scripts/README.md).
 
-### Idea
+### Still useful ideas
 
-On trigger, optionally:
-
-- **Unmount Cryptomator** volumes (inspired by [BusKill/trigger_cryptomator_umount](https://github.com/BusKill/trigger_cryptomator_umount))
-- **Eject** external disks / DMGs (`diskutil eject`)
-- **Dismount VeraCrypt** (`veracrypt -d` on macOS)
-
-Delivered as **custom scripts** in phase B of the trigger pipeline — not built-in toggles (paths and volume names are machine-specific).
-
-### Shipped examples
-
-| Script | Notes |
-|--------|--------|
-| `cryptomator-umount-best-effort.sh` | Edit `CRYPTO_VOLUME_NAMES` |
-| `eject-removable-volumes.sh` | `diskutil list external physical` |
-| `veracrypt-dismount-best-effort.sh` | Homebrew or `/Applications` VeraCrypt |
-
-Documented in [examples/scripts/README.md](../examples/scripts/README.md), user guide, onboarding (paranoid page).
-
-### Still open (v0.6 paranoid)
-
-- Built-in `DestructionPipeline` for configured wipe paths / APFS (not script-only)
-- Optional built-in hygiene action only if we can do it without false promises
+- More volume types / VeraCrypt as first-class Settings toggle (script exists)
+- Clearer Full Disk Access guidance when eject fails
 
 ### Open questions
 
 - Full Disk Access for some eject / history paths
-- Order: hygiene scripts vs. script budget vs. future built-in destruction
+- Order: hygiene vs. script budget vs. paranoid wipe
+
+---
+
+## Paranoid destruction pipeline
+
+**Shipped in v0.6.x** — `DestructionPipeline`, setup wizard, **Settings → Paranoid**, codeword (≥ 6), notarized releases from v0.6.2.
+
+Remaining polish ideas (not committed):
+
+- Secure-erase options beyond `rm -rf` / honest APFS limits in UI copy
+- Optional dry-run / simulation mode for wipe targets (never in production panic path)
 
 ---
 
@@ -49,15 +42,15 @@ Documented in [examples/scripts/README.md](../examples/scripts/README.md), user 
 
 Trigger MagSafe Guard from a **phone** when Mac and phone share the **same LAN** (home, café Wi‑Fi). Use case: panic or arm/disarm without pulling the cable and without a dedicated iOS/Android app.
 
-### What exists today (v0.5.0)
+### What exists today (v0.6.x)
 
 | Approach | Works? | Limitation |
 |----------|--------|------------|
-| `magsafeguard://panic?token=…` via **Shortcuts** | Yes | Needs Shortcuts automation; URL scheme handling on iOS; not LAN-specific |
+| `magsafeguard://panic?token=…` / `…/paranoid?token=…` via **Shortcuts** | Yes | Needs Shortcuts; not LAN-specific |
 | `magsafeguard://trigger` / `arm` | Yes | Same |
 | Outbound **webhook** on trigger | Yes | Mac → internet, not phone → Mac |
 
-So remote trigger is already possible from a phone **indirectly** (Shortcuts, another device opening the URL). A smoother “same Wi‑Fi, one tap” flow does **not** exist yet.
+So remote trigger is already possible from a phone **indirectly**. A smoother “same Wi‑Fi, one tap” flow does **not** exist yet.
 
 ### Rough directions (implementation unclear)
 

@@ -13,13 +13,15 @@
 
 > **macOS security utility** — power cable as a dead-man's switch. Arm from the menu bar; unplugging triggers a grace period, then configurable protective actions.
 
+**Download (notarized DMG):** [Latest release](https://github.com/sutz2001/MagSafe-BusKill/releases/latest) · macOS 13+ · [all releases](https://github.com/sutz2001/MagSafe-BusKill/releases)
+
 Inspired by [BusKill](https://github.com/BusKill/buskill-app). Independent fork of [lekman/magsafe-buskill](https://github.com/lekman/magsafe-buskill).
 
 **CI:** Lightweight Ubuntu checks on push/PR to `main` (commit messages). macOS tests and security scans: `task test` locally or run manually in [Actions](https://github.com/sutz2001/MagSafe-BusKill/actions).
 
 | | |
 | --- | --- |
-| **Version** | `0.6.2` (build `22`) |
+| **Version** | `0.6.2` (build `22`) · [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases) |
 | **Platform** | macOS 13+ (Ventura) · menu bar app |
 | **Bundle ID** | `com.sutz2001.MagSafeGuard` |
 | **License** | MIT — [`LICENSE`](LICENSE) · [`NOTICE`](NOTICE) |
@@ -69,7 +71,8 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | --- | --- |
 | Event log | **⌘L** or menu → Event Log |
 | Language | Settings → General → System / EN / DE |
-| Operation mode & grace | Settings → **Security** (Normal / Discreet / Panic presets) |
+| Operation mode & grace | Settings → **Security** (Beginner / Normal / Discreet / Panic) |
+| Paranoid setup | Settings → **Paranoid** (wizard, legal notice, codeword, wipe targets) |
 | Menu bar only | Settings → General → **Show in Dock** off (default) |
 
 ---
@@ -81,15 +84,16 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | Power disconnect (MagSafe, USB-C) | **Shipped** | IOKit, no kernel extension |
 | Arm / disarm (Touch ID, password) | **Shipped** | Monitoring only when armed |
 | Grace period + menu bar countdown | **Shipped** | Default 30 s; presets 20 s (Discreet) / 5 s (Panic profile) |
-| Operation profiles (Normal / Discreet / Panic) | **Shipped** | v0.5.1 — Settings → Security · [guide](docs/features/user-guide.md#2-operation-profiles-settings-presets) |
+| Operation profiles (Beginner / Normal / Discreet / Panic) | **Shipped** | v0.5.1+ — Settings → Security · [guide](docs/features/user-guide.md#2-operation-profiles-settings-presets) |
 | Security actions (5 types) | **Shipped** | Reorder in Settings → Security |
 | Auto-arm (location / network) | **Shipped** | Optional permissions |
 | Event log, onboarding, EN/DE | **Shipped** | v0.3.0 |
-| Network actions + remote trigger | **Shipped** | v0.4.0 — webhook, VPN, SSH, clipboard, Wi‑Fi; `magsafeguard://` |
+| Network & hygiene actions + remote trigger | **Shipped** | v0.4–0.5.9 — webhook, VPN, SSH, clipboard, eject, Cryptomator, Bluetooth, Wi‑Fi; `magsafeguard://` |
 | Discreet operation | **Shipped** | v0.4.3+ — **Discreet** profile or notification toggles · [guide](docs/features/user-guide.md#4-discreet-operation) |
+| Beginner preset, risk labels, CLI | **Shipped** | v0.5.6 — `magsafeguard-cli` |
 | Panic mode | **Shipped** | v0.5.0 — zero grace when panic-armed, **⌃⌘P** · [guide](docs/features/user-guide.md#5-panic-protection-mode-v050) |
-| Paranoid mode | **Shipped** | v0.6.0 — wipe + shutdown; FileVault + setup + codeword · [guide](docs/features/user-guide.md#6-paranoid-protection-mode-v060) |
-| Notarized DMG for others | **Later** | v1.0 · paid Apple Dev optional |
+| Paranoid mode | **Shipped** | v0.6.0 — wipe + shutdown; **Settings → Paranoid**; FileVault + codeword (≥ 6) · [guide](docs/features/user-guide.md#6-paranoid-protection-mode-v060) |
+| Notarized DMG for others | **Shipped** | v0.6.2 — Developer ID + notarization · [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases/latest) · [guide](docs/maintainers/notarization.md) |
 | Mac App Store | **Out of scope** | App Sandbox incompatible |
 
 ### Security actions
@@ -110,9 +114,12 @@ Upstream targets the Mac App Store and paid Apple capabilities. **This fork** fo
 | Disconnect VPN | Stop active VPN connection |
 | Clear SSH Agent | Remove keys from `ssh-agent` |
 | Clear Clipboard | Empty the system pasteboard |
+| Eject Removable Volumes | Hard-eject external disks (`diskutil`) |
+| Unmount Cryptomator | Best-effort Cryptomator volume unmount |
+| Disable Bluetooth | Via `blueutil` if installed |
 | Disable Wi‑Fi | Turn off Wi‑Fi (warns about Find My) |
 
-Configure in **Settings → Security** (network section). **Panic** operation preset enables VPN, SSH agent, and clipboard clear (not Wi‑Fi off — keeps Find My).
+Configure in **Settings → Security** (network section). **Panic** operation preset enables VPN, SSH agent, clipboard clear, and related hygiene (not Wi‑Fi off — keeps Find My).
 
 **Custom script paths:** `~/.magsafe/scripts/` · `/usr/local/magsafe-scripts/`  
 **Trigger scripts (bundled):** [`MagSafeGuard/Resources/TriggerScripts/`](MagSafeGuard/Resources/TriggerScripts/) — ship inside the app; see README there for install to `~/.magsafe/scripts/`  
@@ -185,7 +192,7 @@ task release:clean                   # remove dist/
 | Clone source & build on your Mac | No — free Apple ID |
 | Publish source on GitHub | No |
 | Attach a `.dmg` to GitHub Releases for yourself | No |
-| Others install your `.dmg` without Gatekeeper warnings | Yes — Developer ID + notarization ([guide](docs/maintainers/notarization.md)) |
+| Others install your `.dmg` without Gatekeeper warnings | Yes — Developer ID + notarization (**shipped** from [v0.6.2](https://github.com/sutz2001/MagSafe-BusKill/releases/tag/v0.6.2)) |
 | Mac App Store | Not planned (sandbox limits) |
 
 **Model:** open source on GitHub; users **compile locally** or download a **notarized DMG** from [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases) (from **v0.6.2**).
@@ -219,11 +226,11 @@ Full plan: **[docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md)** · Releases: **[docs
 > Details: **[docs/features/panic-modes.md](docs/features/panic-modes.md)** · [user guide §6](docs/features/user-guide.md#6-paranoid-protection-mode-v060)
 
 - [x] Full legal disclaimer (EN + DE): irreversible data loss, user responsibility, work-device warning
-- [x] Double confirmation + mandatory codeword
-- [x] Setup wizard (FileVault, wipe paths/volumes)
-- [ ] Legal review for DE/EU before wide public beta — [gate checklist](docs/maintainers/legal-review-gate.md) (not legal advice — consult a lawyer)
+- [x] Double confirmation + mandatory codeword (min. 6 characters)
+- [x] Setup wizard (FileVault, wipe paths/volumes) — **Settings → Paranoid**
+- [x] Informed self-review (BusKill-aligned) — [legal-review-gate.md](docs/maintainers/legal-review-gate.md); formal counsel optional before commercial push
 
-**Panic (v0.5.0)** and **Paranoid (v0.6.0)** are shipped — see [user guide](docs/features/user-guide.md).
+**Panic (v0.5.0)** and **Paranoid (v0.6.x)** are shipped — see [user guide](docs/features/user-guide.md). Notarized DMGs from [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases/latest).
 
 ---
 
@@ -236,9 +243,10 @@ The repository is **public** at [github.com/sutz2001/MagSafe-BusKill](https://gi
 | [`LICENSE`](LICENSE) — MIT, upstream + fork copyright | Done |
 | [`NOTICE`](NOTICE) — attribution, upstream link, BusKill credit | Done |
 | README — fork vs upstream, maintainer, license pointers | Done |
-| Binary releases include `LICENSE` + `NOTICE` | To do when publishing GitHub Releases |
+| Binary releases include `LICENSE` + `NOTICE` | Open — still to bundle in DMG/.app for future releases |
 | Panic-mode legal UI | Shipped in v0.5.0 (short notice EN/DE at first arm) |
 | Paranoid-mode legal UI | Shipped in v0.6.0 (full notice EN/DE + codeword); informed self-review signed off in v0.6.1 |
+| Notarized public DMG | Shipped in v0.6.2 · [Releases](https://github.com/sutz2001/MagSafe-BusKill/releases/latest) |
 
 The first three items were verified on `main` before the repository was made public (August 2026).
 
@@ -269,15 +277,29 @@ Optional upstream reference (manual only): `git fetch upstream && git merge upst
 | Document | Description |
 | --- | --- |
 | [README.de.md](README.de.md) | German version of this file |
-| [docs/features/user-guide.md](docs/features/user-guide.md) | **User guide** — operation profiles, discreet, panic · [DE](docs/features/user-guide.de.md) |
+| [docs/features/user-guide.md](docs/features/user-guide.md) | **User guide** — profiles, discreet, panic, paranoid · [DE](docs/features/user-guide.de.md) |
 | [docs/features/operating-modes.md](docs/features/operating-modes.md) | State machine & technical flows |
+| [docs/features/future-ideas.md](docs/features/future-ideas.md) | Scratch pad for new ideas |
 | [`MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md`](MagSafeGuard/Resources/TriggerScripts/SCRIPTS.md) | Bundled trigger scripts (also in .app) |
 | [docs/FORK_ROADMAP.md](docs/FORK_ROADMAP.md) | Feature roadmap & legal notes |
 | [docs/FORK_CHANGELOG.md](docs/FORK_CHANGELOG.md) | Fork release history |
+| [docs/README.md](docs/README.md) | Full documentation index |
 | [docs/maintainers/building-and-running.md](docs/maintainers/building-and-running.md) | Detailed build guide |
 | [docs/maintainers/notarization.md](docs/maintainers/notarization.md) | Developer ID + notarytool |
 | [docs/maintainers/code-signing.md](docs/maintainers/code-signing.md) | Signing & distribution (broader) |
 | [AGENTS.md](AGENTS.md) | Contributor & AI agent rules |
+
+---
+
+## Feedback & ideas
+
+Feedback is appreciated — bug reports, questions, and **new ideas** are welcome.
+
+- [Open an issue](https://github.com/sutz2001/MagSafe-BusKill/issues/new/choose) or start a discussion on GitHub
+- Pull requests welcome for docs, fixes, and small features
+- Rough product ideas can land in [docs/features/future-ideas.md](docs/features/future-ideas.md) (scratch pad) or a GitHub issue labeled `enhancement`
+
+Please keep security reports private when appropriate — see [docs/SECURITY.md](docs/SECURITY.md).
 
 ---
 
