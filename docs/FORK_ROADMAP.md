@@ -264,6 +264,7 @@ Alles aus Panic, plus **parallele** Destruction-Pipeline (fire-and-forget), dann
 
 - **iCloud: Skript-Inhalte syncen** (nicht nur Pfade) — wenn CloudKit aktiv: Custom-Scripts aus `~/.magsafe/scripts/` als Bundle/Records mit deployen (heute sync’t Settings nur die Pfad-Liste). Spielerei / Multi-Mac-Komfort, kein Muss.
 - **LAN trigger from phone** (same Wi‑Fi, minimal web UI?) — [Gedankenfetzen](features/future-ideas.md#lan-trigger-from-phone-same-wi-fi); heute nur `magsafeguard://` + Shortcuts
+- **Apple Watch trigger** — parked / no implementation (Aufwand ≫ Nutzen); see [future-ideas](features/future-ideas.md#apple-watch-trigger); prefer LAN phone first if ever
 - Home Assistant / MQTT Presets
 - Evidence / Forensik-Paket
 - Hardware-BusKill (USB)
