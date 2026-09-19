@@ -102,4 +102,32 @@ Heute (wenn CloudKit aktiv): nur die **Pfad-Liste** in Settings (`customScripts`
 
 ---
 
+## Apple Watch trigger
+
+**Status:** thought fragment / **parked — no implementation**  
+**Captured:** 2026-09 (Marc) · **Warum geparkt:** Aufwand ≫ Nutzen (Marc, Sep 2026)
+
+Panic / Paranoid / Arm / Trigger von der Apple Watch auslösen. Heute gibt es **kein** Watch-/iOS-Target — nur die macOS-Menüleiste und `magsafeguard://` auf dem Mac.
+
+### Constraints (kurz)
+
+- Braucht **Mac inbound** (LAN/VPN/Cloud) — Watch/iPhone können `magsafeguard://` **nicht** still auf dem Mac öffnen (Schema ist Mac-only)
+- **WatchConnectivity ≠ Mac** — nur Watch↔iPhone; Continuity/Handoff ist kein stiller Panic-Button
+- watchOS: HTTP/S (URLSession) ja; Bonjour/Local-Network-Discovery eingeschränkt
+
+### Prefer sequence if ever
+
+1. Phase 4 **[LAN trigger from phone](#lan-trigger-from-phone-same-wi-fi)** zuerst (Mac inbound + Token)
+2. Watch später als **dünner HTTP-Client** derselben API — nicht vor dem Endpoint
+
+Siehe auch [FORK_ROADMAP Phase 4](../FORK_ROADMAP.md#phase-4--nice-to-have-nach-10).
+
+### Non-goals (for now)
+
+- No Watch app target / App Store companion
+- No Continuity URL promise (“Watch opens Mac schema”)
+- Not a Phase-4 priority — parked until after 1.0 + LAN (if ever)
+
+---
+
 *Add new sections below as one-off ideas. Keep each block short.*
