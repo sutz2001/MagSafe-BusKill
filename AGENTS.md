@@ -6,7 +6,7 @@ Thin entry points (keep in sync when this file changes):
 
 | Tool | File |
 |------|------|
-| **Cursor** | [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc) |
+| **Cursor** | [.cursor/rules/project-conventions.mdc](.cursor/rules/project-conventions.mdc), [.cursor/rules/markitdown.mdc](.cursor/rules/markitdown.mdc) |
 | **GitHub Copilot** | [.github/copilot-instructions.md](.github/copilot-instructions.md) |
 
 Path-specific Copilot rules: [.github/instructions/](.github/instructions/) (README, Swift, commits, docs)
@@ -241,11 +241,24 @@ The `.cursor/` folder is a **dot-directory** — hidden in Finder by default; us
 
 ---
 
+
+## Markitdown (document conversion)
+
+**Markitdown** ([microsoft/markitdown](https://github.com/microsoft/markitdown)) is installed/available for converting Office, PDF, and HTML to Markdown.
+
+- **CLI:** `markitdown`
+- **OCR plugins** enabled — use for scanned PDFs when needed (e.g. DKB Belege)
+- Prefer Markitdown over ad-hoc PDF text extraction when converting docs to Markdown for analysis
+- Do not commit secrets from converted bank PDFs into git
+
+Cursor rule: [.cursor/rules/markitdown.mdc](.cursor/rules/markitdown.mdc)
+
 ## Maintaining these rules
 
 When conventions change, update **this file** (`AGENTS.md`) and adjust the thin stubs only if critical inline bullets need to change:
 
 - `.cursor/rules/project-conventions.mdc`
+- `.cursor/rules/markitdown.mdc` (tooling note)
 - `.github/copilot-instructions.md`
 
 Do not duplicate long explanations in the stubs — link here instead.
