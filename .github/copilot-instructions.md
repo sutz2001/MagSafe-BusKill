@@ -24,6 +24,10 @@ task version:sync
 
 Path-specific rules: [instructions/swift.instructions.md](instructions/swift.instructions.md), [instructions/commits.instructions.md](instructions/commits.instructions.md), [instructions/readme.instructions.md](instructions/readme.instructions.md), [instructions/docs.instructions.md](instructions/docs.instructions.md).
 
+## Markitdown
+
+See [AGENTS.md § Markitdown](../AGENTS.md#markitdown-document-conversion) — CLI `markitdown`, OCR plugins on; prefer over ad-hoc PDF extraction; never commit secrets from bank PDFs.
+
 ## Security actions (only five)
 
 `lockScreen`, `soundAlarm`, `forceLogout`, `shutdown`, `customScript`

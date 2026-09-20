@@ -31,4 +31,4 @@ task version:show
 
 ## Where rules live
 
-Canonical: [AGENTS.md](../../AGENTS.md). This file is Cursor’s always-on stub. Copilot: [.github/copilot-instructions.md](../../.github/copilot-instructions.md). Dot-folder `.cursor/` may be hidden in Finder — `ls -la .cursor/rules/`.
+Canonical: [AGENTS.md](../../AGENTS.md). This file is Cursor’s always-on stub. Tooling: [markitdown.mdc](markitdown.mdc). Copilot: [.github/copilot-instructions.md](../../.github/copilot-instructions.md). Dot-folder `.cursor/` may be hidden in Finder — `ls -la .cursor/rules/`.
