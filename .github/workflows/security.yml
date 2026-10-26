@@ -159,7 +159,7 @@ jobs:
         uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
 
       - name: Dependency Review
-        uses: actions/dependency-review-action@284c089a1c4d8e8673b7398cdb8df358a9de47ad # v3
+        uses: actions/dependency-review-action@907a6e9569212033966bc0b69d32473b046dd66b # v3
         with:
           # Fail on high severity vulnerabilities
           fail-on-severity: high
@@ -264,7 +264,7 @@ jobs:
 
       # Upload Semgrep results to GitHub Security tab
       - name: Upload SARIF results
-        uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         if: always() # Upload even if Semgrep step fails
         with:
           sarif_file: semgrep.sarif
@@ -284,7 +284,7 @@ jobs:
         uses: actions/checkout@f548e57e544e1ff5a4c46bf1e1b8685f8e4a348a # v4
 
       - name: Run License Scan
-        uses: fossas/fossa-action@4ece07243d21a80f452ae608440a2295a2937700 # v1
+        uses: fossas/fossa-action@7f9093e8e9864a4fd9ab58426a3e34c54040da04 # v1
         with:
           api-key: ${{ secrets.FOSSA_API_KEY }}
         continue-on-error: true # Don't fail if FOSSA is not configured
@@ -309,14 +309,14 @@ jobs:
           persist-credentials: false
 
       - name: Run Scorecard
-        uses: ossf/scorecard-action@e8e61e86ea0a152be84d03729c02a7300065c17d # v2
+        uses: ossf/scorecard-action@365df9f035d4b5177b9cd57330f8c3dfa6134420 # v2
         with:
           results_file: results.sarif
           results_format: sarif
           publish_results: false
 
       - name: Upload results to code scanning
-        uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: results.sarif
 
