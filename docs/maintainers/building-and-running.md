@@ -438,14 +438,21 @@ security find-identity -p codesigning
 
 ### Creating DMG
 
-Handled by `task release` / `task release:dmg`. Manual equivalent:
+Handled by `task release` / `task release:dmg` via [`scripts/package-release.sh`](../../scripts/package-release.sh). That script prefers Apple's `diskutil image` path (`hdiutil` is deprecated on macOS 27+). Manual equivalent:
 
 ```bash
-hdiutil create -volname "MagSafe Guard" \
-               -srcfolder dist/MagSafeGuard-0.3.0.app \
-               -ov -format UDZO \
-               dist/MagSafeGuard-0.3.0.dmg
+# Preferred (macOS 14+; required to avoid hdiutil deprecation on macOS 27+)
+diskutil image create from \
+  --volumeName "MagSafe Guard" \
+  --format UDZO \
+  dist/.dmg-staging \
+  dist/MagSafeGuard-0.6.2.dmg
+
+# Legacy fallback only (deprecated on macOS 27+):
+# hdiutil create -volname "MagSafe Guard" -srcfolder ... -ov -format UDZO -fs HFS+ ...
 ```
+
+Use a staging folder that contains `MagSafe Guard.app` plus an `Applications` symlink (same layout `task release:dmg` builds). Keep `--format UDZO` for notarization-friendly UDIF zlib compression.
 
 ## Environment Setup
 

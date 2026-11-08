@@ -13,7 +13,7 @@ Team ID for this fork: **`7FPM58LVXH`** · Bundle ID: `com.sutz2001.MagSafeGuard
 Account Holder only (you, if you enrolled personally):
 
 1. Xcode → **Settings → Accounts** → your Apple ID → select team **7FPM58LVXH**
-2. **Manage Certificates…** → **+** → **Developer ID Application**
+2. **Manage Certificates...** → **+** → **Developer ID Application**
 3. Confirm:
 
 ```bash
@@ -46,7 +46,7 @@ SIGN_MODE=developerid task release:package
 SIGN_MODE=developerid SKIP_TESTS=true task release
 ```
 
-`SIGN_MODE=developerid` builds unsigned in Xcode (avoids `com.apple.provenance` codesign failures), re-signs with Developer ID + hardened runtime using [`MagSafeGuard.developerid.entitlements`](../../MagSafeGuard/MagSafeGuard.developerid.entitlements) (sandbox **off** for system actions), creates an HFS+ DMG, notarizes app + DMG, staples tickets, writes `dist/SHA256SUMS`.
+`SIGN_MODE=developerid` builds unsigned in Xcode (avoids `com.apple.provenance` codesign failures), re-signs with Developer ID + hardened runtime using [`MagSafeGuard.developerid.entitlements`](../../MagSafeGuard/MagSafeGuard.developerid.entitlements) (sandbox **off** for system actions), creates a **UDZO** DMG via `diskutil image create from` (Apple's replacement for deprecated `hdiutil` on macOS 27+; `hdiutil` remains a fallback on older hosts), notarizes app + DMG, staples tickets, writes `dist/SHA256SUMS`.
 
 Skip notarization (sign only):
 
@@ -83,6 +83,6 @@ gh release upload vX.Y.Z dist/MagSafeGuard-X.Y.Z.dmg dist/SHA256SUMS --clobber
 | `No Keychain password item found for profile` | Run `notarytool store-credentials` (step 2) |
 | Notary rejected: invalid signature | Ensure `--options runtime --timestamp` and nested frameworks signed |
 | Gatekeeper still warns | Staple failed or wrong download; re-run `stapler staple` on DMG |
-| Xcode Release codesign fails on provenance | Expected — use `SIGN_MODE=developerid` (unsigned build + re-sign) |
+| Xcode Release codesign fails on provenance | Expected - use `SIGN_MODE=developerid` (unsigned build + re-sign) |
 
 Related: [code-signing.md](code-signing.md) (broader / partly historical), [`scripts/package-release.sh`](../../scripts/package-release.sh), [`scripts/notarize-release.sh`](../../scripts/notarize-release.sh).
