@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build a signed Release .app, optional DMG, checksum, and optional notarization.
-# Used by: task release, task release:build, task release:dmg, …
+# Used by: task release, task release:build, task release:dmg, ...
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -55,7 +55,7 @@ find_developer_id_identity() {
   [ -n "$id" ] || die "No 'Developer ID Application' certificate in Keychain.
 
 Create one (Account Holder):
-  Xcode → Settings → Accounts → your Apple ID → Manage Certificates… → + → Developer ID Application
+  Xcode → Settings → Accounts → your Apple ID → Manage Certificates... → + → Developer ID Application
 
 Team ID expected: 7FPM58LVXH
 Docs: docs/maintainers/notarization.md"
@@ -105,7 +105,7 @@ run_xcodebuild() {
       $SIGN_SETTINGS \
       2>&1 | xcbeautify --quiet --is-ci
   else
-    log "⚠️  xcbeautify not found — plain xcodebuild output"
+    log "⚠️  xcbeautify not found - plain xcodebuild output"
   # shellcheck disable=SC2086
     xcodebuild build \
       -project "$PROJECT_PATH" \
@@ -160,7 +160,7 @@ cmd_build() {
   sign_settings
 
   if ! command -v xcodebuild &>/dev/null; then
-    die "xcodebuild not found — install Xcode"
+    die "xcodebuild not found - install Xcode"
   fi
 
   mkdir -p "$DIST_DIR"
@@ -192,7 +192,7 @@ cmd_build() {
     fi
   fi
 
-  log "📦 Release build — MagSafe Guard ${MARKETING} (build ${BUILD_NUM})"
+  log "📦 Release build - MagSafe Guard ${MARKETING} (build ${BUILD_NUM})"
   log "   Sign mode: ${SIGN_MODE}"
   log "   Output:    ${STAGED_APP}"
   echo ""
@@ -227,9 +227,47 @@ cmd_build() {
   log "✅ Friendly app: $FRIENDLY_APP"
 }
 
+# Create a UDZO DMG from a staging folder.
+# Prefer diskutil image (Apple's replacement; hdiutil is deprecated on macOS 27+).
+# Fall back to hdiutil on older hosts where diskutil image create from is unavailable.
+create_udzo_dmg() {
+  local volname="$1"
+  local srcfolder="$2"
+  local dmg_path="$3"
+
+  rm -f "$dmg_path"
+
+  if command -v diskutil >/dev/null 2>&1; then
+    # macOS 14+: diskutil image create from. --volumeName is supported on recent releases
+    # (including macOS 27). UDZO stays notarization-friendly (UDIF zlib-compressed).
+    if diskutil image create from \
+      --volumeName "$volname" \
+      --format UDZO \
+      "$srcfolder" \
+      "$dmg_path"
+    then
+      [ -f "$dmg_path" ] || die "diskutil reported success but DMG missing: $dmg_path"
+      return 0
+    fi
+    log "⚠️  diskutil image create from failed - falling back to hdiutil (deprecated on macOS 27+)"
+    rm -f "$dmg_path"
+  fi
+
+  command -v hdiutil >/dev/null 2>&1 || die "Neither diskutil image nor hdiutil is available to create a DMG"
+  # Legacy path (pre-diskutil image / recovery). HFS+ helped older Finder views of APFS DMGs.
+  hdiutil create \
+    -volname "$volname" \
+    -srcfolder "$srcfolder" \
+    -ov \
+    -format UDZO \
+    -fs HFS+ \
+    "$dmg_path" >/dev/null
+  [ -f "$dmg_path" ] || die "hdiutil failed to create DMG: $dmg_path"
+}
+
 cmd_dmg() {
   read_version
-  [ -d "$STAGED_APP" ] || die "Staged app missing — run: task release:build"
+  [ -d "$STAGED_APP" ] || die "Staged app missing - run: task release:build"
 
   STAGING="${DIST_DIR}/.dmg-staging"
   rm -rf "$STAGING" "$DMG_PATH"
@@ -239,14 +277,7 @@ cmd_dmg() {
   ln -s /Applications "$STAGING/Applications"
 
   log "💿 Creating DMG: $DMG_PATH"
-  # HFS+ so Finder reliably shows MagSafe Guard.app (default APFS images often look empty).
-  hdiutil create \
-    -volname "MagSafe Guard ${MARKETING}" \
-    -srcfolder "$STAGING" \
-    -ov \
-    -format UDZO \
-    -fs HFS+ \
-    "$DMG_PATH" >/dev/null
+  create_udzo_dmg "MagSafe Guard ${MARKETING}" "$STAGING" "$DMG_PATH"
 
   rm -rf "$STAGING"
 
@@ -286,14 +317,14 @@ cmd_notarize() {
 
 cmd_install() {
   read_version
-  [ -d "$STAGED_APP" ] || die "Staged app missing — run: task release"
+  [ -d "$STAGED_APP" ] || die "Staged app missing - run: task release"
 
   TARGET="/Applications/${APP_BUNDLE_NAME}"
   log "📲 Installing to $TARGET"
   # Remove prior versioned install names from older packaging.
   rm -rf "$TARGET" /Applications/MagSafeGuard-*.app
   ditto --norsrc "$STAGED_APP" "$TARGET"
-  log "✅ Installed — launch from Applications or Spotlight"
+  log "✅ Installed - launch from Applications or Spotlight"
 }
 
 cmd_open() {
@@ -303,7 +334,7 @@ cmd_open() {
   elif [ -d "$STAGED_APP" ]; then
     open "$STAGED_APP"
   else
-    die "No release artifacts — run: task release"
+    die "No release artifacts - run: task release"
   fi
 }
 
@@ -344,8 +375,8 @@ Commands:
 
 Environment:
   SIGN_MODE=auto|adhoc|unsigned|developerid
-      default: auto — Xcode automatic signing
-      developerid — unsigned xcodebuild, then Developer ID + hardened runtime
+      default: auto - Xcode automatic signing
+      developerid - unsigned xcodebuild, then Developer ID + hardened runtime
   NOTARIZE=1                 notarize after dmg (default on for SIGN_MODE=developerid)
   NOTARY_PROFILE=name        notarytool keychain profile (default: MagSafeGuard-notary)
   SKIP_TESTS=true            (only used by task release, not this script)
